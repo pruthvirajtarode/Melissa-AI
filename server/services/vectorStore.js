@@ -43,16 +43,17 @@ class VectorStore {
     }
 
     /**
-     * Add document to vector store
-     * @param {string} text - Document text
-     * @param {object} metadata - Document metadata
-     */
-    async addDocument(text, metadata = {}) {
+    * Add document to vector store
+    * @param {string} text - Document text
+    * @param {object} metadata - Document metadata
+    * @param {boolean} skipSave - Whether to skip saving to disk (for bulk operations)
+    */
+    async addDocument(text, metadata = {}, skipSave = false) {
         try {
             const embedding = await generateEmbedding(text);
 
             const document = {
-                id: Date.now().toString(),
+                id: Date.now().toString() + Math.random().toString(36).substring(2, 7),
                 text,
                 embedding,
                 metadata,
@@ -60,13 +61,32 @@ class VectorStore {
             };
 
             this.documents.push(document);
-            await this.saveStore();
+            if (!skipSave) {
+                await this.saveStore();
+            }
 
             return document.id;
         } catch (error) {
             console.error('❌ Error adding document:', error.message);
             throw error;
         }
+    }
+
+    /**
+     * Add multiple documents to vector store
+     * @param {Array<{text: string, metadata: object}>} docs - Array of documents
+     */
+    async addDocuments(docs) {
+        console.log(`📥 Adding ${docs.length} documents to vector store...`);
+        for (let i = 0; i < docs.length; i++) {
+            const { text, metadata } = docs[i];
+            await this.addDocument(text, metadata, true);
+            if ((i + 1) % 10 === 0) {
+                console.log(`   Processed ${i + 1}/${docs.length} chunks...`);
+            }
+        }
+        await this.saveStore();
+        console.log('✅ Bulk addition complete and saved to disk');
     }
 
     /**

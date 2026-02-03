@@ -7,3 +7,4 @@ data/vectors/*
 !data/vectors/.gitkeep
 *.log
 .vscode/
+NMV Online Content/
