@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Melissa AI Widget</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/widget.css">
+</head>
+
+<body>
+    <!-- Widget Button -->
+    <button class="widget-button" id="widgetButton">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+    </button>
+
+    <!-- Widget Container -->
+    <div class="widget-container" id="widgetContainer">
+        <div class="widget-header">
+            <div class="widget-title">
+                <svg class="widget-logo" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="url(#widgetGradient)" stroke="currentColor"
+                        stroke-width="2" />
+                    <defs>
+                        <linearGradient id="widgetGradient" x1="2" y1="2" x2="22" y2="12">
+                            <stop offset="0%" stop-color="#667eea" />
+                            <stop offset="100%" stop-color="#764ba2" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <span>Melissa AI</span>
+            </div>
+            <button class="widget-close" id="widgetClose">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M18 6L6 18M6 6l12 12" stroke-width="2" stroke-linecap="round" />
+                </svg>
+            </button>
+        </div>
+
+        <div class="widget-messages" id="widgetMessages">
+            <div class="widget-welcome">
+                <div class="widget-avatar">🤖</div>
+                <div class="widget-welcome-text">
+                    <h3>Hi! I'm Melissa AI</h3>
+                    <p>Your business development assistant. How can I help you today?</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="widget-input">
+            <input type="text" id="widgetInput" class="widget-input-field" placeholder="Ask me anything..." />
+            <button class="widget-send" id="widgetSend">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                </svg>
+            </button>
+        </div>
+
+        <div class="widget-footer">
+            Powered by <strong>Melissa AI</strong>
+        </div>
+    </div>
+
+    <script src="js/widget.js"></script>
+</body>
+
+</html>

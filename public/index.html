@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Melissa AI - Business Development Assistant</title>
+    <meta name="description"
+        content="AI-powered business development chatbot providing expert guidance on strategy, growth, and execution">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <svg class="logo-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="url(#gradient1)" stroke="currentColor"
+                            stroke-width="2" stroke-linejoin="round" />
+                        <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        <defs>
+                            <linearGradient id="gradient1" x1="2" y1="2" x2="22" y2="12">
+                                <stop offset="0%" stop-color="#667eea" />
+                                <stop offset="100%" stop-color="#764ba2" />
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <span class="logo-text">Melissa AI</span>
+                </div>
+                <nav class="nav">
+                    <a href="admin.html" class="nav-link">Admin Dashboard</a>
+                    <button class="btn-new-chat" id="newChatBtn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M12 5v14m-7-7h14" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                        <span>New Chat</span>
+                    </button>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Welcome Screen -->
+            <div class="welcome-screen" id="welcomeScreen">
+                <div class="welcome-content">
+                    <!-- Professional Hero Section -->
+                    <div class="hero-section">
+                        <div class="hero-background">
+                            <img src="images/hero-business-team.png"
+                                alt="Professional business team collaborating with AI technology" class="hero-image">
+                            <div class="hero-overlay"></div>
+                        </div>
+                        <div class="hero-content-box">
+                            <div class="hero-icon">
+                                <svg width="64" height="64" viewBox="0 0 24 24" fill="none">
+                                    <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="url(#heroIconGradient)"
+                                        stroke="currentColor" stroke-width="1.5" />
+                                    <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="1.5"
+                                        stroke-linecap="round" />
+                                    <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="1.5"
+                                        stroke-linecap="round" />
+                                    <defs>
+                                        <linearGradient id="heroIconGradient" x1="2" y1="2" x2="22" y2="12">
+                                            <stop offset="0%" stop-color="#667eea" />
+                                            <stop offset="100%" stop-color="#764ba2" />
+                                        </linearGradient>
+                                    </defs>
+                                </svg>
+                            </div>
+                            <h1 class="hero-title">Melissa AI</h1>
+                            <p class="hero-tagline">AI-Powered Business Intelligence</p>
+                        </div>
+                    </div>
+
+                    <h1 class="welcome-title">Welcome to Melissa AI</h1>
+                    <p class="welcome-subtitle">Your expert AI assistant for business development, strategy, and
+                        execution</p>
+
+                    <div class="suggestion-cards">
+                        <div class="suggestion-card"
+                            data-prompt="How do I create an effective go-to-market strategy for a B2B SaaS product?">
+                            <div class="card-icon">
+                                <img src="images/icon-analytics.png" alt="Analytics" class="card-icon-img">
+                            </div>
+                            <h3>Go-to-Market Strategy</h3>
+                            <p>Learn how to launch your B2B SaaS product</p>
+                        </div>
+                        <div class="suggestion-card"
+                            data-prompt="What are the key metrics I should track for my startup?">
+                            <div class="card-icon">
+                                <img src="images/icon-metrics.png" alt="Metrics" class="card-icon-img">
+                            </div>
+                            <h3>Key Metrics</h3>
+                            <p>Discover essential KPIs for your business</p>
+                        </div>
+                        <div class="suggestion-card" data-prompt="How should I price my product for maximum revenue?">
+                            <div class="card-icon">
+                                <img src="images/icon-pricing.png" alt="Pricing" class="card-icon-img">
+                            </div>
+                            <h3>Pricing Strategy</h3>
+                            <p>Optimize your pricing model</p>
+                        </div>
+                        <div class="suggestion-card"
+                            data-prompt="What are effective strategies for scaling operations?">
+                            <div class="card-icon">
+                                <img src="images/icon-rocket.png" alt="Growth" class="card-icon-img">
+                            </div>
+                            <h3>Scaling Operations</h3>
+                            <p>Grow your business efficiently</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Container -->
+            <div class="chat-container" id="chatContainer" style="display: none;">
+                <div class="messages" id="messagesContainer"></div>
+            </div>
+        </main>
+
+        <!-- Input Area -->
+        <div class="input-area">
+            <div class="input-container">
+                <textarea id="messageInput" class="message-input"
+                    placeholder="Ask me anything about business development, strategy, or growth..."
+                    rows="1"></textarea>
+                <button class="send-button" id="sendButton">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                    </svg>
+                </button>
+            </div>
+            <div class="input-footer">
+                <p class="disclaimer">Melissa AI provides business guidance. For legal, tax, or investment advice,
+                    consult professionals.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+
+</html>

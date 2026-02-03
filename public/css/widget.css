@@ -1,0 +1,334 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Widget Button */
+.widget-button {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 9998;
+}
+
+.widget-button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 24px rgba(102, 126, 234, 0.5);
+}
+
+.widget-button.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Widget Container */
+.widget-container {
+    position: fixed;
+    bottom: 100px;
+    right: 24px;
+    width: 400px;
+    height: 600px;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+    pointer-events: none;
+    transition: all 0.3s ease;
+    z-index: 9999;
+}
+
+.widget-container.active {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: all;
+}
+
+/* Widget Header */
+.widget-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 16px 20px;
+    border-radius: 16px 16px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.widget-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.widget-logo {
+    width: 24px;
+    height: 24px;
+    color: white;
+}
+
+.widget-close {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease;
+}
+
+.widget-close:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Widget Messages */
+.widget-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    background: #f9fafb;
+}
+
+.widget-messages::-webkit-scrollbar {
+    width: 6px;
+}
+
+.widget-messages::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 3px;
+}
+
+.widget-welcome {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.widget-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.widget-welcome-text {
+    background: white;
+    padding: 12px 16px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.widget-welcome-text h3 {
+    font-size: 15px;
+    margin-bottom: 4px;
+    color: #111827;
+}
+
+.widget-welcome-text p {
+    font-size: 14px;
+    color: #6b7280;
+}
+
+/* Message Styles */
+.widget-message {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.widget-message.user {
+    flex-direction: row-reverse;
+}
+
+.widget-message .widget-avatar {
+    background: #667eea;
+}
+
+.widget-message.user .widget-avatar {
+    background: #6b7280;
+}
+
+.widget-message-content {
+    max-width: 75%;
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.widget-message.assistant .widget-message-content {
+    background: white;
+    color: #111827;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.widget-message.user .widget-message-content {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+/* Typing Indicator */
+.widget-typing {
+    display: flex;
+    gap: 4px;
+    padding: 8px;
+}
+
+.widget-typing-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #9ca3af;
+    animation: typing 1.4s infinite;
+}
+
+.widget-typing-dot:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.widget-typing-dot:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes typing {
+
+    0%,
+    60%,
+    100% {
+        transform: translateY(0);
+        opacity: 0.7;
+    }
+
+    30% {
+        transform: translateY(-8px);
+        opacity: 1;
+    }
+}
+
+/* Widget Input */
+.widget-input {
+    padding: 16px 20px;
+    background: white;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    gap: 8px;
+}
+
+.widget-input-field {
+    flex: 1;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-family: inherit;
+    font-size: 14px;
+    color: #111827;
+    transition: border-color 0.2s ease;
+}
+
+.widget-input-field:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.widget-send {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.widget-send:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.widget-send:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Widget Footer */
+.widget-footer {
+    padding: 12px 20px;
+    background: white;
+    border-radius: 0 0 16px 16px;
+    text-align: center;
+    font-size: 12px;
+    color: #6b7280;
+    border-top: 1px solid #e5e7eb;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .widget-container {
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        height: 100vh;
+        border-radius: 0;
+    }
+
+    .widget-header {
+        border-radius: 0;
+    }
+
+    .widget-footer {
+        border-radius: 0;
+    }
+
+    .widget-button {
+        bottom: 20px;
+        right: 20px;
+    }
+}

@@ -1,0 +1,13 @@
+{
+    "ignore": [
+        "data/**/*",
+        "uploads/**/*",
+        "*.log",
+        ".git"
+    ],
+    "watch": [
+        "server/",
+        "public/"
+    ],
+    "ext": "js,html,css,json,env"
+}
