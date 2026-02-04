@@ -5,8 +5,8 @@ const config: CapacitorConfig = {
     appName: 'Melissa AI',
     webDir: 'public',
     server: {
-        // REPLACE THIS with your actual Vercel URL so the mobile app stays in sync with your live site
-        url: 'https://YOUR_VERCEL_URL.vercel.app',
+        // Updated with your actual live Vercel URL
+        url: 'https://melissa-ai.vercel.app',
         cleartext: true
     },
     plugins: {

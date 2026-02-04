@@ -27,7 +27,7 @@ Before building, ensure you have:
 To create an installer (`.apk`) that you can send to users:
 
 1. **Update the URL**:
-   Open `capacitor.config.ts` and replace `https://YOUR_VERCEL_URL.vercel.app` with your actual live URL.
+   Open `capacitor.config.ts` and ensure it reflects your actual live URL: `https://melissa-ai.vercel.app`.
 
 2. **Sync the Project**:
    ```bash

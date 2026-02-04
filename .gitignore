@@ -8,3 +8,7 @@ data/vectors/*
 *.log
 .vscode/
 NMV Online Content/
+dist/
+android/app/build/
+ios/App/App/public/
+.vercel
