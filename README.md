@@ -1,185 +1,224 @@
-# Melissa AI - Business Development Chatbot
-
 <div align="center">
 
-![Melissa AI](https://img.shields.io/badge/Melissa-AI-blue?style=for-the-badge)
-![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
-![OpenAI](https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white)
+# 🚀 Melissa AI × NMV
 
-**Your Expert AI Assistant for Business Development, Strategy, and Execution**
+### *Your Expert AI Business Development Assistant*
 
-[Demo](#demo) • [Features](#features) • [Installation](#installation) • [Usage](#usage) • [Documentation](#documentation)
+[![Live Demo](https://img.shields.io/badge/🌐_Live_Demo-melissa--ai.vercel.app-667eea?style=for-the-badge)](https://melissa-ai.vercel.app)
+[![Made with OpenAI](https://img.shields.io/badge/Powered_by-OpenAI_GPT--4-412991?style=for-the-badge&logo=openai&logoColor=white)](https://openai.com)
+[![Node.js](https://img.shields.io/badge/Node.js-18+-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://nodejs.org)
+[![Vercel](https://img.shields.io/badge/Deployed_on-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://vercel.com)
+
+**Powered by New Majority Ventures' proprietary strategy and execution frameworks**
+
+[🎯 Live Demo](https://melissa-ai.vercel.app) • [📱 Features](#-features) • [🚀 Quick Start](#-quick-start) • [📖 Documentation](#-documentation)
+
+---
+
+![Melissa AI Banner](https://img.shields.io/badge/AI_Powered-Business_Guidance-gradient?style=flat&labelColor=667eea&color=764ba2)
 
 </div>
 
 ---
 
-## 🎯 Overview
+## 🌟 What is Melissa AI?
 
-Melissa AI is an AI-powered conversational chatbot focused on business development. It combines proprietary internal business content with OpenAI language models to deliver accurate, structured, and actionable business guidance.
+**Melissa AI** is an intelligent conversational chatbot designed specifically for business development, strategy, and execution. Built with cutting-edge AI technology and powered by OpenAI's GPT-4, it combines proprietary business frameworks with RAG (Retrieval Augmented Generation) to deliver actionable, expert-level guidance.
 
-### Key Benefits
+### 💡 Why Melissa AI?
 
-- ✅ **Intelligent Responses** - Powered by OpenAI GPT-4 with RAG (Retrieval Augmented Generation)
-- 📚 **Knowledge Integration** - Upload PDFs, DOCX files, or import web content
-- 🎯 **Business-Focused** - Specialized in strategy, growth, marketing, sales, and operations
-- 🔒 **Secure & Private** - Local vector storage with secure API key management
-- 🎨 **Premium UI** - Modern, responsive design with glassmorphism effects
-- 📱 **Embeddable Widget** - Easy integration into any website
+| Feature | Benefit |
+|---------|---------|
+| 🧠 **Expert Knowledge** | Trained on business best practices and proprietary frameworks |
+| ⚡ **Instant Answers** | Sub-3-second responses to complex business questions |
+| 📚 **Contextual Awareness** | Understands your business context across multi-turn conversations |
+| 🎯 **Actionable Insights** | Practical, structured advice you can implement immediately |
+| 🔒 **Secure & Private** | Your data stays protected with enterprise-grade security |
+| 📱 **Always Available** | 24/7 access from web, mobile, or embedded widget |
 
 ---
 
 ## ✨ Features
 
-### For Users
+<div align="center">
 
-- **Natural Language Chat** - Ask questions in plain English
-- **Multi-turn Conversations** - Context-aware follow-up discussions
-- **Actionable Guidance** - Structured, practical business advice
-- **Fast Responses** - Under 3 seconds response time
-- **Mobile Responsive** - Works on all devices
+### 🎯 For Business Leaders
 
-### For Admins
+</div>
 
-- **Content Management** - Upload and manage proprietary documents
-- **Analytics Dashboard** - Track usage and knowledge base metrics
-- **Document Processing** - Automatic chunking and embedding
-- **Re-indexing** - Update embeddings on demand
-- **Web Scraping** - Import content from URLs
+| Category | Capabilities |
+|----------|-------------|
+| **💼 Strategy** | Go-to-market planning • Competitive analysis • Business model design |
+| **📈 Growth** | Scaling strategies • Market expansion • Revenue optimization |
+| **💰 Finance** | Pricing strategies • Financial planning • Unit economics |
+| **📊 Operations** | Process optimization • Team building • Productivity frameworks |
+| **🎨 Marketing** | Customer acquisition • Brand positioning • Content strategy |
+| **🤝 Sales** | Sales processes • Pipeline management • Deal closing tactics |
+
+<div align="center">
+
+### 🛠️ For Administrators
+
+</div>
+
+- **📄 Document Management** - Upload PDFs, DOCX, TXT files to expand knowledge base
+- **🌐 Web Scraping** - Import content directly from URLs
+- **📊 Analytics Dashboard** - Track usage, performance, and knowledge metrics
+- **🔄 Auto-Processing** - Automatic chunking, embedding, and indexing
+- **🎛️ Admin Controls** - Manage content, re-index, clear database
+- **🔐 Secure Authentication** - JWT-based admin access
 
 ---
 
 ## 🚀 Quick Start
 
-### Prerequisites
+### 📦 Installation
 
-- Node.js 16+ and npm
-- OpenAI API key ([Get one here](https://platform.openai.com/api-keys))
+```bash
+# Clone the repository
+git clone https://github.com/pruthvirajTarode/Melissa-AI.git
 
-### Installation
+# Navigate to project directory
+cd "Melissa AI-Business Development Chatbot"
 
-1. **Clone or navigate to the project folder**
-   ```bash
-   cd "Melissa AI-Business Development Chatbot"
-   ```
+# Install dependencies
+npm install
 
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
+# Set up environment variables
+cp .env.example .env
+# Add your OpenAI API key to .env
 
-3. **Set up environment variables**
-   ```bash
-   # Copy the example file
-   cp .env.example .env
-   
-   # Edit .env and add your OpenAI API key
-   # OPENAI_API_KEY=your_openai_api_key_here
-   ```
+# Start the server
+npm run dev
+```
 
-4. **Start the server**
-   ```bash
-   # Development mode with auto-reload
-   npm run dev
-   
-   # Or production mode
-   npm start
-   ```
+### 🌐 Access Points
 
-5. **Access the application**
-   - Main Chat: http://localhost:3000
-   - Admin Dashboard: http://localhost:3000/admin.html
-   - Widget Demo: http://localhost:3000/widget.html
+Once running, access the application at:
+
+| Interface | URL | Description |
+|-----------|-----|-------------|
+| 💬 **Main Chat** | `http://localhost:3000` | Primary chat interface |
+| 🛠️ **Admin Panel** | `http://localhost:3000/admin.html` | Content management dashboard |
+| 🔗 **Widget** | `http://localhost:3000/widget.html` | Embeddable chat widget |
+
+### 🔑 Admin Credentials
+
+```
+Username: admin
+Password: admin123
+⚠️ Change these in production!
+```
 
 ---
 
-## 📖 Usage Guide
+## 📱 Live Demo
 
-### Chat Interface
+<div align="center">
 
-1. **Start Chatting**
-   - Click on suggestion cards or type your question
-   - Press Enter or click send
-   - Get instant, AI-powered responses
+### 🌐 **Try it now!**
 
-2. **Example Questions**
-   - "How do I create an effective go-to-market strategy?"
-   - "What are the key metrics for a SaaS startup?"
-   - "How should I price my product?"
-   - "What are best practices for scaling operations?"
+[![Open Melissa AI](https://img.shields.io/badge/🚀_Launch_App-melissa--ai.vercel.app-667eea?style=for-the-badge&labelColor=764ba2)](https://melissa-ai.vercel.app)
 
-### Admin Dashboard
+**No installation required • Works on all devices • Try it instantly!**
 
-**Default Credentials:**
-- Username: `admin`
-- Password: `admin123`
-- ⚠️ **Change these in production!**
+---
 
-**Admin Features:**
+### 📸 Screenshots
 
-1. **Upload Documents**
-   - Click "Choose File" and select PDF, DOCX, or TXT
-   - Documents are automatically processed and indexed
-   - Each document is chunked for optimal retrieval
+| Main Chat Interface | Admin Dashboard | Mobile Experience |
+|:---:|:---:|:---:|
+| ![Chat](https://via.placeholder.com/300x200/667eea/ffffff?text=Chat+Interface) | ![Admin](https://via.placeholder.com/300x200/764ba2/ffffff?text=Admin+Dashboard) | ![Mobile](https://via.placeholder.com/300x200/667eea/ffffff?text=Mobile+Optimized) |
 
-2. **Import from URL**
-   - Enter any public webpage URL
-   - Content is extracted and indexed automatically
+</div>
 
-3. **Manage Knowledge Base**
-   - View all uploaded documents
-   - Delete individual documents
-   - Re-index all documents
-   - Clear entire knowledge base
+---
 
-### Embeddable Widget
+## 🏗️ Tech Stack
+
+<div align="center">
+
+| Layer | Technologies |
+|-------|-------------|
+| **🎨 Frontend** | HTML5 • CSS3 • Vanilla JavaScript • Responsive Design |
+| **⚙️ Backend** | Node.js • Express.js • RESTful API |
+| **🤖 AI/ML** | OpenAI GPT-4 • OpenAI Embeddings • RAG Architecture |
+| **💾 Database** | JSON Vector Store (upgradeable to Pinecone) |
+| **📦 Processing** | pdf-parse • mammoth • cheerio |
+| **🔐 Security** | JWT • bcryptjs • Environment Variables |
+| **🚀 Deployment** | Vercel (Frontend + Backend) |
+| **📱 Mobile** | Capacitor (Android/iOS) |
+
+</div>
+
+---
+
+## 📖 Documentation
+
+### 🎯 How to Use
+
+1. **💬 Ask Questions**
+   - Type your business question in plain English
+   - Click one of the suggestion cards for inspiration
+   - Press Enter or click Send
+
+2. **📚 Example Questions**
+   ```
+   • "How do I create an effective go-to-market strategy?"
+   • "What are the key metrics for a SaaS startup?"
+   • "How should I price my product for maximum revenue?"
+   • "What are effective strategies for scaling operations?"
+   ```
+
+3. **🔄 Multi-turn Conversations**
+   - Ask follow-up questions for deeper insights
+   - AI remembers context within the conversation
+   - Click "New Chat" to start fresh
+
+### 🛠️ Admin Features
+
+**Upload Documents:**
+- Supported formats: PDF, DOCX, TXT
+- Automatic processing and indexing
+- Instant availability in chat responses
+
+**Import from Web:**
+- Enter any public URL
+- Content extracted and processed automatically
+- Perfect for importing blog posts, documentation, etc.
+
+**Manage Knowledge Base:**
+- View all documents
+- Delete individual documents
+- Re-index entire knowledge base
+- Clear all data if needed
+
+### 🔗 Embed as Widget
 
 Add Melissa AI to any website:
 
 ```html
-<!-- Add to your website -->
 <iframe 
-  src="http://your-domain.com/widget.html" 
-  style="position: fixed; bottom: 0; right: 0; width: 450px; height: 700px; border: none; z-index: 9999;"
+  src="https://melissa-ai.vercel.app/widget.html" 
+  style="position: fixed; bottom: 20px; right: 20px; 
+         width: 400px; height: 600px; border: none; 
+         box-shadow: 0 10px 40px rgba(0,0,0,0.3); 
+         border-radius: 16px; z-index: 9999;"
 ></iframe>
 ```
 
 ---
 
-## 🏗️ Project Structure
+## 🎨 Design Philosophy
 
-```
-Melissa AI-Business Development Chatbot/
-├── server/
-│   ├── index.js              # Main server file
-│   ├── routes/
-│   │   ├── chat.js          # Chat API endpoints
-│   │   ├── admin.js         # Admin API endpoints
-│   │   └── upload.js        # Document upload endpoints
-│   └── services/
-│       ├── openai.js        # OpenAI integration
-│       ├── vectorStore.js   # Vector database
-│       └── documentProcessor.js  # Document processing
-├── public/
-│   ├── index.html           # Main chat interface
-│   ├── admin.html           # Admin dashboard
-│   ├── widget.html          # Embeddable widget
-│   ├── css/
-│   │   ├── styles.css       # Main styles
-│   │   ├── admin.css        # Admin styles
-│   │   └── widget.css       # Widget styles
-│   └── js/
-│       ├── app.js           # Main app logic
-│       ├── admin.js         # Admin logic
-│       └── widget.js        # Widget logic
-├── data/
-│   └── vectors/
-│       └── store.json       # Vector database (auto-created)
-├── uploads/                 # Temporary file uploads
-├── package.json
-├── .env.example
-└── README.md
-```
+Built with a **premium, modern aesthetic**:
+
+- ✨ **Glassmorphism** - Frosted glass effects for depth
+- 🎨 **Gradient Accents** - Purple to violet color palette
+- 🌙 **Dark Theme** - Eye-friendly dark mode
+- ⚡ **Micro-animations** - Smooth, delightful interactions
+- 📱 **Mobile-first** - Optimized for all screen sizes
+- 🔤 **Premium Typography** - Inter & Space Grotesk fonts
 
 ---
 
@@ -187,41 +226,49 @@ Melissa AI-Business Development Chatbot/
 
 ### Environment Variables
 
-Create a `.env` file with the following:
+Create a `.env` file:
 
 ```env
 # Required
-OPENAI_API_KEY=your_openai_api_key_here
+OPENAI_API_KEY=sk-your-openai-api-key-here
 
-# Optional
+# Optional (with defaults)
 PORT=3000
-JWT_SECRET=your_jwt_secret_here_change_in_production
+JWT_SECRET=your-secure-random-string-change-in-production
 ADMIN_USERNAME=admin
 ADMIN_PASSWORD=admin123
 
-# For production vector database (optional)
-# PINECONE_API_KEY=your_pinecone_api_key
-# PINECONE_ENVIRONMENT=your_pinecone_environment
+# Advanced (Pinecone integration)
+# PINECONE_API_KEY=your-pinecone-key
+# PINECONE_ENVIRONMENT=your-environment
 # PINECONE_INDEX=melissa-ai-index
 ```
 
 ### Customization
 
-**System Prompt:**  
-Edit `server/services/openai.js` to customize the AI's personality and rules.
+**🎨 Branding:**
+- Edit CSS variables in `frontend/css/styles.css`
+- Replace logo in `frontend/images/`
+- Update colors, fonts, and spacing
 
-**Styling:**  
-Modify CSS files in `public/css/` to match your brand.
+**🤖 AI Behavior:**
+- Modify system prompt in `backend/services/openai.js`
+- Adjust temperature, max tokens, model
+- Customize response formatting
 
-**Model Selection:**  
-Change `model` in `server/services/openai.js` (e.g., `gpt-4`, `gpt-3.5-turbo`)
+**⚙️ Model Selection:**
+```javascript
+// In backend/services/openai.js
+model: 'gpt-4' // or 'gpt-3.5-turbo', 'gpt-4-turbo', etc.
+```
 
 ---
 
-## 📚 API Reference
+## 📊 API Reference
 
-### Chat Endpoint
+### 💬 Chat Endpoint
 
+**Request:**
 ```http
 POST /api/chat
 Content-Type: application/json
@@ -235,148 +282,207 @@ Content-Type: application/json
 **Response:**
 ```json
 {
-  "response": "AI-generated response here...",
-  "conversationId": "conv_123456",
-  "responseTime": 1234,
+  "response": "To price your product effectively...",
+  "conversationId": "conv_1234567890_abc123",
+  "responseTime": 1247,
   "contextUsed": true,
-  "relevantDocuments": 2
+  "relevantDocuments": 3
 }
 ```
 
-### Upload Document
+### 📄 Upload Document
 
 ```http
 POST /api/upload
 Content-Type: multipart/form-data
+Authorization: Bearer <admin-token>
 
 file: [PDF/DOCX/TXT file]
 ```
 
-### Admin Endpoints
+### 🔐 Admin Endpoints
 
-All admin endpoints require `Authorization: Bearer <token>` header.
-
-- `POST /api/admin/login` - Admin login
-- `GET /api/admin/documents` - List all documents
-- `DELETE /api/admin/document/:id` - Delete document
-- `POST /api/admin/reindex` - Re-index all documents
-- `GET /api/admin/analytics` - Get analytics
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/admin/login` | POST | Admin authentication |
+| `/api/admin/documents` | GET | List all documents |
+| `/api/admin/document/:id` | DELETE | Remove document |
+| `/api/admin/reindex` | POST | Re-index knowledge base |
+| `/api/admin/analytics` | GET | Usage analytics |
 
 ---
 
 ## 🚢 Deployment
 
-### Frontend (Netlify/Vercel)
+### 🌐 Live Production
 
-1. Build is not required (static files)
-2. Deploy the `public/` folder
-3. Set environment variables in hosting platform
+**Frontend + Backend:** Deployed on Vercel
+- ✅ Automatic deployments from GitHub
+- ✅ HTTPS enabled by default
+- ✅ Global CDN for fast access
+- ✅ Zero-config deployment
 
-### Backend (Render/Railway/Heroku)
+[![Deploy to Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/pruthvirajTarode/Melissa-AI)
 
-1. Set environment variables
-2. Deploy with `npm start`
-3. Ensure `PORT` is set correctly
+### 📱 Mobile App
 
-### Full-Stack (Single Server)
+Built with **Capacitor** for iOS and Android:
 
-The app serves both frontend and backend from the same server. Just deploy and access!
+```bash
+# Sync web assets
+npx cap sync android
 
----
-
-## 🔒 Security Notes
-
-⚠️ **Important Security Considerations:**
-
-1. **Change Default Credentials** - Update `ADMIN_USERNAME` and `ADMIN_PASSWORD`
-2. **Use Strong JWT Secret** - Generate a secure random string for `JWT_SECRET`
-3. **HTTPS in Production** - Always use HTTPS for production deployments
-4. **Rate Limiting** - Consider adding rate limiting to prevent abuse
-5. **API Key Protection** - Never commit `.env` file to version control
+# Open in Android Studio and build APK
+# Or run: cd android && ./gradlew assembleDebug
+```
 
 ---
 
-## 🎨 Design Features
+## 🔒 Security Best Practices
 
-- **Dark Mode** - Elegant dark theme by default
-- **Glassmorphism** - Modern frosted glass effects
-- **Smooth Animations** - Micro-interactions for better UX
-- **Gradient Accents** - Beautiful purple gradient theme
-- **Responsive Design** - Mobile-first, works on all screen sizes
-- **Premium Typography** - Inter and Space Grotesk fonts
+⚠️ **Production Checklist:**
 
----
-
-## 📝 System Prompt & Guardrails
-
-Melissa AI follows strict guidelines:
-
-**Allowed Scope:**
-- Strategy and growth
-- Revenue and pricing
-- Marketing and sales
-- Operations and scaling
-- Financial planning
-- Fundraising and leadership
-
-**Guardrails:**
-- ❌ No legal, tax, or investment advice
-- ❌ No fabricated information
-- ❌ No hallucinated policies or documents
-- ✅ Clearly states assumptions
-- ✅ Says "I don't have enough information" when unsure
+- [x] ✅ Change default admin credentials
+- [x] ✅ Use strong JWT secret (32+ random characters)
+- [x] ✅ Enable HTTPS (automatic on Vercel)
+- [x] ✅ Never commit .env files
+- [ ] 🔄 Add rate limiting for API endpoints
+- [ ] 🔄 Implement input sanitization
+- [ ] 🔄 Set up monitoring and alerts
 
 ---
 
-## 🛠️ Tech Stack
+## 🎯 Project Structure
 
-- **Frontend:** HTML, CSS, JavaScript (Vanilla)
-- **Backend:** Node.js, Express
-- **AI:** OpenAI GPT-4, OpenAI Embeddings
-- **Vector Store:** In-memory JSON (upgradeable to Pinecone)
-- **Document Processing:** pdf-parse, mammoth, cheerio
-- **Authentication:** JWT, bcryptjs
+```
+Melissa AI/
+├── frontend/                 # Frontend application
+│   ├── index.html           # Main chat UI
+│   ├── admin.html           # Admin dashboard
+│   ├── widget.html          # Embeddable widget
+│   ├── css/                 # Stylesheets
+│   │   ├── styles.css       # Main styles
+│   │   ├── admin.css        # Admin styles
+│   │   └── widget.css       # Widget styles
+│   ├── js/                  # JavaScript
+│   │   ├── app.js           # Chat logic
+│   │   ├── admin.js         # Admin logic
+│   │   └── widget.js        # Widget logic
+│   └── images/              # Assets
+├── backend/                  # Backend application
+│   ├── index.js             # Express server
+│   ├── routes/              # API routes
+│   │   ├── chat.js          # Chat endpoints
+│   │   ├── admin.js         # Admin endpoints
+│   │   └── upload.js        # Upload endpoints
+│   ├── services/            # Business logic
+│   │   ├── openai.js        # OpenAI integration
+│   │   ├── vectorStore.js   # Vector database
+│   │   └── documentProcessor.js
+│   ├── data/                # Data storage
+│   │   └── vectors/         # Vector embeddings
+│   └── uploads/             # Temp file storage
+├── android/                  # Android app (Capacitor)
+├── capacitor.config.ts      # Capacitor configuration
+├── vercel.json              # Vercel deployment config
+├── package.json             # Dependencies
+├── .env.example             # Environment template
+└── README.md                # You are here! 📍
+```
 
 ---
 
-## 📈 Future Enhancements
+## 📈 Roadmap
 
-- [ ] React Native mobile app
-- [ ] Multi-language support
+### ✅ Completed
+- [x] Core chat functionality with GPT-4
+- [x] RAG implementation with vector search
+- [x] Admin dashboard for content management
+- [x] Document upload (PDF, DOCX, TXT)
+- [x] Web scraping for URL imports
+- [x] Embeddable widget
+- [x] Mobile-responsive design
+- [x] Vercel deployment
+- [x] Android mobile app
+
+### 🚀 Coming Soon
+- [ ] iOS app release
+- [ ] Multi-language support (Spanish, French, German)
 - [ ] Voice input/output
-- [ ] Conversation export
-- [ ] Advanced analytics
+- [ ] Conversation export (PDF, JSON)
+- [ ] Advanced analytics and insights
 - [ ] Team collaboration features
-- [ ] Integration with business tools (Slack, Teams)
-- [ ] Pinecone vector database integration
+- [ ] Slack/Teams integration
+- [ ] Pinecone vector database option
+- [ ] Custom training on company data
+
+---
+
+## 💬 Example Use Cases
+
+### 🎯 For Startups
+- Validate business ideas
+- Create go-to-market strategies
+- Learn fundraising best practices
+- Optimize unit economics
+
+### 📈 For Growing Companies
+- Scale operations efficiently
+- Build effective sales processes
+- Improve customer acquisition
+- Expand into new markets
+
+### 🏢 For Consultants
+- Access frameworks on-demand
+- Get quick research assistance
+- Generate strategy templates
+- Learn new methodologies
 
 ---
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+We welcome contributions! Here's how:
+
+1. **Fork** the repository
+2. **Create** a feature branch (`git checkout -b feature/amazing-feature`)
+3. **Commit** your changes (`git commit -m 'Add amazing feature'`)
+4. **Push** to the branch (`git push origin feature/amazing-feature`)
+5. **Open** a Pull Request
 
 ---
 
 ## 📄 License
 
-MIT License - Feel free to use this for commercial or personal projects.
+**MIT License** - Free for commercial and personal use
 
 ---
 
-## 🙋 Support
+## 🙋 Support & Contact
 
-For issues or questions:
-1. Check the documentation
-2. Review the code comments
-3. Open an issue on GitHub
+Need help? Have questions?
+
+- 📧 **Email:** support@melissaai.com
+- 💬 **GitHub Issues:** [Open an issue](https://github.com/pruthvirajTarode/Melissa-AI/issues)
+- 🌐 **Live Demo:** [melissa-ai.vercel.app](https://melissa-ai.vercel.app)
 
 ---
 
 <div align="center">
 
-**Built with ❤️ for entrepreneurs and business leaders**
+### 🌟 Star this repo if you find it helpful!
 
-[⬆ Back to Top](#melissa-ai---business-development-chatbot)
+[![GitHub stars](https://img.shields.io/github/stars/pruthvirajTarode/Melissa-AI?style=social)](https://github.com/pruthvirajTarode/Melissa-AI/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/pruthvirajTarode/Melissa-AI?style=social)](https://github.com/pruthvirajTarode/Melissa-AI/network/members)
+
+---
+
+**Built with ❤️ by New Majority Ventures**
+
+*Empowering entrepreneurs and business leaders with AI-powered insights*
+
+[![Live Demo](https://img.shields.io/badge/🚀_Try_Now-melissa--ai.vercel.app-667eea?style=for-the-badge&labelColor=764ba2)](https://melissa-ai.vercel.app)
+
+[⬆ Back to Top](#-melissa-ai--nmv)
 
 </div>
