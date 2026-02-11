@@ -155,6 +155,21 @@ Password: admin123
 
 ## 📖 Documentation
 
+Additional detailed documentation can be found in the [docs](./docs) directory:
+
+| Document | Description |
+|----------|-------------|
+| 📱 **[Mobile APK Fix](./docs/APK_FINAL_FIX.md)** | Steps taken to fix the mobile APK 404 issue |
+| 🔨 **[Build Guide](./docs/BUILD_WITH_ANDROID_STUDIO.md)** | How to build the APK using Android Studio |
+| 🌐 **[Vercel Routing](./docs/VERCEL_ROUTING_FIX.md)** | Technical details on Vercel deployment configuration |
+| 🔘 **[New Chat Guide](./docs/NEW_CHAT_BUTTON_GUIDE.md)** | Instructions for the New Chat button functionality |
+| 🛠️ **[Troubleshooting](./docs/TROUBLESHOOTING.md)** | Common issues and their solutions |
+| 🏗️ **[Project Structure](./docs/PROJECT_STRUCTURE.md)** | Detailed breakdown of the project architecture |
+| 🚀 **[Quick Start](./docs/QUICKSTART.md)** | Get up and running in minutes |
+| 📈 **[Project Summary](./docs/PROJECT_SUMMARY.md)** | Overview of project goals and achievements |
+
+---
+
 ### 🎯 How to Use
 
 1. **💬 Ask Questions**
@@ -383,6 +398,7 @@ Melissa AI/
 │   │   └── vectors/         # Vector embeddings
 │   └── uploads/             # Temp file storage
 ├── android/                  # Android app (Capacitor)
+├── docs/                     # Project documentation 📍
 ├── capacitor.config.ts      # Capacitor configuration
 ├── vercel.json              # Vercel deployment config
 ├── package.json             # Dependencies
