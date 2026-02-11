@@ -42,8 +42,16 @@ function setupEventListeners() {
         });
     });
 
-    // New chat button
-    newChatBtn.addEventListener('click', startNewChat);
+    // New chat button - with null check and logging
+    if (newChatBtn) {
+        console.log('New Chat button found, attaching listener');
+        newChatBtn.addEventListener('click', () => {
+            console.log('New Chat button clicked');
+            startNewChat();
+        });
+    } else {
+        console.error('New Chat button not found in DOM!');
+    }
 }
 
 // Send Message
@@ -208,12 +216,14 @@ function scrollToBottom() {
 
 // Start New Chat
 function startNewChat() {
+    console.log('Starting new chat...');
     conversationId = generateConversationId();
     messagesContainer.innerHTML = '';
     welcomeScreen.style.display = 'flex';
     chatContainer.style.display = 'none';
     messageInput.value = '';
     messageInput.focus();
+    console.log('New chat started successfully');
 }
 
 // Generate Conversation ID
