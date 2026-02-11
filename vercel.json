@@ -8,23 +8,8 @@
     ],
     "routes": [
         {
-            "src": "/api/(.*)",
-            "dest": "backend/index.js"
-        },
-        {
-            "src": "/(.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|json|html|woff|woff2|ttf|eot))",
-            "dest": "frontend/$1"
-        },
-        {
             "src": "/(.*)",
-            "dest": "frontend/$1"
+            "dest": "backend/index.js"
         }
-    ],
-    "rewrites": [
-        {
-            "source": "/api/(.*)",
-            "destination": "backend/index.js"
-        }
-    ],
-    "outputDirectory": "frontend"
+    ]
 }
