@@ -3,7 +3,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 const config: CapacitorConfig = {
     appId: 'com.melissa.ai',
     appName: 'Melissa AI',
-    webDir: 'public',
+    webDir: 'frontend',
     server: {
         // Updated with your actual live Vercel URL
         url: 'https://melissa-ai.vercel.app',

@@ -3,7 +3,7 @@ const path = require('path');
 const isDev = require('electron-is-dev');
 
 // Start the Express server
-const server = require('./server/index.js');
+const server = require('./backend/index.js');
 
 let mainWindow;
 
@@ -13,7 +13,7 @@ function createWindow() {
         height: 900,
         minWidth: 800,
         minHeight: 600,
-        icon: path.join(__dirname, 'public/images/icon.png'),
+        icon: path.join(__dirname, 'frontend/images/icon.png'),
         webPreferences: {
             nodeIntegration: false,
             contextIsolation: true,
