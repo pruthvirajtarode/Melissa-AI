@@ -1,9 +1,9 @@
 :root {
     /* Modern SaaS Color Palette */
-    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    --secondary-gradient: linear-gradient(135deg, #4A90E2 0%, #667eea 100%);
+    --primary-gradient: linear-gradient(135deg, #14532d 0%, #22c55e 100%);
+    --secondary-gradient: linear-gradient(135deg, #14532d 0%, #22c55e 100%);
     --success-gradient: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-    --accent-gradient: linear-gradient(135deg, #667eea 0%, #4A90E2 100%);
+    --accent-gradient: linear-gradient(135deg, #14532d 0%, #22c55e 100%);
 
     /* Light Theme Colors */
     --bg-primary: #ffffff;
@@ -17,7 +17,7 @@
     --text-primary: #1a202c;
     --text-secondary: #4a5568;
     --text-muted: #718096;
-    --text-accent: #667eea;
+    --text-accent: #22c55e;
 
     /* Border & Shadow */
     --border-color: #e2e8f0;
@@ -25,7 +25,7 @@
     --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
     --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.12);
-    --shadow-glow: 0 0 30px rgba(102, 126, 234, 0.15);
+    --shadow-glow: 0 0 30px rgba(34, 197, 94, 0.15);
     --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.12);
 
     /* Typography */
@@ -119,7 +119,7 @@ body {
 .logo-icon {
     width: 32px;
     height: 32px;
-    color: #667eea;
+    color: #22c55e;
 }
 
 .logo-text {

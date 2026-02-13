@@ -33,7 +33,10 @@ function setupEventListeners() {
 function openWidget() {
     widgetContainer.classList.add('active');
     widgetButton.classList.add('hidden');
-    widgetInput.focus();
+    setTimeout(() => {
+        scrollToBottom();
+        widgetInput.focus();
+    }, 50);
 }
 
 function closeWidget() {
@@ -100,7 +103,16 @@ function addMessage(role, content) {
 
     const avatar = document.createElement('div');
     avatar.className = 'widget-avatar';
-    avatar.textContent = role === 'user' ? '👤' : '🤖';
+    
+    if (role === 'assistant') {
+        const img = document.createElement('img');
+        img.src = 'images/icon.png';
+        img.alt = 'Melissa AI';
+        img.className = 'widget-avatar-image';
+        avatar.appendChild(img);
+    } else {
+        avatar.textContent = '👤';
+    }
 
     const contentDiv = document.createElement('div');
     contentDiv.className = 'widget-message-content';
@@ -121,7 +133,9 @@ function showTypingIndicator() {
     typingDiv.className = 'widget-message assistant';
 
     typingDiv.innerHTML = `
-        <div class="widget-avatar">🤖</div>
+        <div class="widget-avatar">
+            <img src="images/icon.png" alt="Melissa AI" class="widget-avatar-image" />
+        </div>
         <div class="widget-message-content">
             <div class="widget-typing">
                 <div class="widget-typing-dot"></div>

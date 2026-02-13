@@ -16,11 +16,11 @@ body {
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #14532d 0%, #22c55e 100%);
     border: none;
     color: white;
     cursor: pointer;
-    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 4px 16px rgba(34, 197, 94, 0.4);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -30,7 +30,7 @@ body {
 
 .widget-button:hover {
     transform: scale(1.1);
-    box-shadow: 0 6px 24px rgba(102, 126, 234, 0.5);
+    box-shadow: 0 6px 24px rgba(34, 197, 94, 0.5);
 }
 
 .widget-button.hidden {
@@ -65,7 +65,7 @@ body {
 
 /* Widget Header */
 .widget-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #14532d 0%, #22c55e 100%);
     color: white;
     padding: 16px 20px;
     border-radius: 16px 16px 0 0;
@@ -133,12 +133,19 @@ body {
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #14532d 0%, #22c55e 100%);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 18px;
     flex-shrink: 0;
+}
+
+.widget-avatar-image {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
 }
 
 .widget-welcome-text {
@@ -184,7 +191,7 @@ body {
 }
 
 .widget-message .widget-avatar {
-    background: #667eea;
+    background: #22c55e;
 }
 
 .widget-message.user .widget-avatar {
@@ -206,7 +213,7 @@ body {
 }
 
 .widget-message.user .widget-message-content {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #14532d 0%, #22c55e 100%);
     color: white;
 }
 
@@ -270,14 +277,14 @@ body {
 
 .widget-input-field:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: #22c55e;
 }
 
 .widget-send {
     width: 40px;
     height: 40px;
     border-radius: 8px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #14532d 0%, #22c55e 100%);
     border: none;
     color: white;
     cursor: pointer;
@@ -290,7 +297,7 @@ body {
 
 .widget-send:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
 }
 
 .widget-send:disabled {

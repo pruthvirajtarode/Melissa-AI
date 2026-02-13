@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Melissa AI Widget Embed Code</title>
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #14532d;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .section {
+            margin-bottom: 40px;
+        }
+        .section h2 {
+            color: #22c55e;
+            font-size: 1.3rem;
+            margin-top: 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #22c55e;
+        }
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            margin: 15px 0;
+            border-left: 4px solid #22c55e;
+        }
+        .copy-btn {
+            background: linear-gradient(135deg, #14532d 0%, #22c55e 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+        .copy-btn:hover {
+            opacity: 0.9;
+        }
+        .note {
+            background: #f0fdf4;
+            border-left: 4px solid #22c55e;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 15px 0;
+            color: #14532d;
+        }
+        .options {
+            background: #fafafa;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+        }
+        .option {
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 4px;
+            border-left: 3px solid #22c55e;
+        }
+        .option code {
+            background: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        a {
+            color: #22c55e;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Melissa AI Widget Embed Code</h1>
+        <p class="subtitle">Professional Chat Widget for Business Development</p>
+
+        <div class="section">
+            <h2>📋 Quick Start - Standard Embed</h2>
+            <p>Copy and paste this code into your website to add the Melissa AI chat widget:</p>
+            
+            <div class="code-block" id="standardCode">&lt;!-- Melissa AI Professional Chat Widget --&gt;
+&lt;div id="melissa-ai-bot" style="position: fixed; bottom: 25px; right: 25px; z-index: 999999;"&gt;
+
+  &lt;!-- Floating Button --&gt;
+  &lt;button
+    id="melissa-btn"
+    style="
+      width: 65px;
+      height: 65px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #14532d 0%, #22c55e 100%);
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(34, 197, 94, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    "
+  &gt;
+    &lt;!-- Chat Icon --&gt;
+    &lt;svg
+      width="32"
+      height="32"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="white"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    &gt;
+      &lt;path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"&gt;&lt;/path&gt;
+    &lt;/svg&gt;
+  &lt;/button&gt;
+
+  &lt;!-- Chat Widget (loads in iframe) --&gt;
+  &lt;iframe
+    id="melissa-iframe"
+    src="https://d4aiyhzmtitm8.cloudfront.net/melissa-ai/widget.html"
+    style="
+      position: fixed;
+      bottom: 100px;
+      right: 25px;
+      width: 400px;
+      height: 600px;
+      border: none;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+      display: none;
+      z-index: 999998;
+    "
+    allow="microphone; camera"
+  &gt;&lt;/iframe&gt;
+
+&lt;/div&gt;
+
+&lt;!-- Widget Control Script --&gt;
+&lt;script&gt;
+(function() {
+  const btn = document.getElementById('melissa-btn');
+  const iframe = document.getElementById('melissa-iframe');
+  
+  btn.addEventListener('click', function() {
+    if (iframe.style.display === 'none') {
+      iframe.style.display = 'block';
+      btn.style.opacity = '0';
+      btn.style.pointerEvents = 'none';
+    }
+  });
+  
+  // Listen for close message from iframe
+  window.addEventListener('message', function(event) {
+    if (event.data === 'closeWidget') {
+      iframe.style.display = 'none';
+      btn.style.opacity = '1';
+      btn.style.pointerEvents = 'auto';
+    }
+  });
+  
+  // Add hover effect
+  btn.addEventListener('mouseenter', function() {
+    this.style.transform = 'scale(1.1)';
+  });
+  
+  btn.addEventListener('mouseleave', function() {
+    this.style.transform = 'scale(1)';
+  });
+})();
+&lt;/script&gt;
