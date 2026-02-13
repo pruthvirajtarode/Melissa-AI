@@ -3,25 +3,80 @@ const API_URL = window.location.origin;
 
 // Direct function to open widget (called from HTML onclick)
 function openWidgetDirectly() {
-    console.log('🟢 openWidgetDirectly() called');
+    console.log('🟢 Button clicked - openWidgetDirectly() called');
     const container = document.getElementById('widgetContainer');
     const button = document.getElementById('widgetButton');
     const messages = document.getElementById('widgetMessages');
     const input = document.getElementById('widgetInput');
     
-    if (!container || !button) {
-        console.log('❌ Elements not found:', { container: !!container, button: !!button });
+    console.log('Elements found:', {
+        container: !!container,
+        button: !!button,
+        messages: !!messages,
+        input: !!input
+    });
+    
+    if (!container) {
+        console.error('❌ Container not found!');
         return;
     }
     
-    container.classList.add('active');
-    button.classList.add('hidden');
+    if (!button) {
+        console.error('❌ Button not found!');
+        return;
+    }
     
+    // Immediately add active class
+    console.log('1. Adding active class to container');
+    container.classList.add('active');
+    container.style.opacity = '1';
+    container.style.pointerEvents = 'all';
+    container.style.transform = 'translateY(0) scale(1)';
+    
+    console.log('2. Hiding button');
+    button.classList.add('hidden');
+    button.style.opacity = '0';
+    button.style.pointerEvents = 'none';
+    
+    // Scroll after CSS renders
     setTimeout(() => {
-        if (messages) messages.scrollTop = messages.scrollHeight;
-        if (input) input.focus();
-        console.log('✅ Widget opened');
-    }, 50);
+        console.log('3. Scrolling to bottom');
+        if (messages) {
+            messages.scrollTop = messages.scrollHeight;
+            console.log('Message height:', messages.scrollHeight);
+        }
+        if (input) {
+            console.log('4. Focusing input');
+            input.focus();
+        }
+        console.log('✅ Widget fully opened');
+    }, 100);
+}
+
+// Direct function to close widget (called from HTML onclick)
+function closeWidgetDirectly() {
+    console.log('🔴 Close button clicked - closeWidgetDirectly() called');
+    const container = document.getElementById('widgetContainer');
+    const button = document.getElementById('widgetButton');
+    
+    if (!container || !button) {
+        console.error('❌ Elements not found');
+        return;
+    }
+    
+    // Remove active class
+    console.log('1. Removing active class');
+    container.classList.remove('active');
+    container.style.opacity = '0';
+    container.style.pointerEvents = 'none';
+    
+    // Show button again
+    console.log('2. Showing button');
+    button.classList.remove('hidden');
+    button.style.opacity = '1';
+    button.style.pointerEvents = 'auto';
+    
+    console.log('✅ Widget closed');
 }
 
 // Initialize widget when page loads
