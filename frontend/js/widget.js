@@ -33,10 +33,12 @@ function setupEventListeners() {
 function openWidget() {
     widgetContainer.classList.add('active');
     widgetButton.classList.add('hidden');
+    
+    // Wait for CSS transition to complete (0.3s) before scrolling
     setTimeout(() => {
-        scrollToBottom();
+        widgetMessages.scrollTop = widgetMessages.scrollHeight;
         widgetInput.focus();
-    }, 50);
+    }, 300);
 }
 
 function closeWidget() {
