@@ -34,17 +34,23 @@ function openWidget() {
     widgetContainer.classList.add('active');
     widgetButton.classList.add('hidden');
     
-    // Wait for transform animation to complete (0.3s) before scrolling
-    // This ensures the widget is fully visible and scrollHeight is calculated correctly
+    // Use transitionend event to scroll exactly when animation completes
+    const handleTransitionEnd = () => {
+        widgetMessages.scrollTop = widgetMessages.scrollHeight;
+        widgetInput.focus();
+        widgetContainer.removeEventListener('transitionend', handleTransitionEnd);
+    };
+    
+    // Add listener for when the transform animation completes
+    widgetContainer.addEventListener('transitionend', handleTransitionEnd, { once: true });
+    
+    // Fallback timeout in case transitionend doesn't fire
     setTimeout(() => {
-        requestAnimationFrame(() => {
-            const scrollHeight = widgetMessages.scrollHeight;
-            if (scrollHeight > 0) {
-                widgetMessages.scrollTop = scrollHeight;
-            }
+        if (widgetContainer.classList.contains('active')) {
+            widgetMessages.scrollTop = widgetMessages.scrollHeight;
             widgetInput.focus();
-        });
-    }, 300);
+        }
+    }, 500);
 }
 
 function closeWidget() {
