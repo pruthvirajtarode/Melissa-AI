@@ -3,48 +3,105 @@ const API_URL = window.location.origin;
 let conversationId = generateConversationId();
 let isProcessing = false;
 
-// DOM Elements
-const widgetButton = document.getElementById('widgetButton');
-const widgetContainer = document.getElementById('widgetContainer');
-const widgetClose = document.getElementById('widgetClose');
-const widgetMessages = document.getElementById('widgetMessages');
-const widgetInput = document.getElementById('widgetInput');
-const widgetSend = document.getElementById('widgetSend');
+// DOM Elements - will be set after DOMContentLoaded
+let widgetButton;
+let widgetContainer;
+let widgetClose;
+let widgetMessages;
+let widgetInput;
+let widgetSend;
 
-// Initialize
-document.addEventListener('DOMContentLoaded', () => {
-    setupEventListeners();
-});
+// Initialize when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeWidget);
+} else {
+    // DOM already loaded
+    initializeWidget();
+}
+
+function initializeWidget() {
+    // Get DOM elements
+    widgetButton = document.getElementById('widgetButton');
+    widgetContainer = document.getElementById('widgetContainer');
+    widgetClose = document.getElementById('widgetClose');
+    widgetMessages = document.getElementById('widgetMessages');
+    widgetInput = document.getElementById('widgetInput');
+    widgetSend = document.getElementById('widgetSend');
+
+    // Setup event listeners
+    if (widgetButton) {
+        widgetButton.addEventListener('click', openWidget);
+        console.log('✓ Widget button listener attached');
+    }
+    
+    if (widgetClose) {
+        widgetClose.addEventListener('click', closeWidget);
+    }
+    
+    if (widgetSend) {
+        widgetSend.addEventListener('click', sendMessage);
+    }
+
+    if (widgetInput) {
+        widgetInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    }
+}
 
 // Event Listeners
 function setupEventListeners() {
-    widgetButton.addEventListener('click', openWidget);
-    widgetClose.addEventListener('click', closeWidget);
-    widgetSend.addEventListener('click', sendMessage);
-
-    widgetInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            sendMessage();
-        }
-    });
+    // This function is no longer used, initialization done in initializeWidget
 }
 
 // Open/Close Widget
-function openWidget() {
+function openWidget(e) {
+    if (e) e.preventDefault();
+    if (e) e.stopPropagation();
+    
+    console.log('Opening widget...');
+    
     // Add active class to trigger CSS transitions (opacity and transform)
-    widgetContainer.classList.add('active');
-    widgetButton.classList.add('hidden');
+    if (widgetContainer) {
+        widgetContainer.classList.add('active');
+        console.log('✓ Widget container active class added');
+    }
+    
+    if (widgetButton) {
+        widgetButton.classList.add('hidden');
+        console.log('✓ Widget button hidden');
+    }
     
     // Scroll to bottom after opacity transition starts (small delay)
     setTimeout(() => {
-        widgetMessages.scrollTop = widgetMessages.scrollHeight;
-        widgetInput.focus();
+        if (widgetMessages) {
+            widgetMessages.scrollTop = widgetMessages.scrollHeight;
+            console.log('✓ Scrolled to bottom');
+        }
+        if (widgetInput) {
+            widgetInput.focus();
+            console.log('✓ Input focused');
+        }
     }, 100);
 }
 
-function closeWidget() {
-    widgetContainer.classList.remove('active');
-    widgetButton.classList.remove('hidden');
+function closeWidget(e) {
+    if (e) e.preventDefault();
+    if (e) e.stopPropagation();
+    
+    console.log('Closing widget...');
+    
+    if (widgetContainer) {
+        widgetContainer.classList.remove('active');
+        console.log('✓ Widget container active class removed');
+    }
+    
+    if (widgetButton) {
+        widgetButton.classList.remove('hidden');
+        console.log('✓ Widget button shown');
+    }
 }
 
 // Send Message
