@@ -172,18 +172,43 @@ function displayDocuments(documents) {
         return;
     }
 
-    documentsList.innerHTML = documents.map(doc => `
-        <div class="document-item" data-id="${doc.id}">
+    // Group by filename to show unique documents
+    const docGroups = {};
+    documents.forEach(doc => {
+        const filename = doc.metadata?.filename || 'Unnamed Content';
+        if (!docGroups[filename]) {
+            docGroups[filename] = {
+                filename: filename,
+                chunks: 0,
+                mimetype: doc.metadata?.mimetype || 'text/plain',
+                createdAt: doc.createdAt,
+                ids: []
+            };
+        }
+        docGroups[filename].chunks++;
+        docGroups[filename].ids.push(doc.id);
+        // Keep the earliest created date
+        if (new Date(doc.createdAt) < new Date(docGroups[filename].createdAt)) {
+            docGroups[filename].createdAt = doc.createdAt;
+        }
+    });
+
+    const sortedDocs = Object.values(docGroups).sort((a, b) =>
+        new Date(b.createdAt) - new Date(a.createdAt)
+    );
+
+    documentsList.innerHTML = sortedDocs.map(doc => `
+        <div class="document-item">
             <div class="document-info">
-                <div class="document-title">${escapeHtml(doc.metadata?.filename || doc.text)}</div>
+                <div class="document-title">${escapeHtml(doc.filename)}</div>
                 <div class="document-meta">
-                    <span>📄 ${doc.metadata?.mimetype || 'Unknown type'}</span>
+                    <span>📄 ${doc.mimetype}</span>
+                    <span>🧩 ${doc.chunks} parts</span>
                     <span>🕒 ${formatDate(doc.createdAt)}</span>
-                    ${doc.metadata?.chunkIndex !== undefined ? `<span>🧩 Chunk ${doc.metadata.chunkIndex + 1}/${doc.metadata.totalChunks}</span>` : ''}
                 </div>
             </div>
             <div class="document-actions">
-                <button class="btn-icon delete" onclick="deleteDocument('${doc.id}')">
+                <button class="btn-icon delete" title="Delete Document" onclick="deleteDocumentGroup('${doc.filename}', '${doc.ids.join(',')}')">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                         <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
@@ -191,6 +216,43 @@ function displayDocuments(documents) {
             </div>
         </div>
     `).join('');
+}
+
+// Delete Document Group
+async function deleteDocumentGroup(filename, idsString) {
+    if (!confirm(`Are you sure you want to delete "${filename}" and all its parts?`)) return;
+
+    const ids = idsString.split(',');
+    let successCount = 0;
+    let failCount = 0;
+
+    // Show loading state
+    documentsList.innerHTML = `<div class="loading">Deleting ${filename}...</div>`;
+
+    for (const id of ids) {
+        try {
+            const response = await fetch(`${API_URL}/api/admin/document/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${authToken}`
+                }
+            });
+            if (response.ok) successCount++;
+            else failCount++;
+        } catch (error) {
+            console.error(`Error deleting chunk ${id}:`, error);
+            failCount++;
+        }
+    }
+
+    if (failCount === 0) {
+        console.log(`Successfully deleted all ${successCount} parts of ${filename}`);
+    } else {
+        alert(`Deleted ${successCount} parts, but ${failCount} parts failed. Refreshing list.`);
+    }
+
+    loadAnalytics();
+    loadDocuments();
 }
 
 // File Upload

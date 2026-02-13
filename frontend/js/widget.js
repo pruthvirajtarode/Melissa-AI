@@ -8,36 +8,36 @@ function openWidgetDirectly() {
     const button = document.getElementById('widgetButton');
     const messages = document.getElementById('widgetMessages');
     const input = document.getElementById('widgetInput');
-    
+
     console.log('Elements found:', {
         container: !!container,
         button: !!button,
         messages: !!messages,
         input: !!input
     });
-    
+
     if (!container) {
         console.error('❌ Container not found!');
         return;
     }
-    
+
     if (!button) {
         console.error('❌ Button not found!');
         return;
     }
-    
+
     // Immediately add active class
     console.log('1. Adding active class to container');
     container.classList.add('active');
     container.style.opacity = '1';
     container.style.pointerEvents = 'all';
     container.style.transform = 'translateY(0) scale(1)';
-    
+
     console.log('2. Hiding button');
     button.classList.add('hidden');
     button.style.opacity = '0';
     button.style.pointerEvents = 'none';
-    
+
     // Scroll after CSS renders
     setTimeout(() => {
         console.log('3. Scrolling to bottom');
@@ -58,29 +58,29 @@ function closeWidgetDirectly() {
     console.log('🔴 Close button clicked - closeWidgetDirectly() called');
     const container = document.getElementById('widgetContainer');
     const button = document.getElementById('widgetButton');
-    
+
     if (!container || !button) {
         console.error('❌ Elements not found');
         return;
     }
-    
+
     // Remove active class
     console.log('1. Removing active class');
     container.classList.remove('active');
     container.style.opacity = '0';
     container.style.pointerEvents = 'none';
-    
+
     // Show button again
     console.log('2. Showing button');
     button.classList.remove('hidden');
     button.style.opacity = '1';
     button.style.pointerEvents = 'auto';
-    
+
     console.log('✅ Widget closed');
 }
 
 // Initialize widget when page loads
-window.addEventListener('load', function() {
+window.addEventListener('load', function () {
     // Get DOM elements
     const widgetButton = document.getElementById('widgetButton');
     const widgetContainer = document.getElementById('widgetContainer');
@@ -105,15 +105,15 @@ window.addEventListener('load', function() {
     let isProcessing = false;
 
     // ===== BUTTON CLICK =====
-    widgetButton.onclick = function(e) {
+    widgetButton.onclick = function (e) {
         console.log('🔵 Button clicked - opening chat');
         e.preventDefault();
         e.stopPropagation();
-        
+
         // Show widget
         widgetContainer.classList.add('active');
         widgetButton.classList.add('hidden');
-        
+
         // Scroll and focus
         setTimeout(() => {
             widgetMessages.scrollTop = widgetMessages.scrollHeight;
@@ -123,19 +123,24 @@ window.addEventListener('load', function() {
     };
 
     // ===== CLOSE BUTTON =====
-    widgetClose.onclick = function(e) {
+    widgetClose.onclick = function (e) {
         console.log('❌ Close button clicked');
         e.preventDefault();
         e.stopPropagation();
         widgetContainer.classList.remove('active');
         widgetButton.classList.remove('hidden');
+
+        // Notify parent if embedded
+        if (window.self !== window.top) {
+            window.parent.postMessage('closeWidget', '*');
+        }
     };
 
     // ===== SEND BUTTON =====
     widgetSend.onclick = sendMessage;
 
     // ===== INPUT ENTER KEY =====
-    widgetInput.onkeypress = function(e) {
+    widgetInput.onkeypress = function (e) {
         if (e.key === 'Enter') {
             sendMessage();
         }
@@ -198,13 +203,11 @@ window.addEventListener('load', function() {
 
         const avatar = document.createElement('div');
         avatar.className = 'widget-avatar';
-        
+
         if (role === 'assistant') {
-            const img = document.createElement('img');
-            img.src = 'images/icon.png';
-            img.alt = 'Melissa AI';
-            img.className = 'widget-avatar-image';
-            avatar.appendChild(img);
+            avatar.innerHTML = `
+                <img src="images/melissa-avatar.svg" alt="Melissa AI" class="widget-avatar-image" />
+            `;
         } else {
             avatar.textContent = '👤';
         }
@@ -229,7 +232,7 @@ window.addEventListener('load', function() {
 
         typingDiv.innerHTML = `
             <div class="widget-avatar">
-                <img src="images/icon.png" alt="Melissa AI" class="widget-avatar-image" />
+                <img src="images/melissa-avatar.svg" alt="Melissa AI" class="widget-avatar-image" />
             </div>
             <div class="widget-message-content">
                 <div class="widget-typing">
@@ -257,6 +260,18 @@ window.addEventListener('load', function() {
     // ===== GENERATE CONVERSATION ID =====
     function generateConversationId() {
         return `widget_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    }
+
+    // ===== AUTO-OPEN IF IN IFRAME =====
+    if (window.self !== window.top) {
+        console.log('📦 Embedded mode detected - opening widget automatically');
+        // Small delay to ensure transitions work smoothly
+        setTimeout(() => {
+            widgetContainer.classList.add('active');
+            widgetButton.classList.add('hidden');
+            widgetMessages.scrollTop = widgetMessages.scrollHeight;
+            widgetInput.focus();
+        }, 300);
     }
 
     console.log('✅ Widget initialized successfully!');
