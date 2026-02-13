@@ -31,31 +31,25 @@ function setupEventListeners() {
 
 // Open/Close Widget
 function openWidget() {
+    // Make widget visible immediately
+    widgetContainer.style.display = 'flex';
     widgetContainer.classList.add('active');
     widgetButton.classList.add('hidden');
     
-    // Use transitionend event to scroll exactly when animation completes
-    const handleTransitionEnd = () => {
+    // Scroll to bottom to show welcome message immediately (on next frame)
+    requestAnimationFrame(() => {
         widgetMessages.scrollTop = widgetMessages.scrollHeight;
         widgetInput.focus();
-        widgetContainer.removeEventListener('transitionend', handleTransitionEnd);
-    };
-    
-    // Add listener for when the transform animation completes
-    widgetContainer.addEventListener('transitionend', handleTransitionEnd, { once: true });
-    
-    // Fallback timeout in case transitionend doesn't fire
-    setTimeout(() => {
-        if (widgetContainer.classList.contains('active')) {
-            widgetMessages.scrollTop = widgetMessages.scrollHeight;
-            widgetInput.focus();
-        }
-    }, 500);
+    });
 }
 
 function closeWidget() {
     widgetContainer.classList.remove('active');
     widgetButton.classList.remove('hidden');
+    // Hide after animation completes (0.3s)
+    setTimeout(() => {
+        widgetContainer.style.display = 'none';
+    }, 300);
 }
 
 // Send Message
