@@ -1,6 +1,29 @@
 // Configuration - Update this with your server URL
 const API_URL = window.location.origin;
 
+// Direct function to open widget (called from HTML onclick)
+function openWidgetDirectly() {
+    console.log('🟢 openWidgetDirectly() called');
+    const container = document.getElementById('widgetContainer');
+    const button = document.getElementById('widgetButton');
+    const messages = document.getElementById('widgetMessages');
+    const input = document.getElementById('widgetInput');
+    
+    if (!container || !button) {
+        console.log('❌ Elements not found:', { container: !!container, button: !!button });
+        return;
+    }
+    
+    container.classList.add('active');
+    button.classList.add('hidden');
+    
+    setTimeout(() => {
+        if (messages) messages.scrollTop = messages.scrollHeight;
+        if (input) input.focus();
+        console.log('✅ Widget opened');
+    }, 50);
+}
+
 // Initialize widget when page loads
 window.addEventListener('load', function() {
     // Get DOM elements
