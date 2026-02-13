@@ -55,14 +55,12 @@ body {
     pointer-events: none;
     transition: opacity 0.3s ease, transform 0.3s ease;
     z-index: 9999;
-    visibility: hidden;
 }
 
 .widget-container.active {
     opacity: 1;
     transform: translateY(0) scale(1);
     pointer-events: all;
-    visibility: visible;
 }
 
 /* Widget Header */
