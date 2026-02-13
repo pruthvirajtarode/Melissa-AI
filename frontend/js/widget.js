@@ -31,25 +31,20 @@ function setupEventListeners() {
 
 // Open/Close Widget
 function openWidget() {
-    // Make widget visible immediately
-    widgetContainer.style.display = 'flex';
+    // Add active class to trigger CSS transitions (opacity and transform)
     widgetContainer.classList.add('active');
     widgetButton.classList.add('hidden');
     
-    // Scroll to bottom to show welcome message immediately (on next frame)
-    requestAnimationFrame(() => {
+    // Scroll to bottom after opacity transition starts (small delay)
+    setTimeout(() => {
         widgetMessages.scrollTop = widgetMessages.scrollHeight;
         widgetInput.focus();
-    });
+    }, 100);
 }
 
 function closeWidget() {
     widgetContainer.classList.remove('active');
     widgetButton.classList.remove('hidden');
-    // Hide after animation completes (0.3s)
-    setTimeout(() => {
-        widgetContainer.style.display = 'none';
-    }, 300);
 }
 
 // Send Message
