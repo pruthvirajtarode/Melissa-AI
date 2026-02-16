@@ -24,9 +24,12 @@ class VectorStore {
             this.documents = JSON.parse(data);
             console.log(`✅ Loaded ${this.documents.length} documents from vector store`);
         } catch (error) {
-            console.log('📝 Initializing new vector store');
+            console.log('📝 Vector store file not found or unreadable');
             this.documents = [];
-            await this.saveStore();
+            // Don't auto-save on load in production/Vercel to prevent read-only filesystem errors
+            if (!process.env.VERCEL) {
+                await this.saveStore();
+            }
         }
     }
 
@@ -34,6 +37,12 @@ class VectorStore {
      * Save vector store to disk
      */
     async saveStore() {
+        // Vercel has a read-only filesystem. Skip saving there.
+        if (process.env.VERCEL) {
+            console.log('⚠️ Skipping vector store save (Read-only filesystem on Vercel)');
+            return;
+        }
+
         try {
             this.groupedCache = null; // Invalidate cache on save
             const dir = path.dirname(VECTOR_STORE_PATH);
