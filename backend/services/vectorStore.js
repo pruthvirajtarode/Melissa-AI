@@ -2,7 +2,8 @@ const fs = require('fs').promises;
 const path = require('path');
 const { generateEmbedding } = require('./openai');
 
-const VECTOR_STORE_PATH = path.join(__dirname, '../../data/vectors/store.json');
+// Use process.cwd() for better compatibility with Vercel/Serverless
+const VECTOR_STORE_PATH = path.join(process.cwd(), 'data/vectors/store.json');
 
 /**
  * Simple in-memory vector store
@@ -19,6 +20,12 @@ class VectorStore {
      * Load vector store from disk
      */
     async loadStore() {
+        if (process.env.VERCEL) {
+            console.log('🌐 Vercel detected: Skipping local disk load/save');
+            this.documents = [];
+            return;
+        }
+
         try {
             const data = await fs.readFile(VECTOR_STORE_PATH, 'utf-8');
             this.documents = JSON.parse(data);
@@ -26,10 +33,7 @@ class VectorStore {
         } catch (error) {
             console.log('📝 Vector store file not found or unreadable');
             this.documents = [];
-            // Don't auto-save on load in production/Vercel to prevent read-only filesystem errors
-            if (!process.env.VERCEL) {
-                await this.saveStore();
-            }
+            await this.saveStore();
         }
     }
 

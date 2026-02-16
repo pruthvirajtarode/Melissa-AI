@@ -16,7 +16,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Serve static files from frontend directory
-app.use(express.static(path.join(__dirname, '../frontend')));
+app.use(express.static(path.join(process.cwd(), 'frontend')));
 
 // API Routes
 app.use('/api/chat', chatRoutes);
@@ -31,7 +31,7 @@ app.get('/api/health', (req, res) => {
 
 // Serve main app
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/index.html'));
+  res.sendFile(path.join(process.cwd(), 'frontend/index.html'));
 });
 
 // Error handling middleware
