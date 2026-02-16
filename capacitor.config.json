@@ -1,5 +1,5 @@
 {
-  "appId": "com.melissa.ai",
+  "appId": "com.melliss.ai",
   "appName": "MellissAI",
-  "webDir": "public"
+  "webDir": "frontend"
 }

@@ -1,8 +1,8 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-    appId: 'com.melissa.ai',
-    appName: 'Melissa AI',
+    appId: 'com.melliss.ai',
+    appName: 'MellissAI',
     webDir: 'frontend',
     server: {
         // Updated with your actual live Vercel URL
@@ -13,7 +13,7 @@ const config: CapacitorConfig = {
         SplashScreen: {
             launchShowDuration: 3000,
             launchAutoHide: true,
-            backgroundColor: "#667eea",
+            backgroundColor: "#14532d",
             androidScaleType: "CENTER_CROP",
             showSpinner: true,
             androidSpinnerStyle: "large",
