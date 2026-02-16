@@ -1,6 +1,6 @@
 # Backend
 
-This directory contains all the backend files for the Melissa AI Business Development Chatbot.
+This directory contains all the backend files for the MellissAI Business Development Chatbot.
 
 ## Structure
 

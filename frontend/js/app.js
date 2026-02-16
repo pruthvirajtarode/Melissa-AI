@@ -2,6 +2,11 @@
 const API_URL = window.location.origin;
 let conversationId = generateConversationId();
 let isProcessing = false;
+let botSettings = {
+    avatarUrl: '/images/melliss-avatar.svg',
+    botName: 'MellissAI',
+    welcomeMessage: "Hi! I'm MellissAI, your business development assistant. How can I help you today?"
+};
 
 // DOM Elements
 const welcomeScreen = document.getElementById('welcomeScreen');
@@ -12,10 +17,35 @@ const sendButton = document.getElementById('sendButton');
 const newChatBtn = document.getElementById('newChatBtn');
 
 // Initialize
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     setupEventListeners();
+    await loadSettings();
     adjustTextareaHeight();
 });
+
+// Load Settings
+async function loadSettings() {
+    try {
+        const response = await fetch(`${API_URL}/api/settings`);
+        if (response.ok) {
+            const settings = await response.json();
+            botSettings = { ...botSettings, ...settings };
+
+            // Update UI elements if they exist
+            const welcomeText = document.querySelector('.welcome-subtitle');
+            if (welcomeText && settings.welcomeMessage) {
+                welcomeText.textContent = settings.welcomeMessage;
+            }
+
+            const heroTitle = document.querySelector('.hero-title');
+            if (heroTitle && settings.botName) {
+                heroTitle.textContent = settings.botName;
+            }
+        }
+    } catch (error) {
+        console.error('Failed to load settings:', error);
+    }
+}
 
 // Event Listeners
 function setupEventListeners() {
@@ -36,6 +66,7 @@ function setupEventListeners() {
     // Suggestion cards
     document.querySelectorAll('.suggestion-card').forEach(card => {
         card.addEventListener('click', () => {
+            console.log('Suggestion card clicked:', card.dataset.prompt);
             const prompt = card.dataset.prompt;
             messageInput.value = prompt;
             sendMessage();
@@ -64,10 +95,8 @@ async function sendMessage() {
     sendButton.disabled = true;
 
     // Hide welcome screen, show chat
-    if (welcomeScreen.style.display !== 'none') {
-        welcomeScreen.style.display = 'none';
-        chatContainer.style.display = 'block';
-    }
+    welcomeScreen.style.display = 'none';
+    chatContainer.style.display = 'block';
 
     // Add user message
     addMessage('user', message);
@@ -123,7 +152,11 @@ function addMessage(role, content, meta = {}) {
 
     const avatar = document.createElement('div');
     avatar.className = 'message-avatar';
-    avatar.textContent = role === 'user' ? '👤' : '🤖';
+    if (role === 'user') {
+        avatar.textContent = '👤';
+    } else {
+        avatar.innerHTML = `<img src="${botSettings.avatarUrl}" alt="${botSettings.botName}" class="avatar-img">`;
+    }
 
     const contentDiv = document.createElement('div');
     contentDiv.className = 'message-content';
@@ -180,7 +213,9 @@ function showTypingIndicator() {
     typingDiv.className = 'message assistant';
 
     typingDiv.innerHTML = `
-        <div class="message-avatar">🤖</div>
+        <div class="message-avatar">
+            <img src="${botSettings.avatarUrl}" alt="${botSettings.botName}" class="avatar-img">
+        </div>
         <div class="message-content">
             <div class="typing-indicator">
                 <div class="typing-dot"></div>

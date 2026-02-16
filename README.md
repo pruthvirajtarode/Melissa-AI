@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🚀 Melissa AI × NMV
+# 🚀 MellissAI × NMV
 
 ### *Your Expert AI Business Development Assistant*
 
@@ -15,17 +15,17 @@
 
 ---
 
-![Melissa AI Banner](https://img.shields.io/badge/AI_Powered-Business_Guidance-gradient?style=flat&labelColor=667eea&color=764ba2)
+![MellissAI Banner](https://img.shields.io/badge/AI_Powered-Business_Guidance-gradient?style=flat&labelColor=667eea&color=764ba2)
 
 </div>
 
 ---
 
-## 🌟 What is Melissa AI?
+## 🌟 What is MellissAI?
 
-**Melissa AI** is an intelligent conversational chatbot designed specifically for business development, strategy, and execution. Built with cutting-edge AI technology and powered by OpenAI's GPT-4, it combines proprietary business frameworks with RAG (Retrieval Augmented Generation) to deliver actionable, expert-level guidance.
+**MellissAI** is an intelligent conversational chatbot designed specifically for business development, strategy, and execution. Built with cutting-edge AI technology and powered by OpenAI's GPT-4, it combines proprietary business frameworks with RAG (Retrieval Augmented Generation) to deliver actionable, expert-level guidance.
 
-### 💡 Why Melissa AI?
+### 💡 Why MellissAI?
 
 | Feature | Benefit |
 |---------|---------|
@@ -76,10 +76,10 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/pruthvirajTarode/Melissa-AI.git
+git clone https://github.com/pruthvirajTarode/Melliss-AI.git
 
 # Navigate to project directory
-cd "Melissa AI-Business Development Chatbot"
+cd "MellissAI-Business Development Chatbot"
 
 # Install dependencies
 npm install
@@ -118,7 +118,7 @@ Password: admin123
 
 ### 🌐 **Try it now!**
 
-[![Open Melissa AI](https://img.shields.io/badge/🚀_Launch_App-melissa--ai.vercel.app-667eea?style=for-the-badge&labelColor=764ba2)](https://melissa-ai.vercel.app)
+[![Open MellissAI](https://img.shields.io/badge/🚀_Launch_App-melissa--ai.vercel.app-667eea?style=for-the-badge&labelColor=764ba2)](https://melissa-ai.vercel.app)
 
 **No installation required • Works on all devices • Try it instantly!**
 
@@ -210,7 +210,7 @@ Additional detailed documentation can be found in the [docs](./docs) directory:
 
 ### 🔗 Embed as Widget
 
-Add Melissa AI to any website:
+Add MellissAI to any website:
 
 ```html
 <iframe 
@@ -337,7 +337,7 @@ file: [PDF/DOCX/TXT file]
 - ✅ Global CDN for fast access
 - ✅ Zero-config deployment
 
-[![Deploy to Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/pruthvirajTarode/Melissa-AI)
+[![Deploy to Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/pruthvirajTarode/Melliss-AI)
 
 ### 📱 Mobile App
 
@@ -370,7 +370,7 @@ npx cap sync android
 ## 🎯 Project Structure
 
 ```
-Melissa AI/
+MellissAI/
 ├── frontend/                 # Frontend application
 │   ├── index.html           # Main chat UI
 │   ├── admin.html           # Admin dashboard
@@ -479,7 +479,7 @@ We welcome contributions! Here's how:
 Need help? Have questions?
 
 - 📧 **Email:** support@melissaai.com
-- 💬 **GitHub Issues:** [Open an issue](https://github.com/pruthvirajTarode/Melissa-AI/issues)
+- 💬 **GitHub Issues:** [Open an issue](https://github.com/pruthvirajTarode/Melliss-AI/issues)
 - 🌐 **Live Demo:** [melissa-ai.vercel.app](https://melissa-ai.vercel.app)
 
 ---
@@ -488,8 +488,8 @@ Need help? Have questions?
 
 ### 🌟 Star this repo if you find it helpful!
 
-[![GitHub stars](https://img.shields.io/github/stars/pruthvirajTarode/Melissa-AI?style=social)](https://github.com/pruthvirajTarode/Melissa-AI/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/pruthvirajTarode/Melissa-AI?style=social)](https://github.com/pruthvirajTarode/Melissa-AI/network/members)
+[![GitHub stars](https://img.shields.io/github/stars/pruthvirajTarode/Melliss-AI?style=social)](https://github.com/pruthvirajTarode/Melliss-AI/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/pruthvirajTarode/Melliss-AI?style=social)](https://github.com/pruthvirajTarode/Melliss-AI/network/members)
 
 ---
 

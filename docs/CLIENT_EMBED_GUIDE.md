@@ -1,6 +1,6 @@
-# Melissa AI Website Integration Guide
+# MellissAI Website Integration Guide
 
-This guide provides the necessary code and instructions to embed the Melissa AI Chatbot into your website. You can choose from the options below depending on how you want the bot to appear.
+This guide provides the necessary code and instructions to embed the MellissAI Chatbot into your website. You can choose from the options below depending on how you want the bot to appear.
 
 ---
 
@@ -10,7 +10,7 @@ This is the most popular way to add a chatbot. It appears as a floating button i
 Add this code just before the closing `</body>` tag of your website:
 
 ```html
-<!-- Melissa AI Floating Widget -->
+<!-- MellissAI Floating Widget -->
 <div id="melissa-ai-widget" style="position: fixed; bottom: 20px; right: 20px; z-index: 999999;">
   <button id="melissa-trigger" style="width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); border: none; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; transition: transform 0.3s ease;">
     <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
@@ -20,7 +20,7 @@ Add this code just before the closing `</body>` tag of your website:
     <iframe 
       src="https://melissa-ai.vercel.app/" 
       style="width: 100%; height: 100%; border: none;" 
-      title="Melissa AI">
+      title="MellissAI">
     </iframe>
   </div>
 </div>
@@ -57,7 +57,7 @@ Use this option if you want to place the chatbot inside a specific section of yo
     width="100%" 
     height="100%" 
     style="border: none;" 
-    title="Melissa AI">
+    title="MellissAI">
   </iframe>
 </div>
 ```
@@ -72,7 +72,7 @@ If you want the app to take up a significant portion of the screen or be fully r
   <iframe 
     src="https://melissa-ai.vercel.app/" 
     style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;" 
-    title="Melissa AI">
+    title="MellissAI">
   </iframe>
 </div>
 ```

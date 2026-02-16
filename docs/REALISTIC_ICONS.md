@@ -2,7 +2,7 @@
 
 ## ✨ **PHOTOREALISTIC 3D ICONS ADDED!**
 
-Your Melissa AI now has **stunning, photorealistic 3D icons** instead of emojis!
+Your MellissAI now has **stunning, photorealistic 3D icons** instead of emojis!
 
 ---
 
@@ -68,10 +68,10 @@ Your Melissa AI now has **stunning, photorealistic 3D icons** instead of emojis!
 ## 📁 **Files Saved:**
 
 ```
-public/images/icon-analytics.png  - Bar chart icon
-public/images/icon-metrics.png    - Line graph icon  
-public/images/icon-pricing.png    - Price tag icon
-public/images/icon-rocket.png     - Rocket icon
+frontend/images/icon-analytics.png  - Bar chart icon
+frontend/images/icon-metrics.png    - Line graph icon  
+frontend/images/icon-pricing.png    - Price tag icon
+frontend/images/icon-rocket.png     - Rocket icon
 ```
 
 ---
@@ -166,7 +166,7 @@ You'll see:
 
 ## 🌟 **Complete Visual Transformation:**
 
-Your Melissa AI now has:
+Your MellissAI now has:
 
 1. ✅ **Photorealistic hero image** (business team)
 2. ✅ **3D realistic icons** (all 4 suggestion cards) ← NEW!
@@ -191,7 +191,7 @@ The icons automatically work with all card interactions:
 
 ## 🎉 **Result:**
 
-**Melissa AI now looks like a $1M+ enterprise SaaS product!**
+**MellissAI now looks like a $1M+ enterprise SaaS product!**
 
 **Professional Features:**
 - ✨ Custom photorealistic hero image

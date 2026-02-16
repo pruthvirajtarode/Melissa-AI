@@ -2,7 +2,7 @@
 
 ## ✨ What's New!
 
-Your Melissa AI has been completely transformed into a **modern, professional light SaaS application**!
+Your MellissAI has been completely transformed into a **modern, professional light SaaS application**!
 
 ---
 
@@ -138,11 +138,11 @@ Perfect for a **business SaaS application**!
 ## 🔄 **What Changed in Code**
 
 ### **CSS Updates:**
-- `public/css/styles.css` - Complete color scheme overhaul
-- `public/css/admin.css` - Admin theme update
+- `frontend/css/styles.css` - Complete color scheme overhaul
+- `frontend/css/admin.css` - Admin theme update
 
 ### **HTML Updates:**
-- `public/index.html` - Added hero SVG illustration
+- `frontend/index.html` - Added hero SVG illustration
 
 ### **Key Changes:**
 - ✅ All backgrounds: dark → white/light gray
@@ -221,7 +221,7 @@ The light theme is perfect for:
 
 ## 🎉 **Enjoy Your New Professional SaaS UI!**
 
-Your Melissa AI now has a **modern, professional light theme** perfect for business applications!
+Your MellissAI now has a **modern, professional light theme** perfect for business applications!
 
 **Refresh http://localhost:3000 to see it in action!** 🚀
 

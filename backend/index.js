@@ -5,6 +5,7 @@ const path = require('path');
 const chatRoutes = require('./routes/chat');
 const adminRoutes = require('./routes/admin');
 const uploadRoutes = require('./routes/upload');
+const settingsRoutes = require('./routes/settings');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -21,10 +22,11 @@ app.use(express.static(path.join(__dirname, '../frontend')));
 app.use('/api/chat', chatRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/settings', settingsRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', message: 'Melissa AI Server Running' });
+  res.json({ status: 'ok', message: 'MellissAI Server Running' });
 });
 
 // Serve main app
@@ -42,7 +44,7 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`🚀 Melissa AI Server running on port ${PORT}`);
+  console.log(`🚀 MellissAI Server running on port ${PORT}`);
   console.log(`📊 Admin dashboard: http://localhost:${PORT}/admin.html`);
   console.log(`💬 Chat interface: http://localhost:${PORT}`);
 });

@@ -1,8 +1,8 @@
-# 🎉 Melissa AI - Project Complete!
+# 🎉 MellissAI - Project Complete!
 
 ## ✅ What We've Built
 
-Congratulations! Your **Melissa AI - Business Development Chatbot** is now ready. Here's everything that has been created:
+Congratulations! Your **MellissAI - Business Development Chatbot** is now ready. Here's everything that has been created:
 
 ---
 
@@ -12,7 +12,7 @@ Congratulations! Your **Melissa AI - Business Development Chatbot** is now ready
 
 1. **Main Chat Interface** (`/index.html`)
    - Beautiful dark theme with glassmorphism effects
-   - Gradient purple branding (#667eea to #764ba2)
+   - Professional green gradient branding (#14532d to #22c55e)
    - Welcome screen with suggestion cards
    - Real-time chat with typing indicators
    - Smooth animations and micro-interactions
@@ -34,26 +34,26 @@ Congratulations! Your **Melissa AI - Business Development Chatbot** is now ready
 
 ### ⚙️ **Backend (Node.js/Express)**
 
-1. **Core Server** (`server/index.js`)
+1. **Core Server** (`backend/index.js`)
    - RESTful API architecture
    - Static file serving
    - Error handling middleware
    - CORS support
 
-2. **OpenAI Integration** (`server/services/openai.js`)
+2. **OpenAI Integration** (`backend/services/openai.js`)
    - GPT-4 Turbo chat completions
    - Text embeddings (ada-002)
    - Custom system prompt with business guardrails
    - Streaming support (ready for future)
 
-3. **Vector Store** (`server/services/vectorStore.js`)
+3. **Vector Store** (`backend/services/vectorStore.js`)
    - In-memory vector database
    - Cosine similarity search
    - Document chunking support
    - Persistent JSON storage
    - Easy upgrade path to Pinecone
 
-4. **Document Processor** (`server/services/documentProcessor.js`)
+4. **Document Processor** (`backend/services/documentProcessor.js`)
    - PDF text extraction
    - DOCX processing
    - Web page scraping
@@ -121,7 +121,7 @@ http://localhost:3000/widget.html
 ## 📁 Project Structure
 
 ```
-Melissa AI-Business Development Chatbot/
+MellissAI-Business Development Chatbot/
 ├── 📄 README.md                    # Complete documentation
 ├── 📄 QUICKSTART.md                # Quick start guide
 ├── 📄 WIDGET_INTEGRATION.md        # Widget embedding guide
@@ -139,7 +139,7 @@ Melissa AI-Business Development Chatbot/
 │       ├── vectorStore.js        # Vector database
 │       └── documentProcessor.js  # Doc processing
 │
-├── public/                        # Frontend
+├── frontend/                        # Frontend
 │   ├── index.html                # Main chat
 │   ├── admin.html                # Admin dashboard
 │   ├── widget.html               # Chat widget
@@ -164,7 +164,7 @@ Melissa AI-Business Development Chatbot/
 
 ✨ **Premium Dark Theme** - Professional dark mode with perfect contrast  
 ✨ **Glassmorphism UI** - Modern frosted glass effects  
-✨ **Gradient Accents** - Beautiful purple gradients  
+✨ **Gradient Accents** - Beautiful green gradients  
 ✨ **Smooth Animations** - Micro-interactions for better UX  
 ✨ **Responsive Design** - Works perfectly on all devices  
 ✨ **Google Fonts** - Inter & Space Grotesk typography  
@@ -198,7 +198,7 @@ Melissa AI-Business Development Chatbot/
 
 - **Frontend:** HTML, CSS, JavaScript (Vanilla)
 - **Backend:** Node.js, Express
-- **AI:** OpenAI GPT-4, Embeddings API
+- **AI:** OpenAI gpt-4o-mini, Embeddings API
 - **Vector Store:** JSON (local) - upgradeable to Pinecone
 - **Document Processing:** pdf-parse, mammoth, cheerio
 - **Auth:** JWT, bcryptjs
@@ -272,7 +272,7 @@ Check README.md for detailed deployment instructions!
 
 ## 🎊 Success!
 
-Your Melissa AI chatbot is **fully functional** and ready to use!
+Your MellissAI chatbot is **fully functional** and ready to use!
 
 **What makes this special:**
 

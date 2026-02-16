@@ -1,8 +1,8 @@
-# Deployment Guide - Melissa AI
+# Deployment Guide - MellissAI
 
 ## 🚀 Deploying to Production
 
-This guide covers deploying Melissa AI to various hosting platforms.
+This guide covers deploying MellissAI to various hosting platforms.
 
 ---
 
@@ -44,9 +44,9 @@ Render provides free hosting for both frontend and backend.
 Once deployed, Render gives you a URL like: `https://melissa-ai-backend.onrender.com`
 
 Update in your frontend files:
-- `public/js/app.js`
-- `public/js/admin.js`
-- `public/js/widget.js`
+- `frontend/js/app.js`
+- `frontend/js/admin.js`
+- `frontend/js/widget.js`
 
 Change:
 ```javascript
@@ -71,7 +71,7 @@ railway login
 ### Step 2: Deploy
 
 ```bash
-cd "Melissa AI-Business Development Chatbot"
+cd "MellissAI-Business Development Chatbot"
 railway init
 railway up
 ```
@@ -98,7 +98,7 @@ Download from: https://devcenter.heroku.com/articles/heroku-cli
 ### Step 2: Deploy
 
 ```bash
-cd "Melissa AI-Business Development Chatbot"
+cd "MellissAI-Business Development Chatbot"
 heroku login
 heroku create melissa-ai-chatbot
 git push heroku main
@@ -136,14 +136,14 @@ npm i -g vercel
   "version": 2,
   "builds": [
     {
-      "src": "server/index.js",
+      "src": "backend/index.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "server/index.js"
+      "dest": "backend/index.js"
     }
   ]
 }
@@ -217,7 +217,7 @@ nano .env
 ### Step 4: Start with PM2
 
 ```bash
-pm2 start server/index.js --name melissa-ai
+pm2 start backend/index.js --name melissa-ai
 pm2 save
 pm2 startup
 ```
@@ -281,7 +281,7 @@ sudo certbot --nginx -d your-domain.com
 
 1. **Enable Compression**
 ```javascript
-// In server/index.js
+// In backend/index.js
 const compression = require('compression');
 app.use(compression());
 ```
@@ -347,7 +347,7 @@ npm install @pinecone-database/pinecone
 
 3. **Update Vector Store Service**
 
-Create `server/services/pineconeStore.js`:
+Create `backend/services/pineconeStore.js`:
 
 ```javascript
 const { Pinecone } = require('@pinecone-database/pinecone');

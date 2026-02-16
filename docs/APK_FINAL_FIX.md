@@ -67,19 +67,19 @@ User Request → Vercel → backend/index.js
 
 ### **Wait 3-5 minutes** (until 21:34), then:
 
-1. **Open Melissa AI app** on your phone
+1. **Open MellissAI app** on your phone
 2. **Wait 15-20 seconds** for initial load
 3. **Check if it loads** the welcome screen
 4. **Try sending a message**
 
 ### **Expected Result:**
 - ✅ App loads successfully (no 404 error)
-- ✅ Shows Melissa AI welcome screen
+- ✅ Shows MellissAI welcome screen
 - ✅ Can type and send messages
 - ✅ Gets AI responses
 
 ### **If Still Showing 404:**
-- **Clear app cache**: Settings → Apps → Melissa AI → Clear Cache
+- **Clear app cache**: Settings → Apps → MellissAI → Clear Cache
 - **Or uninstall and reinstall** the APK
 
 ---
@@ -91,7 +91,7 @@ Before testing the APK, verify the fix worked in browser:
 1. Go to: https://melissa-ai.vercel.app/
 2. Should load without errors
 3. Check: https://melissa-ai.vercel.app/api/health
-4. Should show: `{"status":"ok","message":"Melissa AI Server Running"}`
+4. Should show: `{"status":"ok","message":"MellissAI Server Running"}`
 
 If both work in browser, APK will work too!
 

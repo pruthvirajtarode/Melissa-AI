@@ -52,9 +52,12 @@ router.post('/', upload.single('file'), async (req, res) => {
         for (const chunk of processed.chunks) {
             const id = await vectorStore.addDocument(chunk, {
                 source: processed.filename,
+                filename: processed.filename,
                 mimetype: processed.mimetype,
+                summary: processed.summary, // Add the summary here
                 chunkIndex: processed.chunks.indexOf(chunk),
-                totalChunks: processed.chunks.length
+                totalChunks: processed.chunks.length,
+                isActive: true // Activate by default
             });
             documentIds.push(id);
         }
@@ -87,18 +90,21 @@ router.post('/url', async (req, res) => {
             return res.status(400).json({ error: 'URL is required' });
         }
 
-        const { scrapeWebPage, chunkText } = require('../services/documentProcessor');
+        const { scrapeWebPage, chunkText, summarizeDocument } = require('../services/documentProcessor');
 
         const text = await scrapeWebPage(url);
         const chunks = chunkText(text);
+        const summary = await summarizeDocument(text);
 
         const documentIds = [];
         for (const chunk of chunks) {
             const id = await vectorStore.addDocument(chunk, {
                 source: url,
                 type: 'webpage',
+                summary: summary, // Add the summary here
                 chunkIndex: chunks.indexOf(chunk),
-                totalChunks: chunks.length
+                totalChunks: chunks.length,
+                isActive: true // Activate by default
             });
             documentIds.push(id);
         }

@@ -1,11 +1,11 @@
 # Project Structure
 
-This document describes the organization of the Melissa AI Business Development Chatbot codebase.
+This document describes the organization of the MellissAI Business Development Chatbot codebase.
 
 ## 📁 Directory Overview
 
 ```
-Melissa AI-Business Development Chatbot/
+MellissAI-Business Development Chatbot/
 │
 ├── frontend/              # All frontend files (HTML, CSS, JS)
 │   ├── index.html        # Main chat interface
@@ -163,7 +163,7 @@ OPENAI_API_KEY=your_openai_api_key_here
 ## 🔄 Recent Changes
 
 **Separation of Frontend and Backend** (2026-02-11)
-- Moved all frontend files from `public/` to `frontend/`
+- Moved all frontend files from `frontend/` to `frontend/`
 - Moved all backend files from `server/` to `backend/`
 - Updated all configuration files to reflect new structure
 - Created separate README files for frontend and backend

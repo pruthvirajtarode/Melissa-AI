@@ -13,7 +13,7 @@
 Your APK **IS WORKING** - it just needs the Vercel deployment to finish!
 
 **Error you saw:** `DEPLOYMENT_NOT_FOUND`
-**Cause:** Vercel had the old folder structure (public/server)
+**Cause:** Vercel had the old folder structure (frontend/server)
 **Fix:** Pushed new structure (frontend/backend) → Vercel is deploying now
 
 ---
@@ -30,7 +30,7 @@ Your APK **IS WORKING** - it just needs the Vercel deployment to finish!
 
 After Vercel deployment completes:
 
-1. **Open the Melissa AI app** on your phone
+1. **Open the MellissAI app** on your phone
 2. **Wait for it to load** (may take 10-20 seconds first time)
 3. **Try typing a message** in the chat
 
@@ -39,7 +39,7 @@ After Vercel deployment completes:
 ## ✅ Expected Result:
 
 The app should now:
-- ✅ Load the Melissa AI interface
+- ✅ Load the MellissAI interface
 - ✅ Connect to the backend successfully
 - ✅ Show chat interface
 - ✅ Respond to your messages
@@ -66,7 +66,7 @@ Both should load without errors.
 
 ### Option 3: Clear App Cache
 
-1. Go to phone Settings → Apps → Melissa AI
+1. Go to phone Settings → Apps → MellissAI
 2. Clear cache & data
 3. Reinstall the APK
 

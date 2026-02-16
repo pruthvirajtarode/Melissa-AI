@@ -9,7 +9,7 @@ The **"+ New Chat"** button in the top right corner is designed to **reset your 
 ## 🎯 **Purpose:**
 
 This button allows you to:
-- ✅ **Start a brand new conversation** with Melissa AI
+- ✅ **Start a brand new conversation** with MellissAI
 - ✅ **Clear all previous messages** from the current chat
 - ✅ **Get a fresh conversation ID** (for tracking purposes)
 - ✅ **Return to the welcome screen** with suggestion cards
@@ -20,7 +20,7 @@ This button allows you to:
 
 ### Step 1: Have a Conversation First
 1. Type a message in the chat box
-2. Send it to Melissa AI
+2. Send it to MellissAI
 3. Get responses and have a conversation
 
 ### Step 2: Click "New Chat"

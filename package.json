@@ -1,5 +1,5 @@
 {
-  "name": "melissa-ai-chatbot",
+  "name": "melliss-ai-chatbot",
   "version": "1.0.0",
   "description": "AI-powered business development chatbot with RAG capabilities",
   "main": "electron.js",
@@ -47,8 +47,8 @@
     "typescript": "^5.9.3"
   },
   "build": {
-    "appId": "com.melissa.ai",
-    "productName": "Melissa AI",
+    "appId": "com.melliss.ai",
+    "productName": "MellissAI",
     "copyright": "Copyright © 2024 New Majority Ventures",
     "directories": {
       "output": "dist"

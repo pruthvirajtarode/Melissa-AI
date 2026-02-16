@@ -33,13 +33,24 @@ router.post('/', async (req, res) => {
             content: message
         });
 
-        // Search vector store for relevant context
+        // Search vector store for relevant context (reduced from 5 to 3 for speed)
         const relevantDocs = await vectorStore.search(message, 3);
 
-        const context = relevantDocs
-            .filter(doc => doc.similarity > 0.7) // Only use highly relevant docs
-            .map(doc => doc.text)
-            .join('\n\n');
+        let context = "";
+        const seenSources = new Set();
+
+        relevantDocs.forEach(doc => {
+            if (doc.similarity > 0.65) {
+                // Add the chunk text
+                context += `\n[Source: ${doc.metadata?.filename || doc.metadata?.source}]\n${doc.text}\n`;
+
+                // Add the summary if we haven't added it for this source yet
+                if (doc.metadata?.summary && !seenSources.has(doc.metadata.source)) {
+                    context += `SUMMARY OF ${doc.metadata.filename || doc.metadata.source}: ${doc.metadata.summary}\n`;
+                    seenSources.add(doc.metadata.source);
+                }
+            }
+        });
 
         // Generate AI response
         const response = await generateResponse(conversation, context);

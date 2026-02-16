@@ -2,7 +2,7 @@ const pdfParse = require('pdf-parse');
 const mammoth = require('mammoth');
 const axios = require('axios');
 const cheerio = require('cheerio');
-
+const { summarizeDocument } = require('./openai');
 /**
  * Process PDF file and extract text
  * @param {Buffer} buffer - PDF file buffer
@@ -42,8 +42,18 @@ async function scrapeWebPage(url) {
     try {
         const response = await axios.get(url, {
             headers: {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-            }
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+                'Accept-Language': 'en-US,en;q=0.9',
+                'Accept-Encoding': 'gzip, deflate, br',
+                'Cache-Control': 'no-cache',
+                'Pragma': 'no-cache',
+                'Sec-Ch-Ua': '"Not A(Brand";v="99", "Google Chrome";v="121", "Chromium";v="121"',
+                'Sec-Ch-Ua-Mobile': '?0',
+                'Sec-Ch-Ua-Platform': '"Windows"',
+                'Upgrade-Insecure-Requests': '1'
+            },
+            timeout: 10000
         });
 
         const $ = cheerio.load(response.data);
@@ -58,8 +68,12 @@ async function scrapeWebPage(url) {
 
         return text;
     } catch (error) {
-        console.error('Web scraping error:', error);
-        throw new Error('Failed to scrape web page');
+        if (error.response?.status === 999 || error.response?.status === 403) {
+            console.error(`🛡️ URL Access Blocked by Target Site (${error.response.status}):`, url);
+            throw new Error('This site is protected by anti-bot measures (like LinkedIn). Please copy-paste the content into a TXT file and upload instead.');
+        }
+        console.error('Web scraping error:', error.message);
+        throw new Error('Failed to scrape web page. Please check the URL.');
     }
 }
 
@@ -107,17 +121,22 @@ async function processDocument(buffer, mimetype, filename) {
         // Chunk the text
         const chunks = chunkText(text);
 
+        // Generate summary
+        const summary = await summarizeDocument(text);
+
         return {
             filename,
             mimetype,
             text,
             chunks,
+            summary,
             metadata: {
                 filename,
                 mimetype,
                 processedAt: new Date().toISOString(),
                 chunkCount: chunks.length,
-                totalLength: text.length
+                totalLength: text.length,
+                summary
             }
         };
     } catch (error) {
@@ -131,5 +150,6 @@ module.exports = {
     processDOCX,
     scrapeWebPage,
     chunkText,
-    processDocument
+    processDocument,
+    summarizeDocument
 };

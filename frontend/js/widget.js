@@ -1,87 +1,53 @@
 // Configuration - Update this with your server URL
 const API_URL = window.location.origin;
+let botSettings = {
+    avatarUrl: 'images/melliss-avatar.svg',
+    botName: 'MellissAI',
+    welcomeMessage: "Hi! I'm MellissAI, your business development assistant. How can I help you today?"
+};
+
+// Global variables
+let conversationId = generateConversationId();
+let isProcessing = false;
 
 // Direct function to open widget (called from HTML onclick)
 function openWidgetDirectly() {
-    console.log('🟢 Button clicked - openWidgetDirectly() called');
     const container = document.getElementById('widgetContainer');
     const button = document.getElementById('widgetButton');
     const messages = document.getElementById('widgetMessages');
     const input = document.getElementById('widgetInput');
 
-    console.log('Elements found:', {
-        container: !!container,
-        button: !!button,
-        messages: !!messages,
-        input: !!input
-    });
+    if (!container || !button) return;
 
-    if (!container) {
-        console.error('❌ Container not found!');
-        return;
-    }
-
-    if (!button) {
-        console.error('❌ Button not found!');
-        return;
-    }
-
-    // Immediately add active class
-    console.log('1. Adding active class to container');
     container.classList.add('active');
-    container.style.opacity = '1';
-    container.style.pointerEvents = 'all';
-    container.style.transform = 'translateY(0) scale(1)';
-
-    console.log('2. Hiding button');
     button.classList.add('hidden');
-    button.style.opacity = '0';
-    button.style.pointerEvents = 'none';
 
-    // Scroll after CSS renders
     setTimeout(() => {
-        console.log('3. Scrolling to bottom');
-        if (messages) {
-            messages.scrollTop = messages.scrollHeight;
-            console.log('Message height:', messages.scrollHeight);
-        }
-        if (input) {
-            console.log('4. Focusing input');
-            input.focus();
-        }
-        console.log('✅ Widget fully opened');
+        if (messages) messages.scrollTop = messages.scrollHeight;
+        if (input) input.focus();
     }, 100);
 }
 
 // Direct function to close widget (called from HTML onclick)
 function closeWidgetDirectly() {
-    console.log('🔴 Close button clicked - closeWidgetDirectly() called');
     const container = document.getElementById('widgetContainer');
     const button = document.getElementById('widgetButton');
 
-    if (!container || !button) {
-        console.error('❌ Elements not found');
-        return;
-    }
+    if (!container || !button) return;
 
-    // Remove active class
-    console.log('1. Removing active class');
     container.classList.remove('active');
-    container.style.opacity = '0';
-    container.style.pointerEvents = 'none';
-
-    // Show button again
-    console.log('2. Showing button');
     button.classList.remove('hidden');
-    button.style.opacity = '1';
-    button.style.pointerEvents = 'auto';
 
-    console.log('✅ Widget closed');
+    // Notify parent if embedded
+    if (window.self !== window.top) {
+        window.parent.postMessage('closeWidget', '*');
+    }
 }
 
-// Initialize widget when page loads
-window.addEventListener('load', function () {
-    // Get DOM elements
+// Initialize widget
+window.addEventListener('load', async function () {
+    await loadSettings();
+
     const widgetButton = document.getElementById('widgetButton');
     const widgetContainer = document.getElementById('widgetContainer');
     const widgetClose = document.getElementById('widgetClose');
@@ -89,92 +55,46 @@ window.addEventListener('load', function () {
     const widgetInput = document.getElementById('widgetInput');
     const widgetSend = document.getElementById('widgetSend');
 
-    console.log('Widget: Checking for elements...');
-    console.log('Button:', widgetButton ? '✓' : '✗');
-    console.log('Container:', widgetContainer ? '✓' : '✗');
-
-    // Verify critical elements exist
     if (!widgetButton || !widgetContainer || !widgetMessages || !widgetInput || !widgetSend) {
-        console.error('❌ Widget elements not found!');
+        console.error('Widget elements missing');
         return;
     }
 
-    console.log('✅ All widget elements found!');
-
-    let conversationId = generateConversationId();
-    let isProcessing = false;
-
-    // ===== BUTTON CLICK =====
-    widgetButton.onclick = function (e) {
-        console.log('🔵 Button clicked - opening chat');
-        e.preventDefault();
-        e.stopPropagation();
-
-        // Show widget
+    // Check if embedded in iframe
+    const isEmbedded = window.self !== window.top;
+    if (isEmbedded) {
+        // When embedded, we usually want to show the chat window directly
+        // and let the parent handle the trigger button
         widgetContainer.classList.add('active');
-        widgetButton.classList.add('hidden');
+        widgetContainer.classList.add('embedded');
+        widgetButton.style.display = 'none';
+    }
 
-        // Scroll and focus
-        setTimeout(() => {
-            widgetMessages.scrollTop = widgetMessages.scrollHeight;
-            widgetInput.focus();
-            console.log('✓ Widget opened, scrolled, focused');
-        }, 50);
-    };
+    // Apply settings
+    updateWidgetUI();
 
-    // ===== CLOSE BUTTON =====
-    widgetClose.onclick = function (e) {
-        console.log('❌ Close button clicked');
-        e.preventDefault();
-        e.stopPropagation();
-        widgetContainer.classList.remove('active');
-        widgetButton.classList.remove('hidden');
-
-        // Notify parent if embedded
-        if (window.self !== window.top) {
-            window.parent.postMessage('closeWidget', '*');
-        }
-    };
-
-    // ===== SEND BUTTON =====
+    widgetButton.onclick = openWidgetDirectly;
+    widgetClose.onclick = closeWidgetDirectly;
     widgetSend.onclick = sendMessage;
+    widgetInput.onkeypress = (e) => { if (e.key === 'Enter') sendMessage(); };
 
-    // ===== INPUT ENTER KEY =====
-    widgetInput.onkeypress = function (e) {
-        if (e.key === 'Enter') {
-            sendMessage();
-        }
-    };
-
-    // ===== SEND MESSAGE FUNCTION =====
-    async function sendMessage(e) {
-        if (e) {
-            e.preventDefault();
-        }
-
+    async function sendMessage() {
         const message = widgetInput.value.trim();
         if (!message || isProcessing) return;
 
         isProcessing = true;
         widgetSend.disabled = true;
 
-        // Add user message
         addMessage('user', message);
         widgetInput.value = '';
 
-        // Show typing indicator
         const typingId = showTypingIndicator();
 
         try {
             const response = await fetch(`${API_URL}/api/chat`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    message,
-                    conversationId
-                })
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message, conversationId })
             });
 
             const data = await response.json();
@@ -183,12 +103,11 @@ window.addEventListener('load', function () {
             if (response.ok) {
                 addMessage('assistant', data.response);
             } else {
-                throw new Error(data.error || 'Failed to get response');
+                addMessage('assistant', 'Sorry, I encountered an error.');
             }
         } catch (error) {
-            console.error('Error:', error);
             removeTypingIndicator(typingId);
-            addMessage('assistant', 'I apologize, but I encountered an error. Please try again.');
+            addMessage('assistant', 'Sorry, I encountered a connection error.');
         } finally {
             isProcessing = false;
             widgetSend.disabled = false;
@@ -196,7 +115,6 @@ window.addEventListener('load', function () {
         }
     }
 
-    // ===== ADD MESSAGE =====
     function addMessage(role, content) {
         const messageDiv = document.createElement('div');
         messageDiv.className = `widget-message ${role}`;
@@ -205,34 +123,41 @@ window.addEventListener('load', function () {
         avatar.className = 'widget-avatar';
 
         if (role === 'assistant') {
-            avatar.innerHTML = `
-                <img src="images/melissa-avatar.svg" alt="Melissa AI" class="widget-avatar-image" />
-            `;
+            avatar.innerHTML = `<img src="${botSettings.avatarUrl}" alt="${botSettings.botName}" class="widget-avatar-image" />`;
         } else {
             avatar.textContent = '👤';
         }
 
         const contentDiv = document.createElement('div');
         contentDiv.className = 'widget-message-content';
-        contentDiv.textContent = content;
+        contentDiv.innerHTML = formatMessage(content);
 
         messageDiv.appendChild(avatar);
         messageDiv.appendChild(contentDiv);
-
         widgetMessages.appendChild(messageDiv);
         widgetMessages.scrollTop = widgetMessages.scrollHeight;
     }
 
-    // ===== TYPING INDICATOR =====
+    function formatMessage(text) {
+        if (!text) return '';
+        // Convert line breaks
+        text = text.replace(/\n/g, '<br>');
+        // Bold text
+        text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        // Bullet points
+        text = text.replace(/^- (.*?)(<br>|$)/gm, '<li>$1</li>');
+        return text;
+    }
+
+
     function showTypingIndicator() {
         const typingId = `typing-${Date.now()}`;
         const typingDiv = document.createElement('div');
         typingDiv.id = typingId;
         typingDiv.className = 'widget-message assistant';
-
         typingDiv.innerHTML = `
             <div class="widget-avatar">
-                <img src="images/melissa-avatar.svg" alt="Melissa AI" class="widget-avatar-image" />
+                <img src="${botSettings.avatarUrl}" alt="${botSettings.botName}" class="widget-avatar-image" />
             </div>
             <div class="widget-message-content">
                 <div class="widget-typing">
@@ -242,42 +167,49 @@ window.addEventListener('load', function () {
                 </div>
             </div>
         `;
-
         widgetMessages.appendChild(typingDiv);
         widgetMessages.scrollTop = widgetMessages.scrollHeight;
-
         return typingId;
     }
 
-    // ===== REMOVE TYPING INDICATOR =====
-    function removeTypingIndicator(typingId) {
-        const element = document.getElementById(typingId);
-        if (element) {
-            element.remove();
+    function removeTypingIndicator(id) {
+        const el = document.getElementById(id);
+        if (el) el.remove();
+    }
+
+    function updateWidgetUI() {
+        const welcomeAvatar = document.querySelector('.widget-avatar-image');
+        if (welcomeAvatar) {
+            welcomeAvatar.src = botSettings.avatarUrl;
+        }
+
+        const welcomeTitle = document.querySelector('.widget-welcome-text h3');
+        if (welcomeTitle) {
+            welcomeTitle.textContent = `Hi! I'm ${botSettings.botName}`;
+        }
+
+        const welcomeText = document.querySelector('.widget-welcome-text p');
+        if (welcomeText) {
+            welcomeText.textContent = botSettings.welcomeMessage;
+        }
+
+        const widgetTitle = document.querySelector('.widget-title span');
+        if (widgetTitle) {
+            widgetTitle.textContent = botSettings.botName;
         }
     }
-
-    // ===== GENERATE CONVERSATION ID =====
-    function generateConversationId() {
-        return `widget_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    }
-
-    // ===== AUTO-OPEN IF IN IFRAME =====
-    if (window.self !== window.top) {
-        console.log('📦 Embedded mode detected - opening widget automatically');
-        // Small delay to ensure transitions work smoothly
-        setTimeout(() => {
-            widgetContainer.classList.add('active');
-            widgetButton.classList.add('hidden');
-            widgetMessages.scrollTop = widgetMessages.scrollHeight;
-            widgetInput.focus();
-        }, 300);
-    }
-
-    console.log('✅ Widget initialized successfully!');
 });
 
-// Helper function (outside load event)
+async function loadSettings() {
+    try {
+        const response = await fetch(`${API_URL}/api/settings`);
+        if (response.ok) {
+            const data = await response.json();
+            botSettings = { ...botSettings, ...data };
+        }
+    } catch (e) { console.error('Settings load error', e); }
+}
+
 function generateConversationId() {
     return `widget_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 }

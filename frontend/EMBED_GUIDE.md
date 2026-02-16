@@ -1,4 +1,4 @@
-# Melissa AI Widget - Client Integration Guide
+# MellissAI Widget - Client Integration Guide
 
 ## 📦 Installation
 
@@ -7,7 +7,7 @@ Add the following code snippet to your website's HTML (before closing `</body>` 
 ### Standard Installation (Recommended)
 
 ```html
-<!-- Melissa AI Professional Chat Widget -->
+<!-- MellissAI Professional Chat Widget -->
 <div id="melissa-ai-bot" style="position: fixed; bottom: 25px; right: 25px; z-index: 999999;">
 
   <!-- Floating Button -->
@@ -27,7 +27,7 @@ Add the following code snippet to your website's HTML (before closing `</body>` 
       transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       font-size: 0;
     "
-    aria-label="Open Melissa AI Chat"
+    aria-label="Open MellissAI Chat"
   >
     <!-- Chat Icon SVG -->
     <svg
@@ -46,10 +46,10 @@ Add the following code snippet to your website's HTML (before closing `</body>` 
 
 </div>
 
-<!-- Melissa AI Widget Script -->
+<!-- MellissAI Widget Script -->
 <script src="https://d4aiyhzmtitm8.cloudfront.net/melissa-ai/embed.js"></script>
 <script>
-  MelissaAI.init({
+  MellissAI.init({
     apiUrl: 'https://d4aiyhzmtitm8.cloudfront.net/melissa-ai',
     buttonColor: 'linear-gradient(135deg, #14532d 0%, #22c55e 100%)',
     position: 'bottom-right'
@@ -177,7 +177,7 @@ To test the widget integration:
 1. Add the code to your website
 2. Reload the page
 3. Click the floating chat button
-4. You should see the Melissa AI welcome message
+4. You should see the MellissAI welcome message
 5. Try sending a message to test functionality
 
 ## 🐛 Troubleshooting

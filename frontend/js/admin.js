@@ -22,11 +22,32 @@ const urlUploadForm = document.getElementById('urlUploadForm');
 const urlInput = document.getElementById('urlInput');
 const urlUploadStatus = document.getElementById('urlUploadStatus');
 
+// Settings elements
+const botSettingsForm = document.getElementById('botSettingsForm');
+const botNameInput = document.getElementById('botName');
+const welcomeMessageInput = document.getElementById('welcomeMessage');
+const settingsStatus = document.getElementById('settingsStatus');
+const avatarUploadForm = document.getElementById('avatarUploadForm');
+const avatarInput = document.getElementById('avatarInput');
+const currentAvatarImg = document.getElementById('currentAvatar');
+const avatarStatus = document.getElementById('avatarStatus');
+
 // Documents elements
 const documentsList = document.getElementById('documentsList');
 const refreshDocsBtn = document.getElementById('refreshDocsBtn');
 const reindexBtn = document.getElementById('reindexBtn');
 const clearAllBtn = document.getElementById('clearAllBtn');
+
+// Conversation elements
+const conversationsList = document.getElementById('conversationsList');
+const refreshConvsBtn = document.getElementById('refreshConvsBtn');
+const conversationModal = document.getElementById('conversationModal');
+const closeModal = document.getElementById('closeModal');
+const closeModalBtn = document.getElementById('closeModalBtn');
+const downloadConvBtn = document.getElementById('downloadConvBtn');
+const modalBody = document.getElementById('modalBody');
+const modalTitle = document.getElementById('modalTitle');
+let currentViewedConversation = null;
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
@@ -40,6 +61,8 @@ function checkAuth() {
         showAdmin();
         loadAnalytics();
         loadDocuments();
+        loadSettings();
+        loadConversations();
     } else {
         showLogin();
     }
@@ -63,7 +86,11 @@ function setupEventListeners() {
     fileUploadForm.addEventListener('submit', handleFileUpload);
     urlUploadForm.addEventListener('submit', handleUrlUpload);
 
+    botSettingsForm.addEventListener('submit', handleSettingsUpdate);
+    avatarUploadForm.addEventListener('submit', handleAvatarUpload);
+
     refreshDocsBtn.addEventListener('click', loadDocuments);
+    refreshConvsBtn.addEventListener('click', loadConversations);
     reindexBtn.addEventListener('click', handleReindex);
     clearAllBtn.addEventListener('click', handleClearAll);
 
@@ -71,6 +98,31 @@ function setupEventListeners() {
     fileInput.addEventListener('change', (e) => {
         const fileName = e.target.files[0]?.name || 'Choose File';
         document.querySelector('.file-label-text').textContent = fileName;
+    });
+
+    // Avatar input label update
+    avatarInput.addEventListener('change', (e) => {
+        const fileName = e.target.files[0]?.name || 'New Avatar';
+        document.querySelector('.avatar-label-text').textContent = fileName;
+    });
+
+    // Password visibility toggle
+    const passwordToggle = document.getElementById('passwordToggle');
+    const passwordInput = document.getElementById('password');
+    if (passwordToggle && passwordInput) {
+        passwordToggle.addEventListener('click', () => {
+            const isPassword = passwordInput.type === 'password';
+            passwordInput.type = isPassword ? 'text' : 'password';
+            passwordToggle.classList.toggle('visible', !isPassword);
+        });
+    }
+
+    // Modal listeners
+    closeModal.addEventListener('click', () => conversationModal.style.display = 'none');
+    closeModalBtn.addEventListener('click', () => conversationModal.style.display = 'none');
+    downloadConvBtn.addEventListener('click', handleDownloadConversation);
+    window.addEventListener('click', (e) => {
+        if (e.target === conversationModal) conversationModal.style.display = 'none';
     });
 }
 
@@ -111,7 +163,7 @@ async function handleLogin(e) {
 function handleLogout() {
     authToken = null;
     localStorage.removeItem('adminToken');
-    showLogin();
+    window.location.href = 'index.html';
 }
 
 // Load Analytics
@@ -161,7 +213,7 @@ async function loadDocuments() {
 
 // Display Documents
 function displayDocuments(documents) {
-    if (documents.length === 0) {
+    if (!documents || documents.length === 0) {
         documentsList.innerHTML = `
             <div class="empty-state">
                 <div class="empty-state-icon">📚</div>
@@ -172,43 +224,42 @@ function displayDocuments(documents) {
         return;
     }
 
-    // Group by filename to show unique documents
-    const docGroups = {};
-    documents.forEach(doc => {
-        const filename = doc.metadata?.filename || 'Unnamed Content';
-        if (!docGroups[filename]) {
-            docGroups[filename] = {
-                filename: filename,
-                chunks: 0,
-                mimetype: doc.metadata?.mimetype || 'text/plain',
-                createdAt: doc.createdAt,
-                ids: []
-            };
+    // Sort documents: pending first, then active, then by creation date
+    const sortedDocs = [...documents].sort((a, b) => {
+        if (a.isActive === b.isActive) {
+            return new Date(b.createdAt) - new Date(a.createdAt); // Newest first
         }
-        docGroups[filename].chunks++;
-        docGroups[filename].ids.push(doc.id);
-        // Keep the earliest created date
-        if (new Date(doc.createdAt) < new Date(docGroups[filename].createdAt)) {
-            docGroups[filename].createdAt = doc.createdAt;
-        }
+        return a.isActive ? 1 : -1; // Pending (false) comes before active (true)
     });
 
-    const sortedDocs = Object.values(docGroups).sort((a, b) =>
-        new Date(b.createdAt) - new Date(a.createdAt)
-    );
-
     documentsList.innerHTML = sortedDocs.map(doc => `
-        <div class="document-item">
+        <div class="document-item ${doc.isActive ? 'active-border' : 'pending-border'}">
             <div class="document-info">
                 <div class="document-title">${escapeHtml(doc.filename)}</div>
                 <div class="document-meta">
-                    <span>📄 ${doc.mimetype}</span>
+                    <span>${doc.type === 'webpage' ? '🌐 URL' : '📄 ' + doc.mimetype}</span>
                     <span>🧩 ${doc.chunks} parts</span>
                     <span>🕒 ${formatDate(doc.createdAt)}</span>
+                    <span class="status-badge ${doc.isActive ? 'active' : 'pending'}">
+                        ${doc.isActive ? '✅ Included in Chat' : '⏳ Pending Review'}
+                    </span>
                 </div>
+                ${doc.summary ? `
+                <div class="document-summary">
+                    <strong>🤖 AI Training Highlights:</strong>
+                    <p>${escapeHtml(doc.summary)}</p>
+                </div>
+                ` : ''}
             </div>
             <div class="document-actions">
-                <button class="btn-icon delete" title="Delete Document" onclick="deleteDocumentGroup('${doc.filename}', '${doc.ids.join(',')}')">
+                ${!doc.isActive ? `
+                <button class="btn-icon approve" title="Include in Chatbot" onclick="approveDocumentBySource('${escapeHtml(doc.source)}')">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M20 6L9 17L4 12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+                ` : ''}
+                <button class="btn-icon delete" title="Delete Document" onclick="deleteDocumentBySource('${escapeHtml(doc.source)}')">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                         <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
@@ -218,42 +269,59 @@ function displayDocuments(documents) {
     `).join('');
 }
 
-// Delete Document Group
-async function deleteDocumentGroup(filename, idsString) {
-    if (!confirm(`Are you sure you want to delete "${filename}" and all its parts?`)) return;
+// Approve Document By Source
+async function approveDocumentBySource(source) {
+    try {
+        const response = await fetch(`${API_URL}/api/admin/document/approve`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
+            },
+            body: JSON.stringify({ source })
+        });
 
-    const ids = idsString.split(',');
-    let successCount = 0;
-    let failCount = 0;
-
-    // Show loading state
-    documentsList.innerHTML = `<div class="loading">Deleting ${filename}...</div>`;
-
-    for (const id of ids) {
-        try {
-            const response = await fetch(`${API_URL}/api/admin/document/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${authToken}`
-                }
-            });
-            if (response.ok) successCount++;
-            else failCount++;
-        } catch (error) {
-            console.error(`Error deleting chunk ${id}:`, error);
-            failCount++;
+        if (response.ok) {
+            loadAnalytics();
+            loadDocuments();
+        } else if (response.status === 401) {
+            handleLogout();
+        } else {
+            alert('Failed to approve document');
         }
+    } catch (error) {
+        console.error('Approve error:', error);
+        alert('Failed to approve document');
     }
-
-    if (failCount === 0) {
-        console.log(`Successfully deleted all ${successCount} parts of ${filename}`);
-    } else {
-        alert(`Deleted ${successCount} parts, but ${failCount} parts failed. Refreshing list.`);
-    }
-
-    loadAnalytics();
-    loadDocuments();
 }
+
+// Delete Document By Source
+async function deleteDocumentBySource(source) {
+    if (!confirm(`Are you sure you want to delete "${source}" and all its parts?`)) return;
+
+    try {
+        const response = await fetch(`${API_URL}/api/admin/document/source?source=${encodeURIComponent(source)}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${authToken}`
+            }
+        });
+
+        if (response.ok) {
+            loadAnalytics();
+            loadDocuments();
+        } else if (response.status === 401) {
+            handleLogout();
+        } else {
+            alert('Failed to delete document');
+        }
+    } catch (error) {
+        console.error('Delete error:', error);
+        alert('Failed to delete document');
+    }
+}
+
+// This function is replaced by deleteDocumentBySource
 
 // File Upload
 async function handleFileUpload(e) {
@@ -311,12 +379,12 @@ async function handleUrlUpload(e) {
         const data = await response.json();
 
         if (response.ok) {
-            showStatus(urlUploadStatus, `✅ ${data.message} (${data.chunks} chunks created)`, 'success');
-            urlUploadForm.reset();
-            loadAnalytics();
+            showStatus(urlUploadStatus, '✅ URL processed and ready for review', 'success');
+            urlInput.value = '';
             loadDocuments();
+            loadAnalytics();
         } else {
-            showStatus(urlUploadStatus, `❌ ${data.error}`, 'error');
+            showStatus(urlUploadStatus, `❌ ${data.error || 'Failed to process URL'}`, 'error');
         }
     } catch (error) {
         console.error('URL upload error:', error);
@@ -324,29 +392,7 @@ async function handleUrlUpload(e) {
     }
 }
 
-// Delete Document
-async function deleteDocument(id) {
-    if (!confirm('Are you sure you want to delete this document?')) return;
-
-    try {
-        const response = await fetch(`${API_URL}/api/admin/document/${id}`, {
-            method: 'DELETE',
-            headers: {
-                'Authorization': `Bearer ${authToken}`
-            }
-        });
-
-        if (response.ok) {
-            loadAnalytics();
-            loadDocuments();
-        } else if (response.status === 401) {
-            handleLogout();
-        }
-    } catch (error) {
-        console.error('Delete error:', error);
-        alert('Failed to delete document');
-    }
-}
+// This function is replaced by deleteDocumentBySource
 
 // Re-index
 async function handleReindex() {
@@ -442,6 +488,181 @@ function formatBytes(bytes) {
 function formatDate(dateString) {
     const date = new Date(dateString);
     return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+}
+
+// Load Settings
+async function loadSettings() {
+    try {
+        const response = await fetch(`${API_URL}/api/settings`);
+        if (response.ok) {
+            const settings = await response.json();
+            botNameInput.value = settings.botName || 'MellissAI';
+            welcomeMessageInput.value = settings.welcomeMessage || '';
+            currentAvatarImg.src = settings.avatarUrl || 'images/Melliss-avatar.svg';
+        }
+    } catch (error) {
+        console.error('Settings load error:', error);
+    }
+}
+
+// Update Settings
+async function handleSettingsUpdate(e) {
+    e.preventDefault();
+
+    const botName = botNameInput.value.trim();
+    const welcomeMessage = welcomeMessageInput.value.trim();
+
+    showStatus(settingsStatus, 'Updating settings...', 'loading');
+
+    try {
+        const response = await fetch(`${API_URL}/api/settings/update`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
+            },
+            body: JSON.stringify({ botName, welcomeMessage })
+        });
+
+        if (response.ok) {
+            showStatus(settingsStatus, '✅ Settings saved', 'success');
+        } else {
+            showStatus(settingsStatus, '❌ Update failed', 'error');
+        }
+    } catch (error) {
+        console.error('Update settings error:', error);
+        showStatus(settingsStatus, '❌ Error updating settings', 'error');
+    }
+}
+
+// Upload Avatar
+async function handleAvatarUpload(e) {
+    e.preventDefault();
+
+    const file = avatarInput.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('avatar', file);
+
+    showStatus(avatarStatus, 'Uploading avatar...', 'loading');
+
+    try {
+        const response = await fetch(`${API_URL}/api/settings/avatar`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${authToken}`
+            },
+            body: formData
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            showStatus(avatarStatus, '✅ Avatar updated', 'success');
+            currentAvatarImg.src = data.avatarUrl;
+            avatarUploadForm.reset();
+            document.querySelector('.avatar-label-text').textContent = 'New Avatar';
+        } else {
+            showStatus(avatarStatus, '❌ Upload failed', 'error');
+        }
+    } catch (error) {
+        console.error('Avatar upload error:', error);
+        showStatus(avatarStatus, '❌ Error uploading avatar', 'error');
+    }
+}
+
+// Load Conversations
+async function loadConversations() {
+    try {
+        conversationsList.innerHTML = '<div class="loading">Loading conversations...</div>';
+        const response = await fetch(`${API_URL}/api/chat/conversations`);
+        if (response.ok) {
+            const data = await response.json();
+            displayConversations(data.conversations);
+        }
+    } catch (error) {
+        console.error('Conversations load error:', error);
+        conversationsList.innerHTML = '<div class="error-message">Failed to load conversations</div>';
+    }
+}
+
+// Display Conversations
+function displayConversations(conversations) {
+    if (!conversations || conversations.length === 0) {
+        conversationsList.innerHTML = '<div class="empty-state"><p>No recent conversations</p></div>';
+        return;
+    }
+
+    conversationsList.innerHTML = conversations.map(conv => {
+        const lastMsg = conv.lastMessage ? conv.lastMessage.content : 'No messages';
+        const truncatedMsg = lastMsg.length > 100 ? lastMsg.substring(0, 100) + '...' : lastMsg;
+
+        return `
+            <div class="document-item">
+                <div class="document-info">
+                    <div class="document-title">Session: ${conv.id}</div>
+                    <div class="document-meta">
+                        <span>💬 ${conv.messageCount} messages</span>
+                        <span>📝 Last: ${escapeHtml(truncatedMsg)}</span>
+                    </div>
+                </div>
+                <div class="document-actions">
+                    <button class="btn-icon" title="View Details" onclick="viewConversation('${conv.id}')">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke-width="2"/><circle cx="12" cy="12" r="3" stroke-width="2"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+async function viewConversation(id) {
+    try {
+        modalBody.innerHTML = '<div class="loading">Loading conversation details...</div>';
+        modalTitle.textContent = `Session: ${id}`;
+        conversationModal.style.display = 'flex';
+
+        const response = await fetch(`${API_URL}/api/chat/conversation/${id}`);
+        if (response.ok) {
+            const data = await response.json();
+            currentViewedConversation = data.conversation;
+            displayConversationDetails(data.conversation);
+        } else {
+            modalBody.innerHTML = '<div class="error-message">Failed to load conversation details</div>';
+        }
+    } catch (e) {
+        console.error('View conversation error:', e);
+        modalBody.innerHTML = '<div class="error-message">An error occurred while loading details</div>';
+    }
+}
+
+function displayConversationDetails(messages) {
+    if (!messages || messages.length === 0) {
+        modalBody.innerHTML = '<p>No messages in this session</p>';
+        return;
+    }
+
+    modalBody.innerHTML = messages.map(m => `
+        <div class="modal-message ${m.role}">
+            <strong>${m.role === 'user' ? 'User' : 'MellissAI'}</strong>
+            <p>${m.content.replace(/\n/g, '<br>')}</p>
+        </div>
+    `).join('');
+}
+
+function handleDownloadConversation() {
+    if (!currentViewedConversation) return;
+
+    const sessionID = modalTitle.textContent.replace('Session: ', '');
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(currentViewedConversation, null, 2));
+    const downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", `Melliss_ai_conv_${sessionID}.json`);
+    document.body.appendChild(downloadAnchorNode);
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
 }
 
 function escapeHtml(text) {

@@ -1,4 +1,4 @@
-# Quick Start Guide - Melissa AI
+# Quick Start Guide - MellissAI
 
 ## 🚀 Getting Started in 3 Minutes
 
@@ -97,11 +97,11 @@ ADMIN_PASSWORD=your_secure_password
 
 ### Customize AI Personality
 
-Edit `server/services/openai.js` and modify the `SYSTEM_PROMPT` constant.
+Edit `backend/services/openai.js` and modify the `SYSTEM_PROMPT` constant.
 
 ### Change Colors/Design
 
-Edit CSS files in `public/css/`:
+Edit CSS files in `frontend/css/`:
 - `styles.css` - Main chat interface
 - `admin.css` - Admin dashboard
 - `widget.css` - Chat widget

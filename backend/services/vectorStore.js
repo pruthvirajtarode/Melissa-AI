@@ -11,6 +11,7 @@ const VECTOR_STORE_PATH = path.join(__dirname, '../../data/vectors/store.json');
 class VectorStore {
     constructor() {
         this.documents = [];
+        this.groupedCache = null; // Cache for grouped documents
         this.loadStore();
     }
 
@@ -34,6 +35,7 @@ class VectorStore {
      */
     async saveStore() {
         try {
+            this.groupedCache = null; // Invalidate cache on save
             const dir = path.dirname(VECTOR_STORE_PATH);
             await fs.mkdir(dir, { recursive: true });
             await fs.writeFile(VECTOR_STORE_PATH, JSON.stringify(this.documents, null, 2));
@@ -56,7 +58,10 @@ class VectorStore {
                 id: Date.now().toString() + Math.random().toString(36).substring(2, 7),
                 text,
                 embedding,
-                metadata,
+                metadata: {
+                    ...metadata,
+                    isActive: metadata.isActive !== undefined ? metadata.isActive : false // Default to false
+                },
                 createdAt: new Date().toISOString()
             };
 
@@ -97,14 +102,17 @@ class VectorStore {
      */
     async search(query, topK = 3) {
         try {
-            if (this.documents.length === 0) {
+            // Filter for active documents only
+            const activeDocs = this.documents.filter(doc => doc.metadata?.isActive === true);
+
+            if (activeDocs.length === 0) {
                 return [];
             }
 
             const queryEmbedding = await generateEmbedding(query);
 
-            // Calculate cosine similarity for each document
-            const results = this.documents.map(doc => ({
+            // Calculate dot product for each active document
+            const results = activeDocs.map(doc => ({
                 ...doc,
                 similarity: this.cosineSimilarity(queryEmbedding, doc.embedding)
             }));
@@ -120,25 +128,86 @@ class VectorStore {
     }
 
     /**
-     * Calculate cosine similarity between two vectors
+     * Calculate dot product between two vectors
+     * OpenAI embeddings are normalized to length 1, so dot product equals cosine similarity
      */
     cosineSimilarity(vecA, vecB) {
-        const dotProduct = vecA.reduce((sum, a, i) => sum + a * vecB[i], 0);
-        const magnitudeA = Math.sqrt(vecA.reduce((sum, a) => sum + a * a, 0));
-        const magnitudeB = Math.sqrt(vecB.reduce((sum, b) => sum + b * b, 0));
-        return dotProduct / (magnitudeA * magnitudeB);
+        let dotProduct = 0;
+        const len = vecA.length;
+        for (let i = 0; i < len; i++) {
+            dotProduct += vecA[i] * vecB[i];
+        }
+        return dotProduct;
     }
 
     /**
-     * Get all documents
+     * Get all unique document sources with caching
      */
-    getAllDocuments() {
-        return this.documents.map(doc => ({
-            id: doc.id,
-            text: doc.text.substring(0, 100) + '...',
-            metadata: doc.metadata,
-            createdAt: doc.createdAt
-        }));
+    getGroupedDocuments() {
+        if (this.groupedCache) {
+            return this.groupedCache;
+        }
+
+        const groups = {};
+
+        this.documents.forEach(doc => {
+            const source = doc.metadata?.source || 'Unnamed Content';
+            if (!groups[source]) {
+                groups[source] = {
+                    source: source,
+                    filename: doc.metadata?.filename || source,
+                    mimetype: doc.metadata?.mimetype || 'text/plain',
+                    type: doc.metadata?.type || 'file',
+                    summary: doc.metadata?.summary || '',
+                    isActive: doc.metadata?.isActive === true,
+                    chunks: 0,
+                    createdAt: doc.createdAt,
+                    lastModified: doc.createdAt
+                };
+            }
+            groups[source].chunks++;
+            if (new Date(doc.createdAt) < new Date(groups[source].createdAt)) {
+                groups[source].createdAt = doc.createdAt;
+            }
+            if (new Date(doc.createdAt) > new Date(groups[source].lastModified)) {
+                groups[source].lastModified = doc.createdAt;
+            }
+        });
+
+        const sorted = Object.values(groups).sort((a, b) =>
+            new Date(b.lastModified) - new Date(a.lastModified)
+        );
+
+        this.groupedCache = sorted;
+        return sorted;
+    }
+
+    /**
+     * Approve/Activate all chunks for a specific source
+     */
+    async approveBySource(source) {
+        let count = 0;
+        this.documents.forEach(doc => {
+            if (doc.metadata?.source === source) {
+                doc.metadata.isActive = true;
+                count++;
+            }
+        });
+        if (count > 0) {
+            await this.saveStore();
+        }
+        return count;
+    }
+
+    /**
+     * Delete all chunks for a specific source
+     */
+    async deleteBySource(source) {
+        const initialCount = this.documents.length;
+        this.documents = this.documents.filter(doc => doc.metadata?.source !== source);
+        const deletedCount = initialCount - this.documents.length;
+        await this.saveStore();
+        return deletedCount;
     }
 
     /**
@@ -161,14 +230,39 @@ class VectorStore {
      * Re-index all documents (regenerate embeddings)
      */
     async reindex() {
-        console.log('🔄 Re-indexing documents...');
+        console.log('🔄 Re-indexing documents and generating missing summaries...');
+        const { summarizeDocument } = require('./openai');
+
+        const processedSources = new Set();
 
         for (let doc of this.documents) {
+            // Regenerate embedding
             doc.embedding = await generateEmbedding(doc.text);
+
+            // Generate summary if missing and it's a new source in this loop
+            if (!doc.metadata.summary && !processedSources.has(doc.metadata.source)) {
+                // Find all chunks for this source to get full text
+                const fullText = this.documents
+                    .filter(d => d.metadata.source === doc.metadata.source)
+                    .map(d => d.text)
+                    .join(' ')
+                    .substring(0, 8000);
+
+                const summary = await summarizeDocument(fullText);
+
+                // Update all chunks of this source with the summary
+                this.documents.forEach(d => {
+                    if (d.metadata.source === doc.metadata.source) {
+                        d.metadata.summary = summary;
+                    }
+                });
+
+                processedSources.add(doc.metadata.source);
+            }
         }
 
         await this.saveStore();
-        console.log('✅ Re-indexing complete');
+        console.log('✅ Re-indexing and summarization complete');
     }
 }
 

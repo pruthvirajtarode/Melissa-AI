@@ -53,7 +53,7 @@ router.post('/login', async (req, res) => {
  */
 router.get('/documents', authenticateAdmin, (req, res) => {
     try {
-        const documents = vectorStore.getAllDocuments();
+        const documents = vectorStore.getGroupedDocuments();
         res.json({ documents });
     } catch (error) {
         res.status(500).json({ error: 'Failed to fetch documents' });
@@ -61,14 +61,33 @@ router.get('/documents', authenticateAdmin, (req, res) => {
 });
 
 /**
+ * POST /api/admin/document/approve
+ * Approve/Activate document
+ */
+router.post('/document/approve', authenticateAdmin, async (req, res) => {
+    try {
+        const { source } = req.body;
+        if (!source) return res.status(400).json({ error: 'Source is required' });
+
+        const count = await vectorStore.approveBySource(source);
+        res.json({ message: 'Document approved and added to chatbot knowledge', chunksActivated: count });
+    } catch (error) {
+        console.error('Approve error:', error);
+        res.status(500).json({ error: 'Failed to approve document' });
+    }
+});
+
+/**
  * DELETE /api/admin/document/:id
  * Delete document
  */
-router.delete('/document/:id', authenticateAdmin, async (req, res) => {
+router.delete('/document/source', authenticateAdmin, async (req, res) => {
     try {
-        const { id } = req.params;
-        await vectorStore.deleteDocument(id);
-        res.json({ message: 'Document deleted successfully' });
+        const { source } = req.query;
+        if (!source) return res.status(400).json({ error: 'Source is required' });
+
+        const count = await vectorStore.deleteBySource(source);
+        res.json({ message: 'Document deleted successfully', chunksDeleted: count });
     } catch (error) {
         res.status(500).json({ error: 'Failed to delete document' });
     }
@@ -93,11 +112,11 @@ router.post('/reindex', authenticateAdmin, async (req, res) => {
  */
 router.get('/analytics', authenticateAdmin, (req, res) => {
     try {
+        const grouped = vectorStore.getGroupedDocuments();
         const analytics = {
-            totalDocuments: vectorStore.documents.length,
-            totalChunks: vectorStore.documents.reduce((sum, doc) => sum + 1, 0),
+            totalDocuments: grouped.length,
+            totalChunks: vectorStore.documents.length,
             storageSize: JSON.stringify(vectorStore.documents).length,
-            // Add more analytics as needed
         };
 
         res.json(analytics);

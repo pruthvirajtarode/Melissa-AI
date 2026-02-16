@@ -1,6 +1,6 @@
-# 📱 Melissa AI - Mobile App Guide
+# 📱 MellissAI - Mobile App Guide
 
-This guide explains how to build and distribute the **Melissa AI Mobile App** for Android and iOS.
+This guide explains how to build and distribute the **MellissAI Mobile App** for Android and iOS.
 
 ---
 
@@ -71,7 +71,7 @@ You don't even need to build an APK! Since we added a `manifest.json`, users can
 1. Visit your Vercel URL on their phone.
 2. Tap the **Share** button (iOS) or **Menu dots** (Android).
 3. Select **"Add to Home Screen"**.
-4. Melissa AI will appear on their phone with its own icon and no browser bars.
+4. MellissAI will appear on their phone with its own icon and no browser bars.
 
 ---
 

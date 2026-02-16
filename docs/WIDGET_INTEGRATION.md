@@ -1,8 +1,8 @@
-# Melissa AI Widget Integration Guide
+# MellissAI Widget Integration Guide
 
-## 📦 Embedding Melissa AI on Your Website
+## 📦 Embedding MellissAI on Your Website
 
-This guide shows you how to add the Melissa AI chatbot to your website.
+This guide shows you how to add the MellissAI chatbot to your website.
 
 ---
 
@@ -16,7 +16,7 @@ Add this code to your website's HTML, just before the closing `</body>` tag:
 <iframe 
   src="http://localhost:3000/widget.html" 
   style="position: fixed; bottom: 0; right: 0; width: 450px; height: 700px; border: none; z-index: 9999;"
-  title="Melissa AI Chat"
+  title="MellissAI Chat"
 ></iframe>
 ```
 
@@ -29,7 +29,7 @@ Add this code to your website's HTML, just before the closing `</body>` tag:
   src="http://localhost:3000/widget.html" 
   style="position: fixed; bottom: 0; right: 0; border: none; z-index: 9999;"
   class="melissa-widget"
-  title="Melissa AI Chat"
+  title="MellissAI Chat"
 ></iframe>
 
 <style>
@@ -63,7 +63,7 @@ Add this before the closing `</body>` tag:
   var iframe = document.createElement('iframe');
   iframe.src = 'http://localhost:3000/widget.html';
   iframe.style.cssText = 'position:fixed;bottom:0;right:0;width:450px;height:700px;border:none;z-index:9999;';
-  iframe.title = 'Melissa AI Chat';
+  iframe.title = 'MellissAI Chat';
   
   // Wait for DOM to load
   if (document.readyState === 'loading') {
@@ -102,9 +102,9 @@ Copy the widget HTML/CSS/JS into your own codebase and customize fully.
 
 ### Files to Copy:
 
-1. `public/widget.html` (structure)
-2. `public/css/widget.css` (styling)
-3. `public/js/widget.js` (functionality)
+1. `frontend/widget.html` (structure)
+2. `frontend/css/widget.css` (styling)
+3. `frontend/js/widget.js` (functionality)
 
 ### Customize API URL:
 
@@ -136,7 +136,7 @@ iframe {
 
 ### Change Colors
 
-Edit `public/css/widget.css`:
+Edit `frontend/css/widget.css`:
 
 ```css
 /* Change gradient colors */
@@ -233,7 +233,7 @@ if (window.innerWidth > 768) {
 If embedding across domains, ensure your server has proper CORS headers:
 
 ```javascript
-// In server/index.js
+// In backend/index.js
 app.use(cors({
   origin: ['https://yourwebsite.com'],
   credentials: true
@@ -285,7 +285,7 @@ function App() {
           border: 'none',
           zIndex: 9999
         }}
-        title="Melissa AI"
+        title="MellissAI"
       />
     </div>
   );
@@ -302,7 +302,7 @@ function App() {
     <iframe
       src="https://your-melissa-ai.com/widget.html"
       :style="widgetStyle"
-      title="Melissa AI"
+      title="MellissAI"
     />
   </div>
 </template>

@@ -2,7 +2,7 @@
 
 ## ✨ **CUSTOM GENERATED REALISTIC IMAGE ADDED!**
 
-Your Melissa AI now has a **professionally generated, photorealistic hero image** that looks like real corporate photography!
+Your MellissAI now has a **professionally generated, photorealistic hero image** that looks like real corporate photography!
 
 ---
 
@@ -31,7 +31,7 @@ Your Melissa AI now has a **professionally generated, photorealistic hero image*
 - Photorealistic rendering
 - High resolution (suitable for hero section)
 - Professional corporate aesthetic
-- Matches Melissa AI brand colors
+- Matches MellissAI brand colors
 - Premium business photography style
 
 **Perfect For:**
@@ -47,7 +47,7 @@ Your Melissa AI now has a **professionally generated, photorealistic hero image*
 
 The image has been saved to your project:
 ```
-public/images/hero-business-team.png
+frontend/images/hero-business-team.png
 ```
 
 And the HTML has been updated to use it:
@@ -74,7 +74,7 @@ The image is now local to your project and will load instantly:
 
 ### **vs Stock Photos:**
 - ✅ **Unique** - AI-generated, not found elsewhere
-- ✅ **Customized** - Made specifically for Melissa AI
+- ✅ **Customized** - Made specifically for MellissAI
 - ✅ **Brand-aligned** - Purple/blue color scheme
 - ✅ **No licensing issues** - You own it
 - ✅ **No watermarks** - Clean, professional
@@ -123,7 +123,7 @@ Just let me know what you'd like changed!
 
 Simply replace the file:
 ```
-public/images/hero-business-team.png
+frontend/images/hero-business-team.png
 ```
 
 With any image you want (recommended: 1200x600px minimum)

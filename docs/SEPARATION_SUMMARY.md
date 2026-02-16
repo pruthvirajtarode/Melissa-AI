@@ -14,7 +14,7 @@ Separate all frontend and backend files into organized `frontend/` and `backend/
 ### 1. Directory Restructuring
 
 #### Frontend Files
-Moved from `public/` to `frontend/`:
+Moved from `frontend/` to `frontend/`:
 - ✅ `index.html` - Main chat interface
 - ✅ `admin.html` - Admin dashboard  
 - ✅ `widget.html` - Embeddable widget
@@ -93,7 +93,7 @@ All configuration files were updated to reflect the new structure:
 ## 📂 New Project Structure
 
 ```
-Melissa AI/
+MellissAI/
 │
 ├── frontend/           # 🎨 All frontend files
 │   ├── index.html
@@ -181,7 +181,7 @@ npm run dist
 - ✅ Updated `.gitignore` paths
 - ✅ Created documentation for both directories
 - ✅ Created `PROJECT_STRUCTURE.md`
-- ✅ Removed old empty directories (`public/`, `server/`)
+- ✅ Removed old empty directories (`frontend/`, `server/`)
 - ✅ Tested server startup
 - ✅ Verified all paths are working
 

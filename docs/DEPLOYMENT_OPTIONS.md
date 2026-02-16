@@ -1,6 +1,6 @@
-# 🚀 Melissa AI - Deployment Options Guide
+# 🚀 MellissAI - Deployment Options Guide
 
-This guide provides **all the ways** you can deploy and share Melissa AI with your users.
+This guide provides **all the ways** you can deploy and share MellissAI with your users.
 
 ---
 
@@ -40,7 +40,7 @@ ADMIN_PASSWORD=admin123
 1. Go to https://render.com
 2. Sign up with GitHub
 3. Click **"New Web Service"**
-4. Connect your GitHub repo: `pruthvirajtarode/Melissa-AI`
+4. Connect your GitHub repo: `pruthvirajtarode/Melliss-AI`
 5. Configure:
    - **Name**: melissa-ai-nmv
    - **Environment**: Node
@@ -68,7 +68,7 @@ ADMIN_PASSWORD=admin123
 1. Go to https://railway.app
 2. Sign in with GitHub
 3. Click **"New Project"** → **"Deploy from GitHub repo"**
-4. Select `Melissa-AI`
+4. Select `Melliss-AI`
 5. Railway auto-detects Node.js
 6. Add environment variables in Settings
 7. Deploy!
@@ -106,7 +106,7 @@ npm install --save-dev electron electron-builder
 ```javascript
 const { app, BrowserWindow } = require('electron');
 const path = require('path');
-require('./server/index.js'); // Start your server
+require('./backend/index.js'); // Start your server
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -133,10 +133,10 @@ app.whenReady().then(createWindow);
   },
   "build": {
     "appId": "com.nmv.melissa-ai",
-    "productName": "Melissa AI",
+    "productName": "MellissAI",
     "win": {
       "target": "nsis",
-      "icon": "public/images/icon.ico"
+      "icon": "frontend/images/icon.ico"
     }
   }
 }
@@ -253,7 +253,7 @@ NODE_ENV=production
 
 Once deployed, share this with users:
 
-**Access Melissa AI:**
+**Access MellissAI:**
 ```
 URL: https://your-deployed-url.com
 
@@ -269,7 +269,7 @@ Password: [provided separately]
 
 - **Vercel Issues**: https://vercel.com/docs
 - **Render Issues**: https://docs.render.com
-- **GitHub Issues**: https://github.com/pruthvirajtarode/Melissa-AI/issues
+- **GitHub Issues**: https://github.com/pruthvirajtarode/Melliss-AI/issues
 
 ---
 
