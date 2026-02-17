@@ -49,26 +49,27 @@ router.post('/', upload.single('file'), async (req, res) => {
             req.file.originalname
         );
 
-        // Add chunks to vector store
-        const documentIds = [];
-        for (const chunk of processed.chunks) {
-            const id = await vectorStore.addDocument(chunk, {
+        // Prepare chunks for bulk addition
+        const chunksToAdd = processed.chunks.map((chunk, index) => ({
+            text: chunk,
+            metadata: {
                 source: processed.filename,
                 filename: processed.filename,
                 mimetype: processed.mimetype,
-                summary: processed.summary, // Add the summary here
-                chunkIndex: processed.chunks.indexOf(chunk),
+                summary: processed.summary,
+                chunkIndex: index,
                 totalChunks: processed.chunks.length,
-                isActive: true // Activate by default
-            });
-            documentIds.push(id);
-        }
+                isActive: false // Set to false by default for admin review
+            }
+        }));
+
+        // Add documents in bulk
+        await vectorStore.addDocuments(chunksToAdd);
 
         res.json({
-            message: 'Document processed successfully',
+            message: 'Document processed and pending review',
             filename: processed.filename,
-            chunks: processed.chunks.length,
-            documentIds
+            chunks: processed.chunks.length
         });
 
     } catch (error) {
@@ -98,24 +99,26 @@ router.post('/url', async (req, res) => {
         const chunks = chunkText(text);
         const summary = await summarizeDocument(text);
 
-        const documentIds = [];
-        for (const chunk of chunks) {
-            const id = await vectorStore.addDocument(chunk, {
+        // Prepare chunks for bulk addition
+        const chunksToAdd = chunks.map((chunk, index) => ({
+            text: chunk,
+            metadata: {
                 source: url,
                 type: 'webpage',
-                summary: summary, // Add the summary here
-                chunkIndex: chunks.indexOf(chunk),
+                summary: summary,
+                chunkIndex: index,
                 totalChunks: chunks.length,
-                isActive: true // Activate by default
-            });
-            documentIds.push(id);
-        }
+                isActive: false // Set to false by default for admin review
+            }
+        }));
+
+        // Add documents in bulk
+        await vectorStore.addDocuments(chunksToAdd);
 
         res.json({
-            message: 'Web page processed successfully',
+            message: 'Web page processed and pending review',
             url,
-            chunks: chunks.length,
-            documentIds
+            chunks: chunks.length
         });
 
     } catch (error) {

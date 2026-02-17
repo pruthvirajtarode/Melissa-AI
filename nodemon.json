@@ -1,5 +1,6 @@
 {
     "ignore": [
+        "data/**/*",
         "backend/data/**/*",
         "backend/uploads/**/*",
         "*.log",

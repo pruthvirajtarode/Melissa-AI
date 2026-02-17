@@ -182,9 +182,15 @@ async function loadAnalytics() {
             storageSizeEl.textContent = formatBytes(data.storageSize);
         } else if (response.status === 401) {
             handleLogout();
+        } else {
+            const error = await response.json();
+            console.error('Analytics failed:', error);
+            totalDocsEl.textContent = 'Err';
+            totalChunksEl.textContent = 'Err';
         }
     } catch (error) {
         console.error('Analytics error:', error);
+        totalDocsEl.textContent = 'Err';
     }
 }
 
@@ -204,10 +210,13 @@ async function loadDocuments() {
             displayDocuments(data.documents);
         } else if (response.status === 401) {
             handleLogout();
+        } else {
+            const error = await response.json();
+            documentsList.innerHTML = `<div class="error-message">Failed to load documents: ${error.error || 'Server error'}</div>`;
         }
     } catch (error) {
         console.error('Documents error:', error);
-        documentsList.innerHTML = '<div class="error-message">Failed to load documents</div>';
+        documentsList.innerHTML = `<div class="error-message">Failed to load documents: ${error.message}</div>`;
     }
 }
 
@@ -258,7 +267,13 @@ function displayDocuments(documents) {
                         <path d="M20 6L9 17L4 12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                 </button>
-                ` : ''}
+                ` : `
+                <button class="btn-icon deactivate" title="Exclude from Chatbot" onclick="deactivateDocumentBySource('${escapeHtml(doc.source)}')">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M18 6L6 18M6 6l12 12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+                `}
                 <button class="btn-icon delete" title="Delete Document" onclick="deleteDocumentBySource('${escapeHtml(doc.source)}')">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                         <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -292,6 +307,32 @@ async function approveDocumentBySource(source) {
     } catch (error) {
         console.error('Approve error:', error);
         alert('Failed to approve document');
+    }
+}
+
+// Deactivate Document By Source
+async function deactivateDocumentBySource(source) {
+    try {
+        const response = await fetch(`${API_URL}/api/admin/document/deactivate`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
+            },
+            body: JSON.stringify({ source })
+        });
+
+        if (response.ok) {
+            loadAnalytics();
+            loadDocuments();
+        } else if (response.status === 401) {
+            handleLogout();
+        } else {
+            alert('Failed to deactivate document');
+        }
+    } catch (error) {
+        console.error('Deactivate error:', error);
+        alert('Failed to deactivate document');
     }
 }
 
@@ -347,8 +388,13 @@ async function handleFileUpload(e) {
             showStatus(fileUploadStatus, `✅ ${data.message} (${data.chunks} chunks created)`, 'success');
             fileUploadForm.reset();
             document.querySelector('.file-label-text').textContent = 'Choose File';
-            loadAnalytics();
-            loadDocuments();
+
+            // Wait a moment for the server to finish all tasks before refreshing
+            console.log('Upload successful, refreshing dashboard in 500ms...');
+            setTimeout(() => {
+                loadAnalytics();
+                loadDocuments();
+            }, 500);
         } else {
             showStatus(fileUploadStatus, `❌ ${data.error}`, 'error');
         }

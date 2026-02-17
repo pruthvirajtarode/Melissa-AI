@@ -21,15 +21,30 @@ class VectorStore {
      */
     async loadStore() {
         try {
+            console.log(`📡 Loading vector store from: ${VECTOR_STORE_PATH}`);
             const data = await fs.readFile(VECTOR_STORE_PATH, 'utf-8');
+
+            if (!data || data.trim() === '') {
+                console.log('📝 Vector store is empty, initializing...');
+                this.documents = [];
+                return;
+            }
+
             this.documents = JSON.parse(data);
             console.log(`✅ Loaded ${this.documents.length} documents from vector store`);
         } catch (error) {
-            console.log('📝 Vector store file not found or unreadable');
-            this.documents = [];
-            // Only try to save a default store if not on Vercel
-            if (!process.env.VERCEL) {
-                await this.saveStore();
+            console.error('❌ Error loading vector store:', error.message);
+
+            // If it's a parse error or memory error, DO NOT overwrite the file
+            if (error instanceof SyntaxError || error.message.includes('memory')) {
+                console.error('⚠️ Critical: Could not parse store.json. Keeping local memory empty but NOT overwriting file.');
+                this.documents = [];
+            } else if (error.code === 'ENOENT') {
+                console.log('📝 Vector store file not found, initializing new store...');
+                this.documents = [];
+            } else {
+                console.error('⚠️ Unexpected error loading store. Using empty memory.');
+                this.documents = [];
             }
         }
     }
@@ -38,6 +53,8 @@ class VectorStore {
      * Save vector store to disk
      */
     async saveStore() {
+        this.groupedCache = null; // Invalidate cache on save
+
         // Vercel has a read-only filesystem. Skip saving there.
         if (process.env.VERCEL) {
             console.log('⚠️ Skipping vector store save (Read-only filesystem on Vercel)');
@@ -45,7 +62,6 @@ class VectorStore {
         }
 
         try {
-            this.groupedCache = null; // Invalidate cache on save
             const dir = path.dirname(VECTOR_STORE_PATH);
             await fs.mkdir(dir, { recursive: true });
             await fs.writeFile(VECTOR_STORE_PATH, JSON.stringify(this.documents, null, 2));
@@ -163,7 +179,7 @@ class VectorStore {
         }
 
         const groups = {};
-        console.log(`🔍 Grouping ${this.documents.length} documents...`);
+        console.log(`🔍 Grouping documents... (Total Chunks: ${this.documents.length})`);
 
         if (!Array.isArray(this.documents)) {
             console.error('❌ this.documents is not an array!');
@@ -172,17 +188,16 @@ class VectorStore {
 
         this.documents.forEach((doc, index) => {
             try {
-                // Ensure doc exists and has at least basic properties
                 if (!doc) return;
 
-                const source = (doc.metadata && doc.metadata.source) || 'Unnamed Content';
+                const source = (doc.metadata && doc.metadata.source) || (doc.metadata && doc.metadata.filename) || 'Unnamed Content';
 
                 if (!groups[source]) {
                     groups[source] = {
                         source: source,
-                        filename: (doc.metadata && doc.metadata.filename) || source,
-                        mimetype: (doc.metadata && doc.metadata.mimetype) || 'text/plain',
-                        type: (doc.metadata && doc.metadata.type) || 'file',
+                        filename: (doc.metadata && doc.metadata.filename) || (doc.metadata && doc.metadata.source) || source,
+                        mimetype: (doc.metadata && doc.metadata.mimetype) || (doc.metadata && doc.type === 'webpage' ? 'text/html' : 'text/plain'),
+                        type: (doc.metadata && doc.metadata.type) || (doc.metadata && doc.metadata.source?.startsWith('http') ? 'webpage' : 'file'),
                         summary: (doc.metadata && doc.metadata.summary) || '',
                         isActive: doc.metadata ? doc.metadata.isActive === true : false,
                         chunks: 0,
@@ -210,7 +225,7 @@ class VectorStore {
             new Date(b.lastModified) - new Date(a.lastModified)
         );
 
-        console.log(`✅ Grouped into ${sorted.length} unique sources`);
+        console.log(`✅ Successfully grouped into ${sorted.length} unique sources`);
         this.groupedCache = sorted;
         return sorted;
     }
@@ -222,8 +237,26 @@ class VectorStore {
         await this.ready;
         let count = 0;
         this.documents.forEach(doc => {
-            if (doc && doc.metadata && doc.metadata.source === source) {
+            if (doc && doc.metadata && (doc.metadata.source === source || doc.metadata.filename === source)) {
                 doc.metadata.isActive = true;
+                count++;
+            }
+        });
+        if (count > 0) {
+            await this.saveStore();
+        }
+        return count;
+    }
+
+    /**
+     * Deactivate all chunks for a specific source
+     */
+    async deactivateBySource(source) {
+        await this.ready;
+        let count = 0;
+        this.documents.forEach(doc => {
+            if (doc && doc.metadata && (doc.metadata.source === source || doc.metadata.filename === source)) {
+                doc.metadata.isActive = false;
                 count++;
             }
         });

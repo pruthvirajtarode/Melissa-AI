@@ -34,13 +34,20 @@ router.post('/', async (req, res) => {
         });
 
         // Search vector store for relevant context (reduced from 5 to 3 for speed)
-        const relevantDocs = await vectorStore.search(message, 3);
+        const relevantDocs = await vectorStore.search(message, 5); // Increased to 5 for better coverage
 
         let context = "";
         const seenSources = new Set();
+        let maxSimilarity = 0;
+
+        console.log(`🔍 Chat Search: found ${relevantDocs.length} potential matches`);
 
         relevantDocs.forEach(doc => {
-            if (doc.similarity > 0.65) {
+            if (doc.similarity > maxSimilarity) maxSimilarity = doc.similarity;
+
+            // Lowered threshold to 0.50 for better recall
+            if (doc.similarity > 0.50) {
+                console.log(`   ✅ Match: ${doc.metadata?.filename} (Score: ${doc.similarity.toFixed(3)})`);
                 // Add the chunk text
                 context += `\n[Source: ${doc.metadata?.filename || doc.metadata?.source}]\n${doc.text}\n`;
 
@@ -49,8 +56,14 @@ router.post('/', async (req, res) => {
                     context += `SUMMARY OF ${doc.metadata.filename || doc.metadata.source}: ${doc.metadata.summary}\n`;
                     seenSources.add(doc.metadata.source);
                 }
+            } else {
+                console.log(`   ❌ Skip: ${doc.metadata?.filename} (Score: ${doc.similarity.toFixed(3)})`);
             }
         });
+
+        if (relevantDocs.length > 0 && !context) {
+            console.warn(`⚠️ No matches passed similarity threshold (Max: ${maxSimilarity.toFixed(3)})`);
+        }
 
         // Generate AI response
         const response = await generateResponse(conversation, context);
@@ -72,8 +85,15 @@ router.post('/', async (req, res) => {
             response,
             conversationId,
             responseTime,
-            contextUsed: relevantDocs.length > 0,
-            relevantDocuments: relevantDocs.length
+            contextUsed: !!context,
+            relevantDocuments: relevantDocs.length,
+            debug: {
+                maxScore: maxSimilarity,
+                topMatches: relevantDocs.slice(0, 3).map(d => ({
+                    source: d.metadata?.filename,
+                    score: d.similarity
+                }))
+            }
         });
 
     } catch (error) {

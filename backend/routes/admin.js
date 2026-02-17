@@ -78,6 +78,23 @@ router.post('/document/approve', authenticateAdmin, async (req, res) => {
 });
 
 /**
+ * POST /api/admin/document/deactivate
+ * Deactivate/Exclude document
+ */
+router.post('/document/deactivate', authenticateAdmin, async (req, res) => {
+    try {
+        const { source } = req.body;
+        if (!source) return res.status(400).json({ error: 'Source is required' });
+
+        const count = await vectorStore.deactivateBySource(source);
+        res.json({ message: 'Document deactivated and removed from chatbot knowledge', chunksDeactivated: count });
+    } catch (error) {
+        console.error('Deactivate error:', error);
+        res.status(500).json({ error: 'Failed to deactivate document' });
+    }
+});
+
+/**
  * DELETE /api/admin/document/:id
  * Delete document
  */
@@ -114,14 +131,32 @@ router.get('/analytics', authenticateAdmin, async (req, res) => {
     try {
         await vectorStore.ready;
         const grouped = await vectorStore.getGroupedDocuments();
+
+        // Efficiently get file size
+        let fileSize = 0;
+        try {
+            const fs = require('fs');
+            // Use the documents array length as a base if file stats fail
+            fileSize = JSON.stringify(vectorStore.documents).length;
+
+            // Try to get real file size from the same path the store uses
+            const storePath = path.join(__dirname, '../../data/vectors/store.json');
+            if (fs.existsSync(storePath)) {
+                fileSize = fs.statSync(storePath).size;
+            }
+        } catch (e) {
+            console.error('File stat error:', e);
+        }
+
         const analytics = {
             totalDocuments: grouped.length,
             totalChunks: vectorStore.documents.length,
-            storageSize: JSON.stringify(vectorStore.documents).length,
+            storageSize: fileSize,
         };
 
         res.json(analytics);
     } catch (error) {
+        console.error('Analytics error:', error);
         res.status(500).json({ error: 'Failed to fetch analytics' });
     }
 });
