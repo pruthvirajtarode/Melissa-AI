@@ -10,10 +10,12 @@ const { summarizeDocument } = require('./openai');
  */
 async function processPDF(buffer) {
     try {
+        console.log(`📄 Parsing PDF (${buffer.length} bytes)...`);
         const data = await pdfParse(buffer);
-        return data.text;
+        console.log(`✅ PDF parsed, extracted ${data.text?.length || 0} characters`);
+        return data.text || '';
     } catch (error) {
-        console.error('PDF processing error:', error);
+        console.error('❌ PDF processing error:', error.message);
         throw new Error('Failed to process PDF');
     }
 }
@@ -25,10 +27,12 @@ async function processPDF(buffer) {
  */
 async function processDOCX(buffer) {
     try {
+        console.log(`📄 Parsing DOCX (${buffer.length} bytes)...`);
         const result = await mammoth.extractRawText({ buffer });
-        return result.value;
+        console.log(`✅ DOCX parsed, extracted ${result.value?.length || 0} characters`);
+        return result.value || '';
     } catch (error) {
-        console.error('DOCX processing error:', error);
+        console.error('❌ DOCX processing error:', error.message);
         throw new Error('Failed to process DOCX');
     }
 }

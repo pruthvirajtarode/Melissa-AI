@@ -163,28 +163,46 @@ class VectorStore {
         }
 
         const groups = {};
+        console.log(`🔍 Grouping ${this.documents.length} documents...`);
 
-        this.documents.forEach(doc => {
-            const source = doc.metadata?.source || 'Unnamed Content';
-            if (!groups[source]) {
-                groups[source] = {
-                    source: source,
-                    filename: doc.metadata?.filename || source,
-                    mimetype: doc.metadata?.mimetype || 'text/plain',
-                    type: doc.metadata?.type || 'file',
-                    summary: doc.metadata?.summary || '',
-                    isActive: doc.metadata?.isActive === true,
-                    chunks: 0,
-                    createdAt: doc.createdAt,
-                    lastModified: doc.createdAt
-                };
-            }
-            groups[source].chunks++;
-            if (new Date(doc.createdAt) < new Date(groups[source].createdAt)) {
-                groups[source].createdAt = doc.createdAt;
-            }
-            if (new Date(doc.createdAt) > new Date(groups[source].lastModified)) {
-                groups[source].lastModified = doc.createdAt;
+        if (!Array.isArray(this.documents)) {
+            console.error('❌ this.documents is not an array!');
+            return [];
+        }
+
+        this.documents.forEach((doc, index) => {
+            try {
+                // Ensure doc exists and has at least basic properties
+                if (!doc) return;
+
+                const source = (doc.metadata && doc.metadata.source) || 'Unnamed Content';
+
+                if (!groups[source]) {
+                    groups[source] = {
+                        source: source,
+                        filename: (doc.metadata && doc.metadata.filename) || source,
+                        mimetype: (doc.metadata && doc.metadata.mimetype) || 'text/plain',
+                        type: (doc.metadata && doc.metadata.type) || 'file',
+                        summary: (doc.metadata && doc.metadata.summary) || '',
+                        isActive: doc.metadata ? doc.metadata.isActive === true : false,
+                        chunks: 0,
+                        createdAt: doc.createdAt || new Date().toISOString(),
+                        lastModified: doc.createdAt || new Date().toISOString()
+                    };
+                }
+
+                groups[source].chunks++;
+
+                if (doc.createdAt) {
+                    if (new Date(doc.createdAt) < new Date(groups[source].createdAt)) {
+                        groups[source].createdAt = doc.createdAt;
+                    }
+                    if (new Date(doc.createdAt) > new Date(groups[source].lastModified)) {
+                        groups[source].lastModified = doc.createdAt;
+                    }
+                }
+            } catch (err) {
+                console.error(`❌ Error grouping document at index ${index}:`, err.message);
             }
         });
 
@@ -192,6 +210,7 @@ class VectorStore {
             new Date(b.lastModified) - new Date(a.lastModified)
         );
 
+        console.log(`✅ Grouped into ${sorted.length} unique sources`);
         this.groupedCache = sorted;
         return sorted;
     }
@@ -203,7 +222,7 @@ class VectorStore {
         await this.ready;
         let count = 0;
         this.documents.forEach(doc => {
-            if (doc.metadata?.source === source) {
+            if (doc && doc.metadata && doc.metadata.source === source) {
                 doc.metadata.isActive = true;
                 count++;
             }
