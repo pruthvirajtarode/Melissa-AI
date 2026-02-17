@@ -30,8 +30,8 @@ if (!process.env.VERCEL && !fs.existsSync(dataDir)) {
 // Default settings
 const defaultSettings = {
     avatarUrl: 'images/melliss-avatar.svg',
-    botName: 'MellissAI12',
-    welcomeMessage: "Hi! I'm MellissAI12, your business development assistant. How can I help you today?"
+    botName: 'MellissAI',
+    welcomeMessage: "Hi! I'm MellissAI, your business development assistant. How can I help you today?"
 };
 
 // Helper to get settings
