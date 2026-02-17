@@ -25,13 +25,16 @@ const urlUploadStatus = document.getElementById('urlUploadStatus');
 // Settings elements
 const botSettingsForm = document.getElementById('botSettingsForm');
 const botNameInput = document.getElementById('botName');
-const avatarUrlInput = document.getElementById('avatarUrl');
 const welcomeMessageInput = document.getElementById('welcomeMessage');
 const settingsStatus = document.getElementById('settingsStatus');
+const undoIdentityBtn = document.getElementById('undoIdentityBtn');
 const avatarUploadForm = document.getElementById('avatarUploadForm');
 const avatarInput = document.getElementById('avatarInput');
 const currentAvatarImg = document.getElementById('currentAvatar');
 const avatarStatus = document.getElementById('avatarStatus');
+const undoAvatarBtn = document.getElementById('undoAvatarBtn');
+
+let originalSettings = null;
 
 // Documents elements
 const documentsList = document.getElementById('documentsList');
@@ -88,6 +91,9 @@ function setupEventListeners() {
     urlUploadForm.addEventListener('submit', handleUrlUpload);
 
     botSettingsForm.addEventListener('submit', handleSettingsUpdate);
+    avatarUploadForm.addEventListener('submit', handleAvatarUpload);
+    undoIdentityBtn.addEventListener('click', handleUndoIdentity);
+    undoAvatarBtn.addEventListener('click', handleUndoAvatar);
 
     refreshDocsBtn.addEventListener('click', loadDocuments);
     refreshConvsBtn.addEventListener('click', loadConversations);
@@ -542,10 +548,15 @@ async function loadSettings() {
         const response = await fetch(`${API_URL}/api/settings`);
         if (response.ok) {
             const settings = await response.json();
+            originalSettings = { ...settings }; // Store original state
+
             botNameInput.value = settings.botName || 'MellissAI12';
-            avatarUrlInput.value = settings.avatarUrl || 'images/melliss-avatar.svg';
             welcomeMessageInput.value = settings.welcomeMessage || '';
             currentAvatarImg.src = settings.avatarUrl || 'images/melliss-avatar.svg';
+
+            // Show undo buttons
+            undoIdentityBtn.style.display = 'block';
+            undoAvatarBtn.style.display = 'block';
         }
     } catch (error) {
         console.error('Settings load error:', error);
@@ -557,7 +568,6 @@ async function handleSettingsUpdate(e) {
     e.preventDefault();
 
     const botName = botNameInput.value.trim();
-    const avatarUrl = avatarUrlInput.value.trim();
     const welcomeMessage = welcomeMessageInput.value.trim();
 
     showStatus(settingsStatus, 'Updating settings...', 'loading');
@@ -569,10 +579,13 @@ async function handleSettingsUpdate(e) {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${authToken}`
             },
-            body: JSON.stringify({ botName, welcomeMessage, avatarUrl })
+            body: JSON.stringify({ botName, welcomeMessage })
         });
 
         if (response.ok) {
+            const data = await response.json();
+            originalSettings.botName = data.settings.botName;
+            originalSettings.welcomeMessage = data.settings.welcomeMessage;
             showStatus(settingsStatus, '✅ Settings saved', 'success');
         } else {
             showStatus(settingsStatus, '❌ Update failed', 'error');
@@ -606,16 +619,54 @@ async function handleAvatarUpload(e) {
 
         if (response.ok) {
             const data = await response.json();
+            originalSettings.avatarUrl = data.avatarUrl; // Update original to new good one
             showStatus(avatarStatus, '✅ Avatar updated', 'success');
             currentAvatarImg.src = data.avatarUrl;
             avatarUploadForm.reset();
-            document.querySelector('.avatar-label-text').textContent = 'New Avatar';
+            document.querySelector('.avatar-label-text').textContent = 'Select New Photo';
         } else {
             showStatus(avatarStatus, '❌ Upload failed', 'error');
         }
     } catch (error) {
         console.error('Avatar upload error:', error);
         showStatus(avatarStatus, '❌ Error uploading avatar', 'error');
+    }
+}
+
+// Undo Identity Changes
+function handleUndoIdentity() {
+    if (!originalSettings) return;
+    botNameInput.value = originalSettings.botName || 'MellissAI12';
+    welcomeMessageInput.value = originalSettings.welcomeMessage || '';
+    showStatus(settingsStatus, 'Restored previous identity values', 'success');
+}
+
+// Undo Avatar Changes
+async function handleUndoAvatar() {
+    if (!originalSettings || !originalSettings.avatarUrl) return;
+
+    showStatus(avatarStatus, 'Restoring previous avatar...', 'loading');
+
+    try {
+        // Save the original URL back to settings
+        const response = await fetch(`${API_URL}/api/settings/update`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
+            },
+            body: JSON.stringify({ avatarUrl: originalSettings.avatarUrl })
+        });
+
+        if (response.ok) {
+            currentAvatarImg.src = originalSettings.avatarUrl;
+            showStatus(avatarStatus, '✅ Previous photo restored', 'success');
+        } else {
+            showStatus(avatarStatus, '❌ Restore failed', 'error');
+        }
+    } catch (error) {
+        console.error('Undo avatar error:', error);
+        showStatus(avatarStatus, '❌ Error restoring photo', 'error');
     }
 }
 
