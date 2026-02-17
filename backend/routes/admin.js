@@ -51,9 +51,9 @@ router.post('/login', async (req, res) => {
  * GET /api/admin/documents
  * Get all documents
  */
-router.get('/documents', authenticateAdmin, (req, res) => {
+router.get('/documents', authenticateAdmin, async (req, res) => {
     try {
-        const documents = vectorStore.getGroupedDocuments();
+        const documents = await vectorStore.getGroupedDocuments();
         res.json({ documents });
     } catch (error) {
         res.status(500).json({ error: 'Failed to fetch documents' });
@@ -110,9 +110,10 @@ router.post('/reindex', authenticateAdmin, async (req, res) => {
  * GET /api/admin/analytics
  * Get usage analytics
  */
-router.get('/analytics', authenticateAdmin, (req, res) => {
+router.get('/analytics', authenticateAdmin, async (req, res) => {
     try {
-        const grouped = vectorStore.getGroupedDocuments();
+        await vectorStore.ready;
+        const grouped = await vectorStore.getGroupedDocuments();
         const analytics = {
             totalDocuments: grouped.length,
             totalChunks: vectorStore.documents.length,

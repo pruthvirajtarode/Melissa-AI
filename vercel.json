@@ -7,7 +7,7 @@
             "config": {
                 "includeFiles": [
                     "frontend/**",
-                    "data/vectors/.gitkeep"
+                    "data/vectors/store.json"
                 ]
             }
         }

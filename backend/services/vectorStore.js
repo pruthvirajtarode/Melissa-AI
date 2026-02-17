@@ -2,8 +2,8 @@ const fs = require('fs').promises;
 const path = require('path');
 const { generateEmbedding } = require('./openai');
 
-// Use process.cwd() for better compatibility with Vercel/Serverless
-const VECTOR_STORE_PATH = path.join(process.cwd(), 'data/vectors/store.json');
+// Use __dirname for better compatibility with Vercel/Serverless
+const VECTOR_STORE_PATH = path.join(__dirname, '../../data/vectors/store.json');
 
 /**
  * Simple in-memory vector store
@@ -13,19 +13,13 @@ class VectorStore {
     constructor() {
         this.documents = [];
         this.groupedCache = null; // Cache for grouped documents
-        this.loadStore();
+        this.ready = this.loadStore();
     }
 
     /**
      * Load vector store from disk
      */
     async loadStore() {
-        if (process.env.VERCEL) {
-            console.log('🌐 Vercel detected: Skipping local disk load/save');
-            this.documents = [];
-            return;
-        }
-
         try {
             const data = await fs.readFile(VECTOR_STORE_PATH, 'utf-8');
             this.documents = JSON.parse(data);
@@ -33,7 +27,10 @@ class VectorStore {
         } catch (error) {
             console.log('📝 Vector store file not found or unreadable');
             this.documents = [];
-            await this.saveStore();
+            // Only try to save a default store if not on Vercel
+            if (!process.env.VERCEL) {
+                await this.saveStore();
+            }
         }
     }
 
@@ -114,6 +111,7 @@ class VectorStore {
      * @returns {Promise<Array>} Top matching documents
      */
     async search(query, topK = 3) {
+        await this.ready;
         try {
             // Filter for active documents only
             const activeDocs = this.documents.filter(doc => doc.metadata?.isActive === true);
@@ -156,7 +154,8 @@ class VectorStore {
     /**
      * Get all unique document sources with caching
      */
-    getGroupedDocuments() {
+    async getGroupedDocuments() {
+        await this.ready;
         if (this.groupedCache) {
             return this.groupedCache;
         }

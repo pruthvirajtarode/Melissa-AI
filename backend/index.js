@@ -16,7 +16,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Serve static files from frontend directory
-app.use(express.static(path.join(process.cwd(), 'frontend')));
+app.use(express.static(path.join(__dirname, '../frontend')));
 
 // API Routes
 app.use('/api/chat', chatRoutes);
@@ -31,7 +31,7 @@ app.get('/api/health', (req, res) => {
 
 // Serve main app
 app.get('/', (req, res) => {
-  res.sendFile(path.join(process.cwd(), 'frontend/index.html'));
+  res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
 
 // Error handling middleware
@@ -43,7 +43,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+if (!process.env.VERCEL) {
   app.listen(PORT, () => {
     console.log(`🚀 MellissAI Server running on port ${PORT}`);
     console.log(`📊 Admin dashboard: http://localhost:${PORT}/admin.html`);

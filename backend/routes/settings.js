@@ -21,9 +21,9 @@ const authenticateAdmin = (req, res, next) => {
 // Settings file path
 const SETTINGS_FILE = path.join(__dirname, '../../data/settings.json');
 
-// Ensure data directory exists
+// Ensure data directory exists (Skip on Vercel as it's read-only)
 const dataDir = path.join(__dirname, '../../data');
-if (!fs.existsSync(dataDir)) {
+if (!process.env.VERCEL && !fs.existsSync(dataDir)) {
     fs.mkdirSync(dataDir, { recursive: true });
 }
 
