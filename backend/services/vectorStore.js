@@ -61,6 +61,7 @@ class VectorStore {
     * @param {boolean} skipSave - Whether to skip saving to disk (for bulk operations)
     */
     async addDocument(text, metadata = {}, skipSave = false) {
+        await this.ready;
         try {
             const embedding = await generateEmbedding(text);
 
@@ -92,6 +93,7 @@ class VectorStore {
      * @param {Array<{text: string, metadata: object}>} docs - Array of documents
      */
     async addDocuments(docs) {
+        await this.ready;
         console.log(`📥 Adding ${docs.length} documents to vector store...`);
         for (let i = 0; i < docs.length; i++) {
             const { text, metadata } = docs[i];
@@ -198,6 +200,7 @@ class VectorStore {
      * Approve/Activate all chunks for a specific source
      */
     async approveBySource(source) {
+        await this.ready;
         let count = 0;
         this.documents.forEach(doc => {
             if (doc.metadata?.source === source) {
@@ -215,6 +218,7 @@ class VectorStore {
      * Delete all chunks for a specific source
      */
     async deleteBySource(source) {
+        await this.ready;
         const initialCount = this.documents.length;
         this.documents = this.documents.filter(doc => doc.metadata?.source !== source);
         const deletedCount = initialCount - this.documents.length;
@@ -226,6 +230,7 @@ class VectorStore {
      * Delete document by ID
      */
     async deleteDocument(id) {
+        await this.ready;
         this.documents = this.documents.filter(doc => doc.id !== id);
         await this.saveStore();
     }
@@ -234,6 +239,7 @@ class VectorStore {
      * Clear all documents
      */
     async clearAll() {
+        await this.ready;
         this.documents = [];
         await this.saveStore();
     }
@@ -242,6 +248,7 @@ class VectorStore {
      * Re-index all documents (regenerate embeddings)
      */
     async reindex() {
+        await this.ready;
         console.log('🔄 Re-indexing documents and generating missing summaries...');
         const { summarizeDocument } = require('./openai');
 

@@ -106,6 +106,7 @@ function chunkText(text, chunkSize = 1000, overlap = 200) {
  */
 async function processDocument(buffer, mimetype, filename) {
     let text = '';
+    console.log(`📄 Processing document: ${filename} (${mimetype})`);
 
     try {
         if (mimetype === 'application/pdf') {
@@ -118,11 +119,28 @@ async function processDocument(buffer, mimetype, filename) {
             throw new Error(`Unsupported file type: ${mimetype}`);
         }
 
+        // Clean text - removing excessive whitespace but keeping meaningful content
+        text = text.trim();
+        console.log(`📊 Extracted ${text.length} characters of text`);
+
+        if (text.length === 0) {
+            console.warn('⚠️ Extracted text is empty!');
+        }
+
         // Chunk the text
         const chunks = chunkText(text);
+        console.log(`🧩 Created ${chunks.length} chunks`);
 
-        // Generate summary
-        const summary = await summarizeDocument(text);
+        // Generate summary - even if text is small
+        let summary = 'Summary of the uploaded content.';
+        try {
+            if (text.length > 50) {
+                summary = await summarizeDocument(text);
+                console.log('✅ Generated summary');
+            }
+        } catch (sumErr) {
+            console.error('Error generating summary:', sumErr.message);
+        }
 
         return {
             filename,
@@ -140,7 +158,7 @@ async function processDocument(buffer, mimetype, filename) {
             }
         };
     } catch (error) {
-        console.error('Document processing error:', error);
+        console.error(`❌ Document processing error (${filename}):`, error.message);
         throw error;
     }
 }

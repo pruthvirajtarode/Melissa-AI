@@ -35,9 +35,11 @@ const upload = multer({
 router.post('/', upload.single('file'), async (req, res) => {
     try {
         if (!req.file) {
+            console.warn('⚠️ No file received in upload request');
             return res.status(400).json({ error: 'No file uploaded' });
         }
 
+        console.log(`📥 Received file: ${req.file.originalname} (${req.file.mimetype}), Size: ${req.file.size} bytes`);
         const buffer = req.file.buffer;
 
         // Process document
