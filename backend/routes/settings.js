@@ -113,10 +113,11 @@ router.post('/avatar', authenticateAdmin, uploadAvatar.single('avatar'), (req, r
  */
 router.post('/update', authenticateAdmin, (req, res) => {
     try {
-        const { botName, welcomeMessage } = req.body;
+        const { botName, welcomeMessage, avatarUrl } = req.body;
         const settings = getSettings();
         if (botName) settings.botName = botName;
         if (welcomeMessage) settings.welcomeMessage = welcomeMessage;
+        if (avatarUrl) settings.avatarUrl = avatarUrl;
         saveSettings(settings);
         res.json({ message: 'Saved', settings });
     } catch (error) {

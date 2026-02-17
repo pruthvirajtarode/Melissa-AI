@@ -171,7 +171,13 @@
                         <form id="botSettingsForm">
                             <div class="form-group">
                                 <label for="botName">Bot Name</label>
-                                <input type="text" id="botName" class="form-input" placeholder="MellissAI">
+                                <input type="text" id="botName" class="form-input" placeholder="e.g. MellissAI"
+                                    required>
+                            </div>
+                            <div class="form-group">
+                                <label for="avatarUrl">Bot Avatar URL</label>
+                                <input type="url" id="avatarUrl" class="form-input"
+                                    placeholder="Link to your photo (e.g. https://...)" required>
                             </div>
                             <div class="form-group">
                                 <label for="welcomeMessage">Welcome Message</label>

@@ -25,6 +25,7 @@ const urlUploadStatus = document.getElementById('urlUploadStatus');
 // Settings elements
 const botSettingsForm = document.getElementById('botSettingsForm');
 const botNameInput = document.getElementById('botName');
+const avatarUrlInput = document.getElementById('avatarUrl');
 const welcomeMessageInput = document.getElementById('welcomeMessage');
 const settingsStatus = document.getElementById('settingsStatus');
 const avatarUploadForm = document.getElementById('avatarUploadForm');
@@ -542,9 +543,10 @@ async function loadSettings() {
         const response = await fetch(`${API_URL}/api/settings`);
         if (response.ok) {
             const settings = await response.json();
-            botNameInput.value = settings.botName || 'MellissAI';
+            botNameInput.value = settings.botName || 'MellissAI12';
+            avatarUrlInput.value = settings.avatarUrl || 'images/melliss-avatar.svg';
             welcomeMessageInput.value = settings.welcomeMessage || '';
-            currentAvatarImg.src = settings.avatarUrl || 'images/Melliss-avatar.svg';
+            currentAvatarImg.src = settings.avatarUrl || 'images/melliss-avatar.svg';
         }
     } catch (error) {
         console.error('Settings load error:', error);
@@ -556,6 +558,7 @@ async function handleSettingsUpdate(e) {
     e.preventDefault();
 
     const botName = botNameInput.value.trim();
+    const avatarUrl = avatarUrlInput.value.trim();
     const welcomeMessage = welcomeMessageInput.value.trim();
 
     showStatus(settingsStatus, 'Updating settings...', 'loading');
@@ -567,7 +570,7 @@ async function handleSettingsUpdate(e) {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${authToken}`
             },
-            body: JSON.stringify({ botName, welcomeMessage })
+            body: JSON.stringify({ botName, welcomeMessage, avatarUrl })
         });
 
         if (response.ok) {
