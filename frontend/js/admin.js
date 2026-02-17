@@ -88,7 +88,6 @@ function setupEventListeners() {
     urlUploadForm.addEventListener('submit', handleUrlUpload);
 
     botSettingsForm.addEventListener('submit', handleSettingsUpdate);
-    avatarUploadForm.addEventListener('submit', handleAvatarUpload);
 
     refreshDocsBtn.addEventListener('click', loadDocuments);
     refreshConvsBtn.addEventListener('click', loadConversations);

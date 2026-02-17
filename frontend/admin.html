@@ -165,51 +165,38 @@
             <section class="settings-section">
                 <h2 class="section-title">Bot Settings</h2>
                 <div class="settings-grid">
-                    <div class="settings-card">
+                    <div class="settings-card portrait-card">
                         <h3>🤖 Bot Identity</h3>
                         <p class="settings-desc">Customize your AI's name and appearance</p>
+
+                        <!-- Added Preview directly here -->
+                        <div class="avatar-preview-container" style="margin-bottom: 20px;">
+                            <p style="font-size: 0.8rem; color: #666; margin-bottom: 8px;">Current Portrait:</p>
+                            <img id="currentAvatar" src="images/melliss-avatar.svg" alt="Preview"
+                                class="avatar-preview-img">
+                        </div>
+
                         <form id="botSettingsForm">
                             <div class="form-group">
                                 <label for="botName">Bot Name</label>
-                                <input type="text" id="botName" class="form-input" placeholder="e.g. MellissAI"
+                                <input type="text" id="botName" class="form-input" placeholder="e.g. MellissAI12"
                                     required>
                             </div>
                             <div class="form-group">
                                 <label for="avatarUrl">Bot Avatar URL</label>
                                 <input type="url" id="avatarUrl" class="form-input"
-                                    placeholder="Link to your photo (e.g. https://...)" required>
+                                    placeholder="Paste link (e.g. https://...)" required>
+                                <small style="color: #666;">Note: Use a URL since Vercel does not support direct file
+                                    uploads.</small>
                             </div>
                             <div class="form-group">
                                 <label for="welcomeMessage">Welcome Message</label>
                                 <textarea id="welcomeMessage" class="form-input" rows="2"
                                     placeholder="Hi! I'm MellissAI..."></textarea>
                             </div>
-                            <button type="submit" class="btn-primary btn-block">Save Identity</button>
+                            <button type="submit" class="btn-primary btn-block">Save Complete Identity</button>
                         </form>
                         <div class="upload-status" id="settingsStatus"></div>
-                    </div>
-
-                    <div class="settings-card">
-                        <h3>🖼️ Bot Avatar</h3>
-                        <p class="settings-desc">Upload a custom avatar for the chatbot</p>
-                        <div class="avatar-preview-container">
-                            <img id="currentAvatar" src="images/melissa-avatar.svg" alt="Preview"
-                                class="avatar-preview-img">
-                        </div>
-                        <form id="avatarUploadForm">
-                            <div class="file-input-wrapper">
-                                <input type="file" id="avatarInput" accept=".png,.jpg,.jpeg,.svg,.webp" required>
-                                <label for="avatarInput" class="avatar-file-label">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"
-                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                    </svg>
-                                    <span class="avatar-label-text">New Avatar</span>
-                                </label>
-                            </div>
-                            <button type="submit" class="btn-primary btn-block">Update Avatar</button>
-                        </form>
-                        <div class="upload-status" id="avatarStatus"></div>
                     </div>
                 </div>
             </section>
