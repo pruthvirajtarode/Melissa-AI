@@ -76,10 +76,10 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/pruthvirajTarode/Melliss-AI.git
+git clone https://github.com/pruthvirajtarode/Melissa-AI.git
 
 # Navigate to project directory
-cd "MellissAI-Business Development Chatbot"
+cd Melissa-AI
 
 # Install dependencies
 npm install
@@ -337,7 +337,7 @@ file: [PDF/DOCX/TXT file]
 - ✅ Global CDN for fast access
 - ✅ Zero-config deployment
 
-[![Deploy to Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/pruthvirajTarode/Melliss-AI)
+[![Deploy to Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/pruthvirajtarode/Melissa-AI)
 
 ### 📱 Mobile App
 
@@ -479,7 +479,7 @@ We welcome contributions! Here's how:
 Need help? Have questions?
 
 - 📧 **Email:** support@melissaai.com
-- 💬 **GitHub Issues:** [Open an issue](https://github.com/pruthvirajTarode/Melliss-AI/issues)
+- 💬 **GitHub Issues:** [Open an issue](https://github.com/pruthvirajtarode/Melissa-AI/issues)
 - 🌐 **Live Demo:** [melissa-ai.vercel.app](https://melissa-ai.vercel.app)
 
 ---
@@ -488,8 +488,8 @@ Need help? Have questions?
 
 ### 🌟 Star this repo if you find it helpful!
 
-[![GitHub stars](https://img.shields.io/github/stars/pruthvirajTarode/Melliss-AI?style=social)](https://github.com/pruthvirajTarode/Melliss-AI/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/pruthvirajTarode/Melliss-AI?style=social)](https://github.com/pruthvirajTarode/Melliss-AI/network/members)
+[![GitHub stars](https://img.shields.io/github/stars/pruthvirajtarode/Melissa-AI?style=social)](https://github.com/pruthvirajtarode/Melissa-AI/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/pruthvirajtarode/Melissa-AI?style=social)](https://github.com/pruthvirajtarode/Melissa-AI/network/members)
 
 ---
 
