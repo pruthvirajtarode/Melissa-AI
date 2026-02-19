@@ -63,11 +63,16 @@ window.addEventListener('load', async function () {
     // Check if embedded in iframe
     const isEmbedded = window.self !== window.top;
     if (isEmbedded) {
-        // When embedded, we usually want to show the chat window directly
-        // and let the parent handle the trigger button
+        // When embedded, we strictly show the chat window and hide the internal trigger
         widgetContainer.classList.add('active');
         widgetContainer.classList.add('embedded');
-        widgetButton.style.display = 'none';
+        widgetButton.classList.add('hidden');
+        widgetButton.style.setProperty('display', 'none', 'important');
+
+        // Also hide the close button if we want the parent to manage it
+        if (widgetClose) {
+            widgetClose.style.display = 'none';
+        }
     }
 
     // Apply settings

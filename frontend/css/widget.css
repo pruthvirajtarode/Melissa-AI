@@ -17,6 +17,12 @@ body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
+/* Hide internal elements when embedded in another page */
+.is-embedded .widget-button,
+.is-embedded .widget-close {
+    display: none !important;
+}
+
 /* Widget Button */
 .widget-button {
     position: fixed;
