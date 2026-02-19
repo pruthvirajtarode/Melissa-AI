@@ -36,6 +36,7 @@ const avatarStatus = document.getElementById('avatarStatus');
 const undoAvatarBtn = document.getElementById('undoAvatarBtn');
 
 let originalSettings = null;
+let previousAvatarUrl = null;
 
 // Documents elements
 const documentsList = document.getElementById('documentsList');
@@ -556,6 +557,9 @@ async function loadSettings() {
             avatarUrlInput.value = settings.avatarUrl || 'images/melliss-avatar.svg';
             currentAvatarImg.src = settings.avatarUrl || 'images/melliss-avatar.svg';
 
+            // Set initial previous URL
+            previousAvatarUrl = settings.avatarUrl;
+
             // Show undo buttons
             undoIdentityBtn.style.display = 'block';
             undoAvatarBtn.style.display = 'block';
@@ -626,9 +630,17 @@ async function handleAvatarUpload(e) {
 
         if (response.ok) {
             const data = await response.json();
-            originalSettings.avatarUrl = data.avatarUrl; // Update original to new good one
+
+            // Save the one that was there BEFORE this successful upload
+            previousAvatarUrl = originalSettings.avatarUrl;
+
+            // Update original settings to reflect current DB state
+            originalSettings.avatarUrl = data.avatarUrl;
+
             showStatus(avatarStatus, '✅ Avatar updated', 'success');
             currentAvatarImg.src = data.avatarUrl;
+            avatarUrlInput.value = data.avatarUrl; // Keep URL field in sync
+
             avatarUploadForm.reset();
             document.querySelector('.avatar-label-text').textContent = 'Select New Photo';
         } else {
@@ -641,6 +653,74 @@ async function handleAvatarUpload(e) {
     }
 }
 
+async function handleUndoAvatar() {
+    if (!previousAvatarUrl) {
+        showStatus(avatarStatus, 'ℹ️ No previous photo to restore', 'error');
+        return;
+    }
+
+    showStatus(avatarStatus, 'Restoring previous photo...', 'loading');
+
+    try {
+        const response = await fetch(`${API_URL}/api/settings/update`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
+            },
+            body: JSON.stringify({ avatarUrl: previousAvatarUrl })
+        });
+
+        if (response.ok) {
+            // Success! The "current" is now the one we just restored
+            const restoredUrl = previousAvatarUrl;
+
+            // Swap them so another "Undo" would take us back to the one we just had (Toggle behavior)
+            previousAvatarUrl = originalSettings.avatarUrl;
+            originalSettings.avatarUrl = restoredUrl;
+
+            currentAvatarImg.src = restoredUrl;
+            avatarUrlInput.value = restoredUrl;
+
+            showStatus(avatarStatus, '✅ Photo restored', 'success');
+        } else {
+            showStatus(avatarStatus, '❌ Restore failed', 'error');
+        }
+    } catch (error) {
+        console.error('Undo avatar error:', error);
+        showStatus(avatarStatus, '❌ Error restoring photo', 'error');
+    }
+}
+
+// Dedicated function to restore a specific avatar URL (used as helper)
+async function restoreAvatar(url) {
+    if (!url) return;
+    showStatus(avatarStatus, 'Restoring photo...', 'loading');
+    try {
+        const response = await fetch(`${API_URL}/api/settings/update`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
+            },
+            body: JSON.stringify({ avatarUrl: url })
+        });
+
+        if (response.ok) {
+            currentAvatarImg.src = url;
+            previousAvatarUrl = originalSettings.avatarUrl;
+            originalSettings.avatarUrl = url;
+            avatarUrlInput.value = url;
+            showStatus(avatarStatus, '✅ Photo restored', 'success');
+        } else {
+            showStatus(avatarStatus, '❌ Restore failed', 'error');
+        }
+    } catch (error) {
+        console.error('Restore error:', error);
+        showStatus(avatarStatus, '❌ Error restoring photo', 'error');
+    }
+}
+
 // Undo Identity Changes
 function handleUndoIdentity() {
     if (!originalSettings) return;
@@ -650,34 +730,7 @@ function handleUndoIdentity() {
     showStatus(settingsStatus, 'Restored previous identity values', 'success');
 }
 
-// Undo Avatar Changes
-async function handleUndoAvatar() {
-    if (!originalSettings || !originalSettings.avatarUrl) return;
 
-    showStatus(avatarStatus, 'Restoring previous avatar...', 'loading');
-
-    try {
-        // Save the original URL back to settings
-        const response = await fetch(`${API_URL}/api/settings/update`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${authToken}`
-            },
-            body: JSON.stringify({ avatarUrl: originalSettings.avatarUrl })
-        });
-
-        if (response.ok) {
-            currentAvatarImg.src = originalSettings.avatarUrl;
-            showStatus(avatarStatus, '✅ Previous photo restored', 'success');
-        } else {
-            showStatus(avatarStatus, '❌ Restore failed', 'error');
-        }
-    } catch (error) {
-        console.error('Undo avatar error:', error);
-        showStatus(avatarStatus, '❌ Error restoring photo', 'error');
-    }
-}
 
 // Load Conversations
 async function loadConversations() {
