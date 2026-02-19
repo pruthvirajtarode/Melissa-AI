@@ -36,6 +36,7 @@ const undoAvatarBtn = document.getElementById('undoAvatarBtn');
 
 let originalSettings = null;
 let previousAvatarUrl = null;
+let previousIdentity = null;
 
 // Documents elements
 const documentsList = document.getElementById('documentsList');
@@ -555,8 +556,9 @@ async function loadSettings() {
             welcomeMessageInput.value = settings.welcomeMessage || '';
             currentAvatarImg.src = settings.avatarUrl || 'images/mellissai-new-avatar.jpg';
 
-            // On fresh load, we don't have a "previous" photo in memory yet
+            // Initialize previous states
             previousAvatarUrl = null;
+            previousIdentity = null;
 
             // Show undo buttons
             undoIdentityBtn.style.display = 'block';
@@ -588,6 +590,13 @@ async function handleSettingsUpdate(e) {
 
         if (response.ok) {
             const data = await response.json();
+
+            // Store previous identity before updating
+            previousIdentity = {
+                botName: originalSettings.botName,
+                welcomeMessage: originalSettings.welcomeMessage
+            };
+
             // Update our local memory of the current settings
             originalSettings = { ...data.settings };
 
@@ -716,9 +725,27 @@ async function restoreAvatar(url) {
 
 // Undo Identity Changes
 function handleUndoIdentity() {
-    if (!originalSettings) return;
-    botNameInput.value = originalSettings.botName || 'MellissAI';
-    welcomeMessageInput.value = originalSettings.welcomeMessage || '';
+    if (!previousIdentity) {
+        // If no previous save, just reset to original loaded state
+        botNameInput.value = originalSettings.botName || 'MellissAI';
+        welcomeMessageInput.value = originalSettings.welcomeMessage || '';
+        showStatus(settingsStatus, 'Restored to last saved values', 'success');
+        return;
+    }
+
+    // Toggle/Restore logic
+    const currentName = botNameInput.value.trim();
+    const currentMsg = welcomeMessageInput.value.trim();
+
+    botNameInput.value = previousIdentity.botName;
+    welcomeMessageInput.value = previousIdentity.welcomeMessage;
+
+    // Allow toggling back
+    previousIdentity = {
+        botName: currentName,
+        welcomeMessage: currentMsg
+    };
+
     showStatus(settingsStatus, 'Restored previous identity values', 'success');
 }
 
