@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const vectorStore = require('../services/vectorStore');
 const { SYSTEM_PROMPT } = require('../services/openai');
+const Knowledge = require('../models/Knowledge');
 
 // Simple authentication middleware
 const authenticateAdmin = (req, res, next) => {
@@ -123,7 +124,7 @@ router.post('/reindex', authenticateAdmin, async (req, res) => {
     }
 });
 
-const Knowledge = require('../models/Knowledge');
+
 
 /**
  * GET /api/admin/analytics

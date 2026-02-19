@@ -10,38 +10,59 @@ class VectorStore {
     }
 
     /**
-     * Add document chunks to MongoDB
+     * Add document chunks to MongoDB with parallel embedding generation
      * @param {Array<{text: string, metadata: object}>} docs - Array of documents
      */
+    async asyncPool(poolLimit, array, iteratorFn) {
+        const ret = [];
+        const executing = [];
+        for (const item of array) {
+            const p = Promise.resolve().then(() => iteratorFn(item, array));
+            ret.push(p);
+
+            if (poolLimit <= array.length) {
+                const e = p.then(() => executing.splice(executing.indexOf(e), 1));
+                executing.push(e);
+                if (executing.length >= poolLimit) {
+                    await Promise.race(executing);
+                }
+            }
+        }
+        return Promise.all(ret);
+    }
+
     async addDocuments(docs) {
         try {
             console.log(`📥 Adding ${docs.length} documents to MongoDB...`);
+            const startTime = Date.now();
 
-            const chunksToInsert = [];
-            for (let i = 0; i < docs.length; i++) {
-                const { text, metadata } = docs[i];
-                const embedding = await generateEmbedding(text);
-
-                chunksToInsert.push({
-                    text,
-                    embedding,
-                    metadata: {
-                        ...metadata,
-                        isActive: metadata.isActive !== undefined ? metadata.isActive : false
-                    }
-                });
-
-                if ((i + 1) % 10 === 0) {
-                    console.log(`   Processed ${i + 1}/${docs.length} chunks...`);
+            // Process embeddings in parallel batches for speed
+            const batchSize = 5;
+            const chunksToInsert = await this.asyncPool(batchSize, docs, async (doc, idx) => {
+                const { text, metadata } = doc;
+                try {
+                    const embedding = await generateEmbedding(text);
+                    return {
+                        text,
+                        embedding,
+                        metadata: {
+                            ...metadata,
+                            isActive: metadata.isActive !== undefined ? metadata.isActive : false
+                        }
+                    };
+                } catch (embErr) {
+                    console.error(`❌ Embedding generation failed for chunk:`, embErr.message);
+                    throw embErr;
                 }
-            }
+            });
 
             if (chunksToInsert.length > 0) {
                 await Knowledge.insertMany(chunksToInsert);
             }
 
             this.groupedCache = null; // Invalidate cache
-            console.log('✅ Bulk addition to MongoDB complete');
+            const duration = ((Date.now() - startTime) / 1000).toFixed(1);
+            console.log(`✅ Bulk addition to MongoDB complete in ${duration}s`);
         } catch (error) {
             console.error('❌ Error in addDocuments:', error.message);
             throw error;
@@ -80,6 +101,7 @@ class VectorStore {
     }
 
     cosineSimilarity(vecA, vecB) {
+        if (!vecA || !vecB || vecA.length !== vecB.length) return 0;
         let dotProduct = 0;
         for (let i = 0; i < vecA.length; i++) {
             dotProduct += vecA[i] * vecB[i];
@@ -110,11 +132,15 @@ class VectorStore {
                 { $sort: { lastModified: -1 } }
             ]);
 
-            return grouped.map(g => ({
-                ...g,
-                id: g._id, // Add an id for frontend compatibility
-                type: g.source.startsWith('http') ? 'webpage' : 'file'
-            }));
+            return grouped.map(g => {
+                const source = g.source || 'Unknown Source';
+                return {
+                    ...g,
+                    id: g._id || Math.random().toString(36).substr(2, 9),
+                    source,
+                    type: (source && typeof source === 'string' && source.startsWith('http')) ? 'webpage' : 'file'
+                };
+            });
         } catch (error) {
             console.error('Aggregation error:', error);
             return [];
@@ -162,3 +188,4 @@ class VectorStore {
 }
 
 module.exports = new VectorStore();
+
