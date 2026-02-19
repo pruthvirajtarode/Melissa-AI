@@ -2,11 +2,12 @@ const pdfParse = require('pdf-parse');
 const mammoth = require('mammoth');
 const axios = require('axios');
 const cheerio = require('cheerio');
+const xlsx = require('xlsx');
+const officeparser = require('officeparser');
 const { summarizeDocument } = require('./openai');
+
 /**
  * Process PDF file and extract text
- * @param {Buffer} buffer - PDF file buffer
- * @returns {Promise<string>} Extracted text
  */
 async function processPDF(buffer) {
     try {
@@ -22,8 +23,6 @@ async function processPDF(buffer) {
 
 /**
  * Process DOCX file and extract text
- * @param {Buffer} buffer - DOCX file buffer
- * @returns {Promise<string>} Extracted text
  */
 async function processDOCX(buffer) {
     try {
@@ -34,6 +33,46 @@ async function processDOCX(buffer) {
     } catch (error) {
         console.error('❌ DOCX processing error:', error.message);
         throw new Error('Failed to process DOCX');
+    }
+}
+
+/**
+ * Process XLSX file and extract text
+ */
+async function processXLSX(buffer) {
+    try {
+        console.log(`📄 Parsing XLSX (${buffer.length} bytes)...`);
+        const workbook = xlsx.read(buffer, { type: 'buffer' });
+        let text = '';
+        workbook.SheetNames.forEach(sheetName => {
+            const worksheet = workbook.Sheets[sheetName];
+            text += `\n--- Sheet: ${sheetName} ---\n`;
+            text += xlsx.utils.sheet_to_txt(worksheet);
+        });
+        console.log(`✅ XLSX parsed, extracted ${text.length} characters`);
+        return text;
+    } catch (error) {
+        console.error('❌ XLSX processing error:', error.message);
+        throw new Error('Failed to process XLSX');
+    }
+}
+
+/**
+ * Process PPTX file and extract text
+ */
+async function processPPTX(buffer) {
+    try {
+        console.log(`📄 Parsing PPTX (${buffer.length} bytes)...`);
+        return new Promise((resolve, reject) => {
+            officeparser.parseOffice(buffer, (data, err) => {
+                if (err) return reject(err);
+                console.log(`✅ PPTX parsed, extracted ${data.length} characters`);
+                resolve(data);
+            });
+        });
+    } catch (error) {
+        console.error('❌ PPTX processing error:', error.message);
+        throw new Error('Failed to process PPTX');
     }
 }
 
@@ -117,6 +156,10 @@ async function processDocument(buffer, mimetype, filename) {
             text = await processPDF(buffer);
         } else if (mimetype === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
             text = await processDOCX(buffer);
+        } else if (mimetype === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+            text = await processXLSX(buffer);
+        } else if (mimetype === 'application/vnd.openxmlformats-officedocument.presentationml.presentation') {
+            text = await processPPTX(buffer);
         } else if (mimetype === 'text/plain') {
             text = buffer.toString('utf-8');
         } else {

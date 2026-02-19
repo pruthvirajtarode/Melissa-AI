@@ -12,6 +12,8 @@ const knowledgeSchema = new mongoose.Schema({
     metadata: {
         source: String,
         filename: String,
+        path: String,
+        category: String,
         mimetype: String,
         summary: String,
         chunkIndex: Number,

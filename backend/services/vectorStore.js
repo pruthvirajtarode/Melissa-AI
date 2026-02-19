@@ -74,24 +74,26 @@ class VectorStore {
      * Note: Standard MongoDB Atlas Vector Search requires specific setup. 
      * For now we'll fetch active docs and rank in memory if the dataset is small (<2000 chunks).
      */
-    async search(query, topK = 3) {
+    async search(query, topK = 5) {
         try {
-            // Filter for active documents only
-            const activeDocs = await Knowledge.find({ 'metadata.isActive': true });
+            // Fetch only necessary fields for performance, using lean() to avoid Mongoose overhead
+            const activeDocs = await Knowledge.find(
+                { 'metadata.isActive': true },
+                { embedding: 1, text: 1, 'metadata.source': 1 }
+            ).lean();
 
             if (activeDocs.length === 0) return [];
 
             const queryEmbedding = await generateEmbedding(query);
 
-            // OpenAI embeddings are normalized, so dot product = cosine similarity
-            const results = activeDocs.map(doc => {
-                const docObj = doc.toObject();
-                return {
-                    ...docObj,
-                    similarity: this.cosineSimilarity(queryEmbedding, docObj.embedding)
-                };
-            });
+            // Compute similarity - dot product is fast for normalized vectors
+            const results = activeDocs.map(doc => ({
+                text: doc.text,
+                source: doc.metadata.source,
+                similarity: this.cosineSimilarity(queryEmbedding, doc.embedding)
+            }));
 
+            // Sort and return top matches
             results.sort((a, b) => b.similarity - a.similarity);
             return results.slice(0, topK);
         } catch (error) {
@@ -121,6 +123,8 @@ class VectorStore {
                         _id: "$metadata.source",
                         source: { $first: "$metadata.source" },
                         filename: { $first: "$metadata.filename" },
+                        path: { $first: "$metadata.path" },
+                        category: { $first: "$metadata.category" },
                         mimetype: { $first: "$metadata.mimetype" },
                         summary: { $first: "$metadata.summary" },
                         isActive: { $first: "$metadata.isActive" },
@@ -189,11 +193,20 @@ class VectorStore {
     async reindex() {
         console.log('🔄 Re-indexing MongoDB store...');
         const allDocs = await Knowledge.find({});
-        for (const doc of allDocs) {
-            doc.embedding = await generateEmbedding(doc.text);
-            await doc.save();
-        }
-        console.log('✅ Re-indexing complete');
+        console.log(`   Found ${allDocs.length} chunks to re-index.`);
+
+        // Use asyncPool to process in parallel
+        await this.asyncPool(10, allDocs, async (doc) => {
+            try {
+                doc.embedding = await generateEmbedding(doc.text);
+                await doc.save();
+            } catch (err) {
+                console.error(`   ❌ Failed to re-index chunk ${doc._id}:`, err.message);
+            }
+        });
+
+        console.log('✅ Re-indexing completed.');
+        this.groupedCache = null;
     }
 }
 

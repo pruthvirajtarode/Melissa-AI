@@ -254,6 +254,7 @@ function displayDocuments(documents) {
             <div class="document-info">
                 <div class="document-title">${escapeHtml(doc.filename)}</div>
                 <div class="document-meta">
+                    ${doc.category ? `<span class="category-badge">${escapeHtml(doc.category)}</span>` : ''}
                     <span>${doc.type === 'webpage' ? '🌐 URL' : '📄 ' + doc.mimetype}</span>
                     <span>🧩 ${doc.chunks} parts</span>
                     <span>🕒 ${formatDate(doc.createdAt)}</span>

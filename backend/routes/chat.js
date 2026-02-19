@@ -45,19 +45,13 @@ router.post('/', async (req, res) => {
         relevantDocs.forEach(doc => {
             if (doc.similarity > maxSimilarity) maxSimilarity = doc.similarity;
 
-            // Lowered threshold to 0.50 for better recall
+            // Use a 0.50 threshold for filtering, but give preference to higher scores
             if (doc.similarity > 0.50) {
-                console.log(`   ✅ Match: ${doc.metadata?.filename} (Score: ${doc.similarity.toFixed(3)})`);
+                console.log(`   ✅ Match: ${doc.source} (Score: ${doc.similarity.toFixed(3)})`);
                 // Add the chunk text
-                context += `\n[Source: ${doc.metadata?.filename || doc.metadata?.source}]\n${doc.text}\n`;
-
-                // Add the summary if we haven't added it for this source yet
-                if (doc.metadata?.summary && !seenSources.has(doc.metadata.source)) {
-                    context += `SUMMARY OF ${doc.metadata.filename || doc.metadata.source}: ${doc.metadata.summary}\n`;
-                    seenSources.add(doc.metadata.source);
-                }
+                context += `\n[Source: ${doc.source}]\n${doc.text}\n`;
             } else {
-                console.log(`   ❌ Skip: ${doc.metadata?.filename} (Score: ${doc.similarity.toFixed(3)})`);
+                console.log(`   ❌ Skip: ${doc.source} (Score: ${doc.similarity.toFixed(3)})`);
             }
         });
 
@@ -90,7 +84,7 @@ router.post('/', async (req, res) => {
             debug: {
                 maxScore: maxSimilarity,
                 topMatches: relevantDocs.slice(0, 3).map(d => ({
-                    source: d.metadata?.filename,
+                    source: d.source,
                     score: d.similarity
                 }))
             }
