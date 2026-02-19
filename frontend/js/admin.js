@@ -553,10 +553,10 @@ async function loadSettings() {
 
             botNameInput.value = settings.botName || 'MellissAI';
             welcomeMessageInput.value = settings.welcomeMessage || '';
-            currentAvatarImg.src = settings.avatarUrl || 'images/melliss-avatar.svg';
+            currentAvatarImg.src = settings.avatarUrl || 'images/mellissai-new-avatar.jpg';
 
-            // Set initial previous URL
-            previousAvatarUrl = settings.avatarUrl;
+            // On fresh load, we don't have a "previous" photo in memory yet
+            previousAvatarUrl = null;
 
             // Show undo buttons
             undoIdentityBtn.style.display = 'block';
@@ -627,10 +627,10 @@ async function handleAvatarUpload(e) {
         if (response.ok) {
             const data = await response.json();
 
-            // Save the one that was there BEFORE this successful upload
+            // The NEW previous becomes the one we had right before this upload
             previousAvatarUrl = originalSettings.avatarUrl;
 
-            // Update original settings to reflect current DB state
+            // The NEW current is what the server just gave us
             originalSettings.avatarUrl = data.avatarUrl;
 
             showStatus(avatarStatus, '✅ Avatar updated', 'success');
@@ -650,7 +650,7 @@ async function handleAvatarUpload(e) {
 
 async function handleUndoAvatar() {
     if (!previousAvatarUrl) {
-        showStatus(avatarStatus, 'ℹ️ No previous photo to restore', 'error');
+        showStatus(avatarStatus, 'ℹ️ No previous photo in this session', 'error');
         return;
     }
 
@@ -667,14 +667,14 @@ async function handleUndoAvatar() {
         });
 
         if (response.ok) {
-            // Success! The "current" is now the one we just restored
-            const restoredUrl = previousAvatarUrl;
+            const data = await response.json();
 
-            // Swap them so another "Undo" would take us back to the one we just had (Toggle behavior)
-            previousAvatarUrl = originalSettings.avatarUrl;
-            originalSettings.avatarUrl = restoredUrl;
+            // Swap them so another "Undo" toggles back
+            const oldCurrent = originalSettings.avatarUrl;
+            originalSettings.avatarUrl = previousAvatarUrl;
+            previousAvatarUrl = oldCurrent;
 
-            currentAvatarImg.src = restoredUrl;
+            currentAvatarImg.src = originalSettings.avatarUrl;
 
             showStatus(avatarStatus, '✅ Photo restored', 'success');
         } else {
@@ -682,7 +682,7 @@ async function handleUndoAvatar() {
         }
     } catch (error) {
         console.error('Undo avatar error:', error);
-        showStatus(avatarStatus, '❌ Error restoring photo', 'error');
+        showStatus(avatarStatus, '❌ Error connecting to server', 'error');
     }
 }
 

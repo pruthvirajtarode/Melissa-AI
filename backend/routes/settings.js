@@ -118,7 +118,13 @@ router.post('/update', authenticateAdmin, async (req, res) => {
         }
 
         await settings.save();
-        res.json({ message: 'Saved successfully', settings });
+
+        const settingsObj = settings.toObject();
+        if (settings.avatarData) {
+            settingsObj.avatarUrl = `data:${settings.avatarMimeType};base64,${settings.avatarData}`;
+        }
+
+        res.json({ message: 'Saved successfully', settings: settingsObj });
     } catch (error) {
         res.status(500).json({ error: 'Failed to update settings' });
     }
