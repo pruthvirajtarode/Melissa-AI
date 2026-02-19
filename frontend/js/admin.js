@@ -28,7 +28,6 @@ const botNameInput = document.getElementById('botName');
 const welcomeMessageInput = document.getElementById('welcomeMessage');
 const settingsStatus = document.getElementById('settingsStatus');
 const undoIdentityBtn = document.getElementById('undoIdentityBtn');
-const avatarUrlInput = document.getElementById('avatarUrl'); // New input
 const avatarUploadForm = document.getElementById('avatarUploadForm');
 const avatarInput = document.getElementById('avatarInput');
 const currentAvatarImg = document.getElementById('currentAvatar');
@@ -554,7 +553,6 @@ async function loadSettings() {
 
             botNameInput.value = settings.botName || 'MellissAI';
             welcomeMessageInput.value = settings.welcomeMessage || '';
-            avatarUrlInput.value = settings.avatarUrl || 'images/melliss-avatar.svg';
             currentAvatarImg.src = settings.avatarUrl || 'images/melliss-avatar.svg';
 
             // Set initial previous URL
@@ -575,7 +573,6 @@ async function handleSettingsUpdate(e) {
 
     const botName = botNameInput.value.trim();
     const welcomeMessage = welcomeMessageInput.value.trim();
-    const avatarUrl = avatarUrlInput.value.trim();
 
     showStatus(settingsStatus, 'Updating settings...', 'loading');
 
@@ -586,7 +583,7 @@ async function handleSettingsUpdate(e) {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${authToken}`
             },
-            body: JSON.stringify({ botName, welcomeMessage, avatarUrl })
+            body: JSON.stringify({ botName, welcomeMessage })
         });
 
         if (response.ok) {
@@ -639,7 +636,6 @@ async function handleAvatarUpload(e) {
 
             showStatus(avatarStatus, '✅ Avatar updated', 'success');
             currentAvatarImg.src = data.avatarUrl;
-            avatarUrlInput.value = data.avatarUrl; // Keep URL field in sync
 
             avatarUploadForm.reset();
             document.querySelector('.avatar-label-text').textContent = 'Select New Photo';
@@ -680,7 +676,6 @@ async function handleUndoAvatar() {
             originalSettings.avatarUrl = restoredUrl;
 
             currentAvatarImg.src = restoredUrl;
-            avatarUrlInput.value = restoredUrl;
 
             showStatus(avatarStatus, '✅ Photo restored', 'success');
         } else {
@@ -710,7 +705,6 @@ async function restoreAvatar(url) {
             currentAvatarImg.src = url;
             previousAvatarUrl = originalSettings.avatarUrl;
             originalSettings.avatarUrl = url;
-            avatarUrlInput.value = url;
             showStatus(avatarStatus, '✅ Photo restored', 'success');
         } else {
             showStatus(avatarStatus, '❌ Restore failed', 'error');
@@ -726,7 +720,6 @@ function handleUndoIdentity() {
     if (!originalSettings) return;
     botNameInput.value = originalSettings.botName || 'MellissAI';
     welcomeMessageInput.value = originalSettings.welcomeMessage || '';
-    avatarUrlInput.value = originalSettings.avatarUrl || 'images/melliss-avatar.svg';
     showStatus(settingsStatus, 'Restored previous identity values', 'success');
 }
 
