@@ -37,8 +37,16 @@ app.get('/', (req, res) => {
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
+
+  // Specifically detect Vercel read-only filesystem errors
+  const isVercelFsError = process.env.VERCEL && (
+    err.code === 'EROFS' ||
+    err.message.includes('read-only') ||
+    err.message.includes('permission denied')
+  );
+
   res.status(500).json({
-    error: 'Something went wrong!',
+    error: isVercelFsError ? 'Vercel filesystem is read-only. Use the "Bot Identity" section to update via URL.' : 'Something went wrong!',
     message: err.message
   });
 });
