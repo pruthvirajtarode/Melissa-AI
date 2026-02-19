@@ -103,7 +103,15 @@ router.post('/update', authenticateAdmin, async (req, res) => {
         // If user provides a direct URL, clear the saved data
         if (avatarUrl) {
             settings.avatarUrl = avatarUrl;
-            if (!avatarUrl.startsWith('data:')) {
+            if (avatarUrl.startsWith('data:')) {
+                // If it's a data URL, extract the base64 data to keep it persistent
+                const matches = avatarUrl.match(/^data:([^;]+);base64,(.+)$/);
+                if (matches) {
+                    settings.avatarMimeType = matches[1];
+                    settings.avatarData = matches[2];
+                }
+            } else {
+                // If it's a standard link (images/...), clear the base64 data
                 settings.avatarData = null;
                 settings.avatarMimeType = null;
             }

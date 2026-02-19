@@ -588,13 +588,12 @@ async function handleSettingsUpdate(e) {
 
         if (response.ok) {
             const data = await response.json();
-            originalSettings.botName = data.settings.botName;
-            originalSettings.welcomeMessage = data.settings.welcomeMessage;
-            originalSettings.avatarUrl = data.settings.avatarUrl;
+            // Update our local memory of the current settings
+            originalSettings = { ...data.settings };
 
             // Update preview
             currentAvatarImg.src = data.settings.avatarUrl;
-            showStatus(settingsStatus, '✅ Identity & Avatar URL saved', 'success');
+            showStatus(settingsStatus, '✅ Identity saved', 'success');
         } else {
             showStatus(settingsStatus, '❌ Update failed', 'error');
         }
