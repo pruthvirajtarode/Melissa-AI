@@ -2,12 +2,16 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const connectDB = require('./config/db');
 const chatRoutes = require('./routes/chat');
 const adminRoutes = require('./routes/admin');
 const uploadRoutes = require('./routes/upload');
 const settingsRoutes = require('./routes/settings');
 
 const app = express();
+
+// Connect to MongoDB
+connectDB();
 const PORT = process.env.PORT || 3000;
 
 // Middleware

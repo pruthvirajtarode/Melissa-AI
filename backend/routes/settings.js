@@ -2,8 +2,8 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const path = require('path');
-const fs = require('fs');
 const jwt = require('jsonwebtoken');
+const Settings = require('../models/Settings');
 
 // Simple authentication middleware
 const authenticateAdmin = (req, res, next) => {
@@ -18,59 +18,10 @@ const authenticateAdmin = (req, res, next) => {
     }
 };
 
-// Settings file path
-const SETTINGS_FILE = path.join(__dirname, '../../data/settings.json');
-
-// Ensure data directory exists (Skip on Vercel as it's read-only)
-const dataDir = path.join(__dirname, '../../data');
-if (!process.env.VERCEL && !fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir, { recursive: true });
-}
-
-// Default settings
-const defaultSettings = {
-    avatarUrl: 'images/melliss-avatar.svg',
-    botName: 'MellissAI',
-    welcomeMessage: "Hi! I'm MellissAI, your business development assistant. How can I help you today?"
-};
-
-// Helper to get settings
-function getSettings() {
-    if (fs.existsSync(SETTINGS_FILE)) {
-        try {
-            const data = fs.readFileSync(SETTINGS_FILE, 'utf8');
-            return { ...defaultSettings, ...JSON.parse(data) };
-        } catch (e) {
-            console.error('Error reading settings:', e);
-            return defaultSettings;
-        }
-    }
-    return defaultSettings;
-}
-
-// Helper to save settings
-function saveSettings(settings) {
-    try {
-        fs.writeFileSync(SETTINGS_FILE, JSON.stringify(settings, null, 2));
-    } catch (e) {
-        console.error('Error saving settings:', e);
-    }
-}
-
-// Configure multer for avatar uploads
-const avatarStorage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        const dest = path.join(__dirname, '../../frontend/images/uploads');
-        if (!fs.existsSync(dest)) fs.mkdirSync(dest, { recursive: true });
-        cb(null, dest);
-    },
-    filename: (req, file, cb) => {
-        cb(null, `avatar-${Date.now()}${path.extname(file.originalname)}`);
-    }
-});
-
+// Use memory storage for MongoDB
+const storage = multer.memoryStorage();
 const uploadAvatar = multer({
-    storage: avatarStorage,
+    storage,
     limits: { fileSize: 2 * 1024 * 1024 }, // 2MB
     fileFilter: (req, file, cb) => {
         const filetypes = /jpeg|jpg|png|svg|webp/;
@@ -83,31 +34,56 @@ const uploadAvatar = multer({
 
 /**
  * GET /api/settings
- * Publicly accessible settings (for chatbot UI)
+ * Publicly accessible settings
  */
-router.get('/', (req, res) => {
-    res.json(getSettings());
+router.get('/', async (req, res) => {
+    try {
+        let settings = await Settings.findOne();
+        if (!settings) {
+            settings = new Settings();
+            await settings.save();
+        }
+
+        // If there's base64 data, we can either serve it directly or just return the URL
+        // To keep the frontend working, if we have base64, we'll return that as the URL
+        const settingsObj = settings.toObject();
+        if (settings.avatarData) {
+            settingsObj.avatarUrl = `data:${settings.avatarMimeType};base64,${settings.avatarData}`;
+        }
+
+        res.json(settingsObj);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch settings' });
+    }
 });
 
 /**
  * POST /api/settings/avatar
- * Upload new avatar (Requires Admin)
+ * Upload new avatar to MongoDB (Requires Admin)
  */
-router.post('/avatar', authenticateAdmin, uploadAvatar.single('avatar'), (req, res) => {
+router.post('/avatar', authenticateAdmin, uploadAvatar.single('avatar'), async (req, res) => {
     try {
         if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
 
-        const settings = getSettings();
-        settings.avatarUrl = `images/uploads/${req.file.filename}`;
-        saveSettings(settings);
+        let settings = await Settings.findOne();
+        if (!settings) settings = new Settings();
 
-        res.json({ message: 'Avatar updated', avatarUrl: settings.avatarUrl });
+        // Convert buffer to base64
+        const base64Data = req.file.buffer.toString('base64');
+
+        settings.avatarData = base64Data;
+        settings.avatarMimeType = req.file.mimetype;
+        settings.avatarUrl = `data:${req.file.mimetype};base64,${base64Data}`;
+
+        await settings.save();
+
+        res.json({
+            message: 'Avatar updated and saved to database',
+            avatarUrl: settings.avatarUrl
+        });
     } catch (error) {
-        console.error('Avatar upload error:', error);
-        if (process.env.VERCEL) {
-            return res.status(500).json({ error: 'Vercel filesystem is read-only. Please use the Avatar URL field instead.' });
-        }
-        res.status(500).json({ error: error.message || 'Failed to save avatar' });
+        console.error('Avatar DB upload error:', error);
+        res.status(500).json({ error: 'Failed to save avatar to database' });
     }
 });
 
@@ -115,17 +91,28 @@ router.post('/avatar', authenticateAdmin, uploadAvatar.single('avatar'), (req, r
  * POST /api/settings/update
  * Update general settings (Requires Admin)
  */
-router.post('/update', authenticateAdmin, (req, res) => {
+router.post('/update', authenticateAdmin, async (req, res) => {
     try {
         const { botName, welcomeMessage, avatarUrl } = req.body;
-        const settings = getSettings();
+        let settings = await Settings.findOne();
+        if (!settings) settings = new Settings();
+
         if (botName) settings.botName = botName;
         if (welcomeMessage) settings.welcomeMessage = welcomeMessage;
-        if (avatarUrl) settings.avatarUrl = avatarUrl;
-        saveSettings(settings);
-        res.json({ message: 'Saved', settings });
+
+        // If user provides a direct URL, clear the saved data
+        if (avatarUrl) {
+            settings.avatarUrl = avatarUrl;
+            if (!avatarUrl.startsWith('data:')) {
+                settings.avatarData = null;
+                settings.avatarMimeType = null;
+            }
+        }
+
+        await settings.save();
+        res.json({ message: 'Saved successfully', settings });
     } catch (error) {
-        res.status(500).json({ error: 'Failed' });
+        res.status(500).json({ error: 'Failed to update settings' });
     }
 });
 

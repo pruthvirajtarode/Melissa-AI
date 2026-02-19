@@ -123,35 +123,22 @@ router.post('/reindex', authenticateAdmin, async (req, res) => {
     }
 });
 
+const Knowledge = require('../models/Knowledge');
+
 /**
  * GET /api/admin/analytics
- * Get usage analytics
+ * Get usage analytics from MongoDB
  */
 router.get('/analytics', authenticateAdmin, async (req, res) => {
     try {
-        await vectorStore.ready;
         const grouped = await vectorStore.getGroupedDocuments();
+        const totalChunks = await Knowledge.countDocuments();
 
-        // Efficiently get file size
-        let fileSize = 0;
-        try {
-            const fs = require('fs');
-            // Use the documents array length as a base if file stats fail
-            fileSize = JSON.stringify(vectorStore.documents).length;
-
-            // Try to get real file size from the same path the store uses
-            const storePath = path.join(__dirname, '../../data/vectors/store.json');
-            if (fs.existsSync(storePath)) {
-                fileSize = fs.statSync(storePath).size;
-            }
-        } catch (e) {
-            console.error('File stat error:', e);
-        }
-
+        // MongoDB doesn't have a single file size, but we can return chunk count
         const analytics = {
             totalDocuments: grouped.length,
-            totalChunks: vectorStore.documents.length,
-            storageSize: fileSize,
+            totalChunks: totalChunks,
+            storageSize: totalChunks * 1024, // Rough estimate in bytes (1KB per chunk)
         };
 
         res.json(analytics);
