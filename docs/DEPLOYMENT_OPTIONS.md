@@ -40,7 +40,7 @@ ADMIN_PASSWORD=admin123
 1. Go to https://render.com
 2. Sign up with GitHub
 3. Click **"New Web Service"**
-4. Connect your GitHub repo: `pruthvirajtarode/Melliss-AI`
+4. Connect your GitHub repo: `pruthvirajtarode/Melissa-AI`
 5. Configure:
    - **Name**: melissa-ai-nmv
    - **Environment**: Node
@@ -269,7 +269,7 @@ Password: [provided separately]
 
 - **Vercel Issues**: https://vercel.com/docs
 - **Render Issues**: https://docs.render.com
-- **GitHub Issues**: https://github.com/pruthvirajtarode/Melliss-AI/issues
+- **GitHub Issues**: https://github.com/pruthvirajtarode/Melissa-AI/issues
 
 ---
 

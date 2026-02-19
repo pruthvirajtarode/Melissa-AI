@@ -265,8 +265,8 @@ To test the widget integration:
 
 For integration issues or customization requests:
 - Email: support@melissaai.com
-- Documentation: https://docs.melissaai.com
-- Issues: https://github.com/melissaai/widget/issues
+- Documentation: https://github.com/pruthvirajtarode/Melissa-AI#readme
+- Issues: https://github.com/pruthvirajtarode/Melissa-AI/issues
 
 ## 📊 Analytics
 
