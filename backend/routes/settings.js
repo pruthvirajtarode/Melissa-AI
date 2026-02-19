@@ -103,7 +103,11 @@ router.post('/avatar', authenticateAdmin, uploadAvatar.single('avatar'), (req, r
 
         res.json({ message: 'Avatar updated', avatarUrl: settings.avatarUrl });
     } catch (error) {
-        res.status(500).json({ error: 'Failed' });
+        console.error('Avatar upload error:', error);
+        if (process.env.VERCEL) {
+            return res.status(500).json({ error: 'Vercel filesystem is read-only. Please use the Avatar URL field instead.' });
+        }
+        res.status(500).json({ error: error.message || 'Failed to save avatar' });
     }
 });
 

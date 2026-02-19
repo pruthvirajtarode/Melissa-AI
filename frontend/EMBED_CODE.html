@@ -191,119 +191,150 @@
       <p>Copy and paste this code if you want full control over the button styling and behavior:</p>
 
       <div class="code-block" id="standardCode">&lt;!-- MellissAI Professional Chat Widget --&gt;
-        &lt;div id="melliss-ai-bot" style="position: fixed; bottom: 25px; right: 25px; z-index: 999999;"&gt;
+        &lt;div id="melliss-ai-bot" style="position: fixed; bottom: 25px; right: 25px; z-index: 999999; font-family:
+        -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;"&gt;
 
-        &lt;!-- Floating Button --&gt;
+        &lt;!-- Global Branding Colors --&gt;
+        &lt;style&gt;
+        :root { --melliss-primary: linear-gradient(135deg, #14532d 0%, #22c55e 100%); }
+        #melliss-btn:hover { transform: scale(1.08); box-shadow: 0 8px 25px rgba(34, 197, 94, 0.45); }
+        #melliss-btn:active { transform: scale(0.95); }
+        &lt;/style&gt;
+
+        &lt;!-- Floating Trigger Button --&gt;
         &lt;button
         id="melliss-btn"
+        aria-label="Open Chat"
         style="
         width: 65px;
         height: 65px;
         border-radius: 50%;
-        background: linear-gradient(135deg, #14532d 0%, #22c55e 100%);
+        background: var(--melliss-primary);
         border: none;
         cursor: pointer;
-        box-shadow: 0 4px 20px rgba(34, 197, 94, 0.35);
+        box-shadow: 0 5px 20px rgba(20, 83, 45, 0.3);
         display: flex;
         align-items: center;
         justify-content: center;
         transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         "
         &gt;
-        &lt;!-- Chat Icon --&gt;
-        &lt;svg
-        width="32"
-        height="32"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="white"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        &gt;
+        &lt;!-- Premium Chat Icon --&gt;
+        &lt;svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"
+        stroke-linecap="round" stroke-linejoin="round"&gt;
         &lt;path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"&gt;&lt;/path&gt;
         &lt;/svg&gt;
         &lt;/button&gt;
 
-        &lt;!-- Chat Widget (loads in iframe) --&gt;
-        &lt;iframe
-        id="melliss-iframe"
-        src="https://your-domain.com/widget.html"
-        style="
-        position: fixed;
-        bottom: 100px;
-        right: 25px;
-        width: 400px;
-        height: 600px;
-        border: none;
-        border-radius: 16px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+        &lt;!-- Chat Window Container --&gt;
+        &lt;div id="melliss-window" style="
         display: none;
-        z-index: 999998;
-        "
-        allow="microphone; camera"
-        &gt;&lt;/iframe&gt;
-
+        position: absolute;
+        bottom: 85px;
+        right: 0;
+        width: 420px;
+        height: 650px;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 25px 60px rgba(0,0,0,0.2);
+        background: white;
+        border: 1px solid rgba(0,0,0,0.08);
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        transform: translateY(20px);
+        opacity: 0;
+        "&gt;
+        &lt;iframe
+        src="https://melissa-ai.vercel.app/widget.html"
+        style="width: 100%; height: 100%; border: none;"
+        title="MellissAI Assistant"
+        id="melliss-iframe"&gt;
+        &lt;/iframe&gt;
+        &lt;/div&gt;
         &lt;/div&gt;
 
-        &lt;!-- Widget Control Script --&gt;
         &lt;script&gt;
         (function() {
         const btn = document.getElementById('melliss-btn');
-        const iframe = document.getElementById('melliss-iframe');
+        const win = document.getElementById('melliss-window');
+        let isOpen = false;
 
-        btn.addEventListener('click', function() {
-        if (iframe.style.display === 'none') {
-        iframe.style.display = 'block';
-        btn.style.opacity = '0';
-        btn.style.pointerEvents = 'none';
+        // Toggle Function with Smooth Animation
+        btn.onclick = () =&gt; {
+        isOpen = !isOpen;
+        if (isOpen) {
+        win.style.display = 'block';
+        setTimeout(() =&gt; {
+        win.style.transform = 'translateY(0)';
+        win.style.opacity = '1';
+        }, 10);
+        btn.innerHTML = '&lt;svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white"
+        stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;line x1="18" y1="6" x2="6"
+        y2="18"&gt;&lt;/line&gt;&lt;line x1="6" y1="6" x2="18" y2="18"&gt;&lt;/line&gt;&lt;/svg&gt;';
+        } else {
+        win.style.transform = 'translateY(20px)';
+        win.style.opacity = '0';
+        setTimeout(() =&gt; { win.style.display = 'none'; }, 300);
+        btn.innerHTML = '&lt;svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white"
+        stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2
+        2 0 0 1 2-2h14a2 2 0 0 1 2 2z"&gt;&lt;/path&gt;&lt;/svg&gt;';
         }
-        });
+        };
 
-        // Listen for close message from iframe
+        // Listen for the "Close" button click inside the iframe
         window.addEventListener('message', function(event) {
-        if (event.data === 'closeWidget') {
-        iframe.style.display = 'none';
-        btn.style.opacity = '1';
-        btn.style.pointerEvents = 'auto';
+        if (event.data === 'closeWidget' || event.data?.type === 'closeWidget') {
+        isOpen = false;
+        win.style.transform = 'translateY(20px)';
+        win.style.opacity = '0';
+        setTimeout(() =&gt; { win.style.display = 'none'; }, 300);
+        btn.innerHTML = '&lt;svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white"
+        stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2
+        2 0 0 1 2-2h14a2 2 0 0 1 2 2z"&gt;&lt;/path&gt;&lt;/svg&gt;';
         }
         });
 
-        // Add hover effect
-        btn.addEventListener('mouseenter', function() {
-        this.style.transform = 'scale(1.1)';
-        });
+        // Mobile Adaptability
+        function checkMobile() {
+        if (window.innerWidth &lt; 480) {
+        win.style.width = 'calc(100vw - 40px)';
+        win.style.height = 'calc(80vh)';
+        win.style.right = '-10px';
+        } else {
+        win.style.width = '420px';
+        win.style.height = '650px';
+        win.style.right = '0';
+        }
+        }
 
-        btn.addEventListener('mouseleave', function() {
-        this.style.transform = 'scale(1)';
-        });
+        window.addEventListener('resize', checkMobile);
+        checkMobile();
         })();
-        &lt;/script&gt;
-      </div>
+        &lt;/script&gt;</div>
     </div>
+  </div>
 
-    <script>
-      function copyCode(elementId) {
-        const codeElement = document.getElementById(elementId);
-        // Create a temporary textarea to decode HTML entities
-        const doc = new DOMParser().parseFromString(codeElement.innerHTML, 'text/html');
-        const decodedCode = doc.documentElement.textContent;
+  <script>
+    function copyCode(elementId) {
+      const codeElement = document.getElementById(elementId);
+      // Create a temporary textarea to decode HTML entities
+      const doc = new DOMParser().parseFromString(codeElement.innerHTML, 'text/html');
+      const decodedCode = doc.documentElement.textContent;
 
-        navigator.clipboard.writeText(decodedCode).then(() => {
-          const btn = event.currentTarget;
-          const originalText = btn.innerText;
-          btn.innerText = '✅ Copied!';
-          btn.style.background = '#14532d';
-          setTimeout(() => {
-            btn.innerText = originalText;
-            btn.style.background = '';
-          }, 2000);
-        }).catch(err => {
-          console.error('Failed to copy code: ', err);
-          alert('Failed to copy code. Please select and copy manually.');
-        });
-      }
-    </script>
+      navigator.clipboard.writeText(decodedCode).then(() => {
+        const btn = event.currentTarget;
+        const originalText = btn.innerText;
+        btn.innerText = '✅ Copied!';
+        btn.style.background = '#14532d';
+        setTimeout(() => {
+          btn.innerText = originalText;
+          btn.style.background = '';
+        }, 2000);
+      }).catch(err => {
+        console.error('Failed to copy code: ', err);
+        alert('Failed to copy code. Please select and copy manually.');
+      });
+    }
+  </script>
 </body>
 
 </html>

@@ -10,38 +10,117 @@ This is the most popular way to add a chatbot. It appears as a floating button i
 Add this code just before the closing `</body>` tag of your website:
 
 ```html
-<!-- MellissAI Floating Widget -->
-<div id="melissa-ai-widget" style="position: fixed; bottom: 20px; right: 20px; z-index: 999999;">
-  <button id="melissa-trigger" style="width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); border: none; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; transition: transform 0.3s ease;">
-    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<!-- MellissAI Professional Chat Widget -->
+<div id="melliss-ai-bot" style="position: fixed; bottom: 25px; right: 25px; z-index: 999999; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+
+  <!-- Global Branding Colors -->
+  <style>
+    :root { --melliss-primary: linear-gradient(135deg, #14532d 0%, #22c55e 100%); }
+    #melliss-btn:hover { transform: scale(1.08); box-shadow: 0 8px 25px rgba(34, 197, 94, 0.45); }
+    #melliss-btn:active { transform: scale(0.95); }
+  </style>
+
+  <!-- Floating Trigger Button -->
+  <button
+    id="melliss-btn"
+    aria-label="Open Chat"
+    style="
+      width: 65px;
+      height: 65px;
+      border-radius: 50%;
+      background: var(--melliss-primary);
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 5px 20px rgba(20, 83, 45, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    "
+  >
+    <!-- Premium Chat Icon -->
+    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+    </svg>
   </button>
-  
-  <div id="melissa-container" style="display: none; position: absolute; bottom: 80px; right: 0; width: 400px; height: 600px; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.15); background: white; border: 1px solid #e5e7eb;">
+
+  <!-- Chat Window Container -->
+  <div id="melliss-window" style="
+    display: none; 
+    position: absolute; 
+    bottom: 85px; 
+    right: 0; 
+    width: 420px; 
+    height: 650px; 
+    border-radius: 20px; 
+    overflow: hidden; 
+    box-shadow: 0 25px 60px rgba(0,0,0,0.2); 
+    background: white; 
+    border: 1px solid rgba(0,0,0,0.08); 
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    transform: translateY(20px);
+    opacity: 0;
+  ">
     <iframe 
-      src="https://melissa-ai.vercel.app/" 
-      style="width: 100%; height: 100%; border: none;" 
-      title="MellissAI">
+        src="https://melissa-ai.vercel.app/widget.html" 
+        style="width: 100%; height: 100%; border: none;" 
+        title="MellissAI Assistant"
+        id="melliss-iframe">
     </iframe>
   </div>
 </div>
 
 <script>
-  (function() {
-    const trigger = document.getElementById('melissa-trigger');
-    const container = document.getElementById('melissa-container');
-    let isOpen = false;
+(function() {
+  const btn = document.getElementById('melliss-btn');
+  const win = document.getElementById('melliss-window');
+  let isOpen = false;
 
-    trigger.addEventListener('click', () => {
-      isOpen = !isOpen;
-      container.style.display = isOpen ? 'block' : 'none';
-      trigger.style.transform = isOpen ? 'rotate(90deg)' : 'rotate(0deg)';
-      
-      if (isOpen && window.innerWidth < 480) {
-        container.style.width = 'calc(100vw - 40px)';
-        container.style.height = 'calc(100vh - 120px)';
-      }
-    });
-  })();
+  // Toggle Function with Smooth Animation
+  btn.onclick = () => {
+    isOpen = !isOpen;
+    if (isOpen) {
+      win.style.display = 'block';
+      setTimeout(() => {
+        win.style.transform = 'translateY(0)';
+        win.style.opacity = '1';
+      }, 10);
+      btn.innerHTML = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
+    } else {
+      win.style.transform = 'translateY(20px)';
+      win.style.opacity = '0';
+      setTimeout(() => { win.style.display = 'none'; }, 300);
+      btn.innerHTML = '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>';
+    }
+  };
+
+  // Listen for the "Close" button click inside the iframe
+  window.addEventListener('message', function(event) {
+    if (event.data === 'closeWidget' || event.data?.type === 'closeWidget') {
+      isOpen = false;
+      win.style.transform = 'translateY(20px)';
+      win.style.opacity = '0';
+      setTimeout(() => { win.style.display = 'none'; }, 300);
+      btn.innerHTML = '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>';
+    }
+  });
+
+  // Mobile Adaptability
+  function checkMobile() {
+    if (window.innerWidth < 480) {
+      win.style.width = 'calc(100vw - 40px)';
+      win.style.height = 'calc(80vh)';
+      win.style.right = '-10px';
+    } else {
+      win.style.width = '420px';
+      win.style.height = '650px';
+      win.style.right = '0';
+    }
+  }
+
+  window.addEventListener('resize', checkMobile);
+  checkMobile();
+})();
 </script>
 ```
 

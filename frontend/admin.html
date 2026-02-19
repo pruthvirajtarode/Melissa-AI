@@ -185,6 +185,13 @@
                                 <textarea id="welcomeMessage" class="form-input" rows="2"
                                     placeholder="Hi! I'm MellissAI..."></textarea>
                             </div>
+                            <div class="form-group">
+                                <label for="avatarUrl">Avatar URL (Vercel Optimized)</label>
+                                <input type="text" id="avatarUrl" class="form-input"
+                                    placeholder="images/melliss-avatar.svg or https://...">
+                                <p style="font-size: 0.75rem; color: #666; margin-top: 4px;">Paste an image link here to
+                                    bypass Vercel's read-only filesystem.</p>
+                            </div>
                             <button type="submit" class="btn-primary btn-block">Save Identity</button>
                         </form>
                         <div class="upload-status" id="settingsStatus"></div>
