@@ -112,6 +112,35 @@ router.delete('/document/source', authenticateAdmin, async (req, res) => {
 });
 
 /**
+ * GET /api/admin/document/download
+ * Download original document
+ */
+router.get('/document/download', authenticateAdmin, async (req, res) => {
+    try {
+        const { source } = req.query;
+        if (!source) return res.status(400).json({ error: 'Source is required' });
+
+        const OriginalDocument = require('../models/OriginalDocument');
+        const doc = await OriginalDocument.findOne({ source });
+
+        if (!doc) {
+            return res.status(404).json({ error: 'Original document not found' });
+        }
+
+        res.set({
+            'Content-Type': doc.mimetype,
+            'Content-Disposition': `attachment; filename="${doc.filename}"`,
+            'Content-Length': doc.data.length
+        });
+
+        res.send(doc.data);
+    } catch (error) {
+        console.error('Download error:', error);
+        res.status(500).json({ error: 'Failed to download document' });
+    }
+});
+
+/**
  * POST /api/admin/reindex
  * Re-index all documents
  */

@@ -543,6 +543,12 @@
     color: #22c55e;
 }
 
+.btn-icon.download:hover {
+    background: rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.3);
+    color: #3b82f6;
+}
+
 .loading {
     text-align: center;
     padding: var(--spacing-xl);

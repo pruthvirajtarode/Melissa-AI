@@ -63,6 +63,26 @@ router.post('/', upload.single('file'), async (req, res) => {
             }
         }));
 
+        // Save original document for download
+        const OriginalDocument = require('../models/OriginalDocument');
+        try {
+            await OriginalDocument.findOneAndUpdate(
+                { source: processed.filename },
+                {
+                    filename: processed.filename,
+                    mimetype: processed.mimetype,
+                    data: buffer,
+                    size: req.file.size,
+                    source: processed.filename
+                },
+                { upsert: true, new: true }
+            );
+            console.log(`✅ Original document saved: ${processed.filename}`);
+        } catch (saveErr) {
+            console.error('❌ Failed to save original document:', saveErr.message);
+            // We continue processing even if original save fails, though ideally it shouldn't
+        }
+
         // Add documents in bulk
         await vectorStore.addDocuments(chunksToAdd);
 

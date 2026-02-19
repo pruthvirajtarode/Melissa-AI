@@ -167,12 +167,22 @@ class VectorStore {
 
     async deleteBySource(source) {
         const result = await Knowledge.deleteMany({ 'metadata.source': source });
+
+        // Also delete original document if it exists
+        const OriginalDocument = require('../models/OriginalDocument');
+        await OriginalDocument.deleteMany({ source });
+
         this.groupedCache = null;
         return result.deletedCount;
     }
 
     async clearAll() {
         await Knowledge.deleteMany({});
+
+        // Also clear all original documents
+        const OriginalDocument = require('../models/OriginalDocument');
+        await OriginalDocument.deleteMany({});
+
         this.groupedCache = null;
     }
 
