@@ -1089,3 +1089,112 @@ function escapeHtml(text) {
     div.textContent = text;
     return div.innerHTML;
 }
+
+// ─── Conversations ────────────────────────────────────────────────────────────
+
+async function loadConversations() {
+    if (!conversationsList) return;
+    conversationsList.innerHTML = '<div class="loading">Loading conversations...</div>';
+
+    try {
+        const response = await fetch(`${API_URL}/api/chat/conversations`, {
+            headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+
+        if (!response.ok) {
+            conversationsList.innerHTML = '<div class="empty-state"><p>No recent conversations</p></div>';
+            return;
+        }
+
+        const data = await response.json();
+        const convs = data.conversations || [];
+
+        if (convs.length === 0) {
+            conversationsList.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon">💬</div>
+                    <p>No recent conversations</p>
+                    <p style="font-size:0.85rem;color:#6b7280;margin-top:6px;">Conversations will appear here once users start chatting</p>
+                </div>`;
+            return;
+        }
+
+        conversationsList.innerHTML = convs.map(conv => {
+            const lastMsg = conv.lastMessage;
+            const preview = lastMsg
+                ? (lastMsg.content || '').substring(0, 80) + (lastMsg.content?.length > 80 ? '...' : '')
+                : 'No messages';
+            const role = lastMsg?.role === 'user' ? '👤' : '🤖';
+            const updatedAt = conv.updatedAt ? new Date(conv.updatedAt).toLocaleString() : '';
+
+            return `
+            <div class="conversation-item" style="background:white;border:1px solid #e5e7eb;border-radius:12px;padding:16px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;" onclick="viewConversation('${escapeHtml(conv.id)}')">
+                <div style="flex:1;min-width:0;">
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+                        <span style="font-weight:600;font-size:13px;color:#111827;">Conv: ${escapeHtml(conv.id).substring(0, 20)}...</span>
+                        <span style="background:#dbeafe;color:#1e40af;font-size:11px;padding:2px 8px;border-radius:20px;">${conv.messageCount || 0} msgs</span>
+                    </div>
+                    <div style="font-size:13px;color:#6b7280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${role} ${escapeHtml(preview)}</div>
+                    <div style="font-size:11px;color:#9ca3af;margin-top:4px;">${updatedAt}</div>
+                </div>
+                <button onclick="event.stopPropagation(); deleteConversation('${escapeHtml(conv.id)}')" style="background:none;border:1px solid #fca5a5;color:#ef4444;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:12px;flex-shrink:0;">Delete</button>
+            </div>`;
+        }).join('');
+
+    } catch (err) {
+        console.error('Load conversations error:', err);
+        conversationsList.innerHTML = '<div class="empty-state"><p>No recent conversations</p></div>';
+    }
+}
+
+async function viewConversation(convId) {
+    try {
+        const response = await fetch(`${API_URL}/api/chat/conversation/${encodeURIComponent(convId)}`, {
+            headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+
+        if (!response.ok) { showToast('Could not load conversation', 'error'); return; }
+
+        const data = await response.json();
+        const messages = data.conversation || [];
+        currentViewedConversation = { id: convId, messages };
+
+        modalTitle.textContent = `Conversation: ${convId.substring(0, 30)}...`;
+        modalBody.innerHTML = messages.length === 0
+            ? '<p style="color:#6b7280;text-align:center;padding:20px;">No messages</p>'
+            : messages.map(m => `
+                <div style="display:flex;gap:10px;margin-bottom:14px;flex-direction:${m.role === 'user' ? 'row-reverse' : 'row'};">
+                    <div style="width:32px;height:32px;border-radius:50%;background:${m.role === 'user' ? '#6b7280' : '#22c55e'};display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">${m.role === 'user' ? '👤' : '🤖'}</div>
+                    <div style="max-width:75%;background:${m.role === 'user' ? '#f3f4f6' : 'white'};border:1px solid #e5e7eb;border-radius:10px;padding:10px 14px;font-size:13px;line-height:1.5;">${escapeHtml(m.content || '')}</div>
+                </div>`).join('');
+
+        conversationModal.style.display = 'flex';
+    } catch (err) {
+        showToast('Failed to load conversation details', 'error');
+    }
+}
+
+async function deleteConversation(convId) {
+    if (!confirm('Delete this conversation?')) return;
+    try {
+        await fetch(`${API_URL}/api/chat/conversation/${encodeURIComponent(convId)}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+        showToast('Conversation deleted', 'success');
+        loadConversations();
+    } catch (err) {
+        showToast('Failed to delete conversation', 'error');
+    }
+}
+
+function handleDownloadConversation() {
+    if (!currentViewedConversation) return;
+    const blob = new Blob([JSON.stringify(currentViewedConversation, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `conversation-${currentViewedConversation.id}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+}
