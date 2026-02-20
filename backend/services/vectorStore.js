@@ -76,35 +76,58 @@ class VectorStore {
      */
     async search(query, topK = 6) {
         try {
-            // Fetch only necessary fields for performance, using lean() to avoid Mongoose overhead
-            const activeDocs = await Knowledge.find(
-                { 'metadata.isActive': true },
-                { embedding: 1, text: 1, 'metadata.source': 1 }
-            ).lean();
+            // ─── Phase 1: Load ONE representative chunk per unique source ───
+            // This cuts data transfer from ~60MB (all chunks) to ~3MB (one per doc)
+            const repDocs = await Knowledge.aggregate([
+                { $match: { 'metadata.isActive': true } },
+                {
+                    $group: {
+                        _id: '$metadata.source',
+                        text: { $first: '$text' },
+                        embedding: { $first: '$embedding' },
+                        source: { $first: '$metadata.source' }
+                    }
+                },
+                { $limit: 1500 } // cap to 1500 unique docs max
+            ]);
 
-            if (activeDocs.length === 0) return [];
+            if (repDocs.length === 0) return [];
 
-            // Use cached embedding if available (avoids extra OpenAI call)
+            // ─── Get query embedding (cached) ────────────────────────────────
             if (!this._embCache) this._embCache = new Map();
             const cacheKey = query.toLowerCase().trim();
             let queryEmbedding;
             const cached = this._embCache.get(cacheKey);
-            if (cached && Date.now() - cached.ts < 10 * 60 * 1000) {
+            if (cached && Date.now() - cached.ts < 30 * 60 * 1000) { // 30 min TTL
                 queryEmbedding = cached.emb;
             } else {
                 queryEmbedding = await generateEmbedding(query);
-                if (this._embCache.size >= 100) this._embCache.delete(this._embCache.keys().next().value);
+                if (this._embCache.size >= 200) this._embCache.delete(this._embCache.keys().next().value);
                 this._embCache.set(cacheKey, { emb: queryEmbedding, ts: Date.now() });
             }
 
-            // Compute similarity - dot product is fast for normalized vectors
-            const results = activeDocs.map(doc => ({
+            // ─── Phase 1 scoring: rank docs by their rep chunk similarity ───
+            const phase1 = repDocs.map(doc => ({
+                source: doc.source,
+                similarity: this.cosineSimilarity(queryEmbedding, doc.embedding)
+            })).sort((a, b) => b.similarity - a.similarity);
+
+            // Take top sources from phase 1
+            const topSources = phase1.slice(0, topK * 3).map(d => d.source);
+
+            // ─── Phase 2: Fetch ALL chunks from top sources only ─────────────
+            const fullChunks = await Knowledge.find(
+                { 'metadata.isActive': true, 'metadata.source': { $in: topSources } },
+                { embedding: 1, text: 1, 'metadata.source': 1 }
+            ).lean();
+
+            // Final scoring on the focused set
+            const results = fullChunks.map(doc => ({
                 text: doc.text,
                 source: doc.metadata.source,
                 similarity: this.cosineSimilarity(queryEmbedding, doc.embedding)
             }));
 
-            // Sort and return top matches
             results.sort((a, b) => b.similarity - a.similarity);
             return results.slice(0, topK);
         } catch (error) {
@@ -112,6 +135,7 @@ class VectorStore {
             return [];
         }
     }
+
 
 
     cosineSimilarity(vecA, vecB) {
