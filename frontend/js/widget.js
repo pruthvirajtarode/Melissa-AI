@@ -68,11 +68,6 @@ window.addEventListener('load', async function () {
         widgetContainer.classList.add('embedded');
         widgetButton.classList.add('hidden');
         widgetButton.style.setProperty('display', 'none', 'important');
-
-        // Also hide the close button if we want the parent to manage it
-        if (widgetClose) {
-            widgetClose.style.display = 'none';
-        }
     }
 
     // Apply settings
