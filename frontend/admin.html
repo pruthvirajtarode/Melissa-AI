@@ -395,7 +395,8 @@
   const btn = document.getElementById('melliss-btn');
   const win = document.getElementById('melliss-window');
   let isOpen = false;
-  btn.onclick = () => {
+  
+  function toggleWidget() {
     isOpen = !isOpen;
     if (isOpen) {
       win.style.display = 'block';
@@ -406,7 +407,16 @@
       setTimeout(() => { win.style.display = 'none'; }, 300);
       btn.innerHTML = '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>';
     }
-  };
+  }
+  
+  btn.onclick = toggleWidget;
+  
+  window.addEventListener('message', (e) => {
+    if (e.data === 'closeWidget' && isOpen) {
+      toggleWidget();
+    }
+  });
+
   function checkMobile() {
     win.style.width = window.innerWidth < 480 ? 'calc(100vw - 40px)' : '420px';
     win.style.height = window.innerWidth < 480 ? 'calc(80vh)' : '650px';

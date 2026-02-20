@@ -1,0 +1,50 @@
+[
+  {
+    "_id": "699745606174891d80f241b4",
+    "metadata": {
+      "source": "Accelerate Track\\Artificial Intelligence Integration Assessment.docx",
+      "filename": "Artificial Intelligence Integration Assessment.docx",
+      "path": "Accelerate Track\\Artificial Intelligence Integration Assessment.docx",
+      "category": "Accelerate Track",
+      "mimetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "chunkIndex": 0,
+      "totalChunks": 5,
+      "isActive": true,
+      "type": "file"
+    },
+    "createdAt": "2026-02-19T17:16:16.371Z",
+    "__v": 0
+  },
+  {
+    "_id": "699745606174891d80f241b2",
+    "metadata": {
+      "source": "Accelerate Track\\Building a Data-Driven Organization.docx",
+      "filename": "Building a Data-Driven Organization.docx",
+      "path": "Accelerate Track\\Building a Data-Driven Organization.docx",
+      "category": "Accelerate Track",
+      "mimetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "chunkIndex": 2,
+      "totalChunks": 3,
+      "isActive": true,
+      "type": "file"
+    },
+    "createdAt": "2026-02-19T17:16:16.296Z",
+    "__v": 0
+  },
+  {
+    "_id": "699745606174891d80f241bb",
+    "metadata": {
+      "source": "Accelerate Track\\Cash Flow and Working Capital Assessment.docx",
+      "filename": "Cash Flow and Working Capital Assessment.docx",
+      "path": "Accelerate Track\\Cash Flow and Working Capital Assessment.docx",
+      "category": "Accelerate Track",
+      "mimetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "chunkIndex": 1,
+      "totalChunks": 6,
+      "isActive": true,
+      "type": "file"
+    },
+    "createdAt": "2026-02-19T17:16:16.380Z",
+    "__v": 0
+  }
+]
