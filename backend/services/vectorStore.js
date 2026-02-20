@@ -76,8 +76,7 @@ class VectorStore {
      */
     async search(query, topK = 6) {
         try {
-            // ─── Phase 1: Load ONE representative chunk per unique source ───
-            // This cuts data transfer from ~60MB (all chunks) to ~3MB (one per doc)
+            // ─── Phase 1: Load ONE representative chunk + filename per source ──
             const repDocs = await Knowledge.aggregate([
                 { $match: { 'metadata.isActive': true } },
                 {
@@ -85,10 +84,12 @@ class VectorStore {
                         _id: '$metadata.source',
                         text: { $first: '$text' },
                         embedding: { $first: '$embedding' },
-                        source: { $first: '$metadata.source' }
+                        source: { $first: '$metadata.source' },
+                        summary: { $first: '$metadata.summary' },
+                        filename: { $first: '$metadata.filename' }
                     }
                 },
-                { $limit: 1500 } // cap to 1500 unique docs max
+                { $limit: 1500 }
             ]);
 
             if (repDocs.length === 0) return [];
@@ -98,7 +99,7 @@ class VectorStore {
             const cacheKey = query.toLowerCase().trim();
             let queryEmbedding;
             const cached = this._embCache.get(cacheKey);
-            if (cached && Date.now() - cached.ts < 30 * 60 * 1000) { // 30 min TTL
+            if (cached && Date.now() - cached.ts < 30 * 60 * 1000) {
                 queryEmbedding = cached.emb;
             } else {
                 queryEmbedding = await generateEmbedding(query);
@@ -106,14 +107,33 @@ class VectorStore {
                 this._embCache.set(cacheKey, { emb: queryEmbedding, ts: Date.now() });
             }
 
-            // ─── Phase 1 scoring: rank docs by their rep chunk similarity ───
-            const phase1 = repDocs.map(doc => ({
-                source: doc.source,
-                similarity: this.cosineSimilarity(queryEmbedding, doc.embedding)
-            })).sort((a, b) => b.similarity - a.similarity);
+            // ─── Phase 1 scoring: semantic + filename keyword boost ───────────
+            const queryWords = query.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter(w => w.length > 2);
 
-            // Take top sources from phase 1
-            const topSources = phase1.slice(0, topK * 3).map(d => d.source);
+            const phase1 = repDocs.map(doc => {
+                let score = this.cosineSimilarity(queryEmbedding, doc.embedding);
+
+                // Filename keyword boost — fixes Excel/PPTX files where first chunk is headers
+                const filename = (doc.filename || doc.source || '').toLowerCase().replace(/[_\-\.]/g, ' ');
+                const filenameMatchCount = queryWords.filter(w => filename.includes(w)).length;
+                if (filenameMatchCount > 0) {
+                    score += 0.15 * Math.min(filenameMatchCount, 3); // up to +0.45 boost
+                }
+
+                // Summary keyword boost — summaries describe the full doc content
+                if (doc.summary) {
+                    const summaryLower = doc.summary.toLowerCase();
+                    const summaryMatchCount = queryWords.filter(w => summaryLower.includes(w)).length;
+                    if (summaryMatchCount > 0) {
+                        score += 0.08 * Math.min(summaryMatchCount, 4); // up to +0.32 boost
+                    }
+                }
+
+                return { source: doc.source, similarity: score };
+            }).sort((a, b) => b.similarity - a.similarity);
+
+            // Take top sources from phase 1 (wider net: topK * 4)
+            const topSources = phase1.slice(0, topK * 4).map(d => d.source);
 
             // ─── Phase 2: Fetch ALL chunks from top sources only ─────────────
             const fullChunks = await Knowledge.find(
@@ -121,7 +141,7 @@ class VectorStore {
                 { embedding: 1, text: 1, 'metadata.source': 1 }
             ).lean();
 
-            // Final scoring on the focused set
+            // Final semantic scoring on the focused set
             const results = fullChunks.map(doc => ({
                 text: doc.text,
                 source: doc.metadata.source,
@@ -135,6 +155,7 @@ class VectorStore {
             return [];
         }
     }
+
 
 
 
