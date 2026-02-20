@@ -216,14 +216,70 @@ window.addEventListener('load', async function () {
 
     function formatMessage(text) {
         if (!text) return '';
-        // Convert line breaks
-        text = text.replace(/\n/g, '<br>');
-        // Bold text
-        text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-        // Bullet points
-        text = text.replace(/^- (.*?)(<br>|$)/gm, '<li>$1</li>');
-        return text;
+
+        // Process line by line for proper list rendering
+        const lines = text.split('\n');
+        let html = '';
+        let inNumberedList = false;
+        let inBulletList = false;
+
+        for (let line of lines) {
+            line = line.trim();
+            if (!line) {
+                // Close any open lists on blank line
+                if (inNumberedList) { html += '</ol>'; inNumberedList = false; }
+                if (inBulletList) { html += '</ul>'; inBulletList = false; }
+                continue;
+            }
+
+            // Apply inline formatting (bold)
+            line = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+            // Numbered list: "1." "2." "3." etc
+            const numberedMatch = line.match(/^(\d+)\.\s+(.+)/);
+            if (numberedMatch) {
+                if (!inNumberedList) {
+                    if (inBulletList) { html += '</ul>'; inBulletList = false; }
+                    html += '<ol style="margin:8px 0;padding-left:0;list-style:none;">';
+                    inNumberedList = true;
+                }
+                html += `<li style="display:flex;gap:8px;margin-bottom:6px;align-items:flex-start;">
+                    <span style="background:#22c55e;color:white;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px;">${numberedMatch[1]}</span>
+                    <span>${numberedMatch[2]}</span>
+                </li>`;
+                continue;
+            }
+
+            // Bullet list: "- " or "• "
+            const bulletMatch = line.match(/^[-•]\s+(.+)/);
+            if (bulletMatch) {
+                if (!inBulletList) {
+                    if (inNumberedList) { html += '</ol>'; inNumberedList = false; }
+                    html += '<ul style="margin:8px 0;padding-left:0;list-style:none;">';
+                    inBulletList = true;
+                }
+                html += `<li style="display:flex;gap:8px;margin-bottom:6px;align-items:flex-start;">
+                    <span style="color:#22c55e;font-size:16px;line-height:1;flex-shrink:0;">•</span>
+                    <span>${bulletMatch[1]}</span>
+                </li>`;
+                continue;
+            }
+
+            // Close lists before plain text
+            if (inNumberedList) { html += '</ol>'; inNumberedList = false; }
+            if (inBulletList) { html += '</ul>'; inBulletList = false; }
+
+            // Plain text line
+            html += `<p style="margin:4px 0;">${line}</p>`;
+        }
+
+        // Close any unclosed lists
+        if (inNumberedList) html += '</ol>';
+        if (inBulletList) html += '</ul>';
+
+        return html;
     }
+
 
 
     function showTypingIndicator() {
