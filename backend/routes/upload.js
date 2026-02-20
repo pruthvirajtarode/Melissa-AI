@@ -68,9 +68,24 @@ router.post('/', upload.single('file'), async (req, res) => {
             }
         }));
 
-        // NOTE: We do NOT store the raw file binary in MongoDB to preserve storage quota.
-        // Only the text chunks + embeddings are stored (already efficient).
-        console.log(`ℹ️ Skipping binary storage to preserve MongoDB quota (${req.file.size} bytes saved)`);
+        // ✅ Store original file binary in MongoDB for download support
+        // M10 cluster has 10GB dedicated storage — safe to store originals
+        try {
+            const OriginalDocument = require('../models/OriginalDocument');
+            const existingDoc = await OriginalDocument.findOne({ source: processed.filename });
+            if (!existingDoc) {
+                await OriginalDocument.create({
+                    source: processed.filename,
+                    filename: processed.filename,
+                    mimetype: processed.mimetype,
+                    data: buffer,
+                    size: buffer.length
+                });
+                console.log(`💾 Original file stored in DB: ${processed.filename} (${buffer.length} bytes)`);
+            }
+        } catch (storageErr) {
+            console.warn(`⚠️ Could not store original binary: ${storageErr.message}`);
+        }
 
         // Add text chunks + embeddings to vector store
         await vectorStore.addDocuments(chunksToAdd);
@@ -80,6 +95,8 @@ router.post('/', upload.single('file'), async (req, res) => {
             filename: processed.filename,
             chunks: processed.chunks.length
         });
+
+
 
     } catch (error) {
         console.error('Upload error:', error);
