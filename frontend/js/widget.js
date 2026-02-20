@@ -138,6 +138,11 @@ window.addEventListener('load', async function () {
                 }
             }
 
+            // ✅ Remove streaming cursor — stops the blinking green dot after response ends
+            contentDiv.classList.remove('streaming');
+            contentDiv.innerHTML = formatMessage(fullText);
+            widgetMessages.scrollTop = widgetMessages.scrollHeight;
+
         } catch (streamError) {
             // Fallback to regular endpoint if streaming fails
             console.warn('Stream failed, using standard endpoint:', streamError);
