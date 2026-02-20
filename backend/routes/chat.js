@@ -33,11 +33,10 @@ router.post('/', async (req, res) => {
             content: message
         });
 
-        // Search vector store for relevant context (reduced from 5 to 3 for speed)
-        const relevantDocs = await vectorStore.search(message, 5); // Increased to 5 for better coverage
+        // Search vector store — 3 results is enough and faster than 5
+        const relevantDocs = await vectorStore.search(message, 3);
 
         let context = "";
-        const seenSources = new Set();
         let maxSimilarity = 0;
 
         console.log(`🔍 Chat Search: found ${relevantDocs.length} potential matches`);
@@ -45,15 +44,19 @@ router.post('/', async (req, res) => {
         relevantDocs.forEach(doc => {
             if (doc.similarity > maxSimilarity) maxSimilarity = doc.similarity;
 
-            // Use a 0.50 threshold for filtering, but give preference to higher scores
-            if (doc.similarity > 0.50) {
+            // Higher threshold 0.72 — only include genuinely relevant chunks
+            if (doc.similarity > 0.72) {
                 console.log(`   ✅ Match: ${doc.source} (Score: ${doc.similarity.toFixed(3)})`);
-                // Add the chunk text
                 context += `\n[Source: ${doc.source}]\n${doc.text}\n`;
             } else {
                 console.log(`   ❌ Skip: ${doc.source} (Score: ${doc.similarity.toFixed(3)})`);
             }
         });
+
+        // Cap context length to keep OpenAI request small and fast
+        if (context.length > 1500) {
+            context = context.substring(0, 1500) + '...';
+        }
 
         if (relevantDocs.length > 0 && !context) {
             console.warn(`⚠️ No matches passed similarity threshold (Max: ${maxSimilarity.toFixed(3)})`);
@@ -68,9 +71,9 @@ router.post('/', async (req, res) => {
             content: response
         });
 
-        // Limit conversation history to last 10 messages
-        if (conversation.length > 10) {
-            conversations.set(conversationId, conversation.slice(-10));
+        // Limit conversation history to last 6 messages (3 exchanges) for speed
+        if (conversation.length > 6) {
+            conversations.set(conversationId, conversation.slice(-6));
         }
 
         const responseTime = Date.now() - startTime;
