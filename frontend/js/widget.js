@@ -96,28 +96,94 @@ window.addEventListener('load', async function () {
         const typingId = showTypingIndicator();
 
         try {
-            const response = await fetch(`${API_URL}/api/chat`, {
+            // Use streaming endpoint for near-instant responses
+            const response = await fetch(`${API_URL}/api/chat/stream`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ message, conversationId })
             });
 
-            const data = await response.json();
-            removeTypingIndicator(typingId);
-
-            if (response.ok) {
-                addMessage('assistant', data.response);
-            } else {
-                addMessage('assistant', 'Sorry, I encountered an error.');
+            if (!response.ok || !response.body) {
+                throw new Error('Stream not available');
             }
-        } catch (error) {
+
+            // Remove typing indicator and create empty assistant bubble
             removeTypingIndicator(typingId);
-            addMessage('assistant', 'Sorry, I encountered a connection error.');
+            const { messageDiv, contentDiv } = createStreamingBubble();
+
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let buffer = '';
+            let fullText = '';
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+
+                buffer += decoder.decode(value, { stream: true });
+                const lines = buffer.split('\n');
+                buffer = lines.pop(); // keep incomplete line in buffer
+
+                for (const line of lines) {
+                    if (!line.startsWith('data: ')) continue;
+                    try {
+                        const data = JSON.parse(line.slice(6));
+                        if (data.token) {
+                            fullText += data.token;
+                            contentDiv.innerHTML = formatMessage(fullText);
+                            widgetMessages.scrollTop = widgetMessages.scrollHeight;
+                        }
+                        if (data.done || data.error) break;
+                    } catch (e) { /* skip malformed chunk */ }
+                }
+            }
+
+        } catch (streamError) {
+            // Fallback to regular endpoint if streaming fails
+            console.warn('Stream failed, using standard endpoint:', streamError);
+            try {
+                const response = await fetch(`${API_URL}/api/chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message, conversationId })
+                });
+                const data = await response.json();
+                removeTypingIndicator(typingId);
+                if (response.ok) {
+                    addMessage('assistant', data.response);
+                } else {
+                    addMessage('assistant', 'Sorry, I encountered an error. Please try again.');
+                }
+            } catch (err) {
+                removeTypingIndicator(typingId);
+                addMessage('assistant', 'Sorry, I encountered a connection error.');
+            }
         } finally {
             isProcessing = false;
             widgetSend.disabled = false;
             widgetInput.focus();
         }
+    }
+
+    // Creates an empty assistant bubble ready for streaming text
+    function createStreamingBubble() {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'widget-message assistant';
+
+        const avatar = document.createElement('div');
+        avatar.className = 'widget-avatar';
+        avatar.innerHTML = `<img src="${botSettings.avatarUrl}" alt="${botSettings.botName}" class="widget-avatar-image" />`;
+
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'widget-message-content streaming';
+        contentDiv.textContent = '';
+
+        messageDiv.appendChild(avatar);
+        messageDiv.appendChild(contentDiv);
+        widgetMessages.appendChild(messageDiv);
+        widgetMessages.scrollTop = widgetMessages.scrollHeight;
+
+        return { messageDiv, contentDiv };
     }
 
     function addMessage(role, content) {
