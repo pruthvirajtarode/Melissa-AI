@@ -4,67 +4,176 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MelissAI Widget Embed Code</title>
+  <title>MelissAI – Embed Code</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
   <style>
-    body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
-      background: #f5f5f5;
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
 
-    .container {
-      background: white;
-      border-radius: 12px;
-      padding: 30px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 860px;
+      width: 100%;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+    }
+
+    .badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #14532d, #22c55e);
+      color: white;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 14px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+      letter-spacing: 0.5px;
     }
 
     h1 {
-      color: #14532d;
-      margin-bottom: 10px;
+      font-size: 28px;
+      font-weight: 700;
+      color: #f8fafc;
+      margin-bottom: 8px;
     }
 
     .subtitle {
-      color: #666;
-      margin-bottom: 30px;
-    }
-
-    .section {
-      margin-bottom: 40px;
-    }
-
-    .section h2 {
-      color: #22c55e;
-      font-size: 1.3rem;
-      margin-top: 0;
-      padding-bottom: 10px;
-      border-bottom: 2px solid #22c55e;
-    }
-
-    .code-block {
-      background: #1e1e1e;
-      color: #d4d4d4;
-      padding: 20px;
-      border-radius: 8px;
-      overflow-x: auto;
-      font-family: 'Courier New', monospace;
-      font-size: 13px;
+      color: #94a3b8;
+      font-size: 15px;
+      margin-bottom: 32px;
       line-height: 1.6;
-      margin: 15px 0;
-      border-left: 4px solid #22c55e;
+    }
+
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .step {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      background: #0f172a;
+      border: 1px solid #1e3a5f;
+      border-radius: 12px;
+      padding: 14px 18px;
+    }
+
+    .step-num {
+      background: linear-gradient(135deg, #14532d, #22c55e);
+      color: white;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .step-text {
+      font-size: 14px;
+      color: #cbd5e1;
+      line-height: 1.6;
+    }
+
+    .step-text strong {
+      color: #f1f5f9;
+    }
+
+    .code-panel {
+      background: #0a0f1a;
+      border: 1px solid #1e3a5f;
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      background: #111827;
+      border-bottom: 1px solid #1e3a5f;
+    }
+
+    .code-header-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #64748b;
+      font-weight: 500;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .dot-red {
+      background: #ef4444;
+    }
+
+    .dot-yellow {
+      background: #eab308;
+    }
+
+    .dot-green {
+      background: #22c55e;
+    }
+
+    pre {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12.5px;
+      line-height: 1.7;
+      color: #e2e8f0;
+      padding: 24px;
+      overflow-x: auto;
+      max-height: 420px;
+      overflow-y: auto;
+      white-space: pre;
     }
 
     .copy-btn {
-      background: linear-gradient(135deg, #14532d 0%, #22c55e 100%);
+      background: linear-gradient(135deg, #14532d, #22c55e);
       color: white;
       border: none;
-      padding: 10px 20px;
-      border-radius: 6px;
-      cursor: pointer;
+      padding: 10px 22px;
+      border-radius: 8px;
+      font-size: 13px;
       font-weight: 600;
-      margin-top: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+      font-family: 'Inter', sans-serif;
     }
 
     .copy-btn:hover {
@@ -72,238 +181,236 @@
       transform: translateY(-1px);
     }
 
-    .copy-btn:active {
-      transform: translateY(0);
-    }
-
-    .back-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      color: #14532d;
-      text-decoration: none;
-      font-weight: 600;
-      margin-bottom: 20px;
-      padding: 8px 16px;
-      background: white;
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      transition: all 0.2s ease;
-      font-size: 0.9rem;
-    }
-
-    .back-btn:hover {
-      background: #f8fafc;
-      border-color: #cbd5e0;
-      transform: translateX(-4px);
-    }
-
-    .section-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 2px solid #22c55e;
-      padding-bottom: 10px;
-      margin-bottom: 15px;
-    }
-
-    .section h2 {
-      color: #22c55e;
-      font-size: 1.3rem;
-      margin: 0;
-      border: none;
-      padding: 0;
+    .copy-btn.copied {
+      background: #166534;
     }
 
     .note {
-      background: #f0fdf4;
-      border-left: 4px solid #22c55e;
-      padding: 15px;
-      border-radius: 4px;
-      margin: 15px 0;
-      color: #14532d;
+      background: rgba(34, 197, 94, 0.08);
+      border: 1px solid rgba(34, 197, 94, 0.2);
+      border-radius: 10px;
+      padding: 14px 18px;
+      font-size: 13px;
+      color: #86efac;
+      line-height: 1.6;
     }
 
-    .options {
-      background: #fafafa;
-      padding: 15px;
-      border-radius: 6px;
-      margin: 15px 0;
-    }
-
-    .option {
-      margin: 10px 0;
-      padding: 10px;
-      background: white;
-      border-radius: 4px;
-      border-left: 3px solid #22c55e;
-    }
-
-    .option code {
-      background: #f0f0f0;
-      padding: 2px 6px;
-      border-radius: 3px;
-      font-family: monospace;
-    }
-
-    a {
-      color: #22c55e;
-      text-decoration: none;
-    }
-
-    a:hover {
-      text-decoration: underline;
+    .note strong {
+      color: #4ade80;
     }
   </style>
 </head>
 
 <body>
-  <div class="container">
-    <a href="admin.html" class="back-btn">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-        stroke-linecap="round" stroke-linejoin="round">
-        <path d="M19 12H5M12 19l-7-7 7-7" />
-      </svg>
-      Back to Admin Dashboard
-    </a>
-    <h1>🎯 MelissAI Widget Embed Code</h1>
-    <p class="subtitle">Professional Chat Widget for Business Development</p>
+  <div class="card">
+    <div class="badge">✅ Verified Working Code</div>
+    <h1>MelissAI Embed Code</h1>
+    <p class="subtitle">Copy and paste this code into any website to add the MelissAI chat widget. Place it just before
+      the closing <code style="background:#0f172a;padding:2px 6px;border-radius:4px;color:#4ade80;">&lt;/body&gt;</code>
+      tag.</p>
 
-    <div class="section">
-      <div class="section-header">
-        <h2>🚀 Recommended - Clean Embed (Script)</h2>
-        <button class="copy-btn" onclick="copyCode('scriptCode')">Copy Script</button>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text"><strong>Copy</strong> the entire code block below using the Copy button.</div>
       </div>
-      <p>The simplest way to integrate MelissAI. Just add this one line and we handle the rest:</p>
-      <div class="code-block" id="scriptCode">&lt;!-- MelissAI One-Line Integration --&gt;
-        &lt;script src="/js/embed.js"&gt;&lt;/script&gt;</div>
-      <div class="note">
-        <strong>💡 Tip:</strong> Replace <code>/js/embed.js</code> with your full domain (e.g.,
-        <code>https://your-bot.com/js/embed.js</code>) if using on an external site.
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text"><strong>Open</strong> your website's HTML file or page editor (WordPress, Webflow, Wix,
+          etc.).</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text"><strong>Paste</strong> the code just before the <code
+            style="background:#0f172a;padding:2px 6px;border-radius:4px;color:#4ade80;">&lt;/body&gt;</code> closing
+          tag.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-text"><strong>Save & publish</strong> — the MelissAI chat button will appear in the
+          bottom-right corner of your site.</div>
       </div>
     </div>
 
-    <div class="section">
-      <div class="section-header">
-        <h2>📋 Advanced - Manual Embed (HTML + Script)</h2>
-        <button class="copy-btn" onclick="copyCode('standardCode')">Copy Code</button>
+    <div class="code-panel">
+      <div class="code-header">
+        <div class="code-header-left">
+          <div class="dot dot-red"></div>
+          <div class="dot dot-yellow"></div>
+          <div class="dot dot-green"></div>
+          <span style="margin-left:8px;">embed-melissai.html</span>
+        </div>
+        <button class="copy-btn" id="copyBtn" onclick="copyCode()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+          Copy Code
+        </button>
       </div>
-      <p>Copy and paste this code if you want full control over the button styling and behavior:</p>
+      <pre id="embedCode">&lt;!-- MelissAI Chatbot Integration - START --&gt;
+&lt;div id="melliss-ai-bot" style="position: fixed; bottom: 25px; right: 25px; z-index: 999999; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;"&gt;
 
-      <div class="code-block" id="standardCode">&lt;!-- MelissAI Chatbot Integration - START --&gt;
-        &lt;div id="meliss-ai-bot" style="position: fixed; bottom: 25px; right: 25px; z-index: 999999; font-family:
-        -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;"&gt;
+  &lt;!-- CSS Styles for Widget --&gt;
+  &lt;style&gt;
+    :root { --melliss-primary: linear-gradient(135deg, #14532d 0%, #22c55e 100%); }
+    #melliss-btn:hover { transform: scale(1.08); box-shadow: 0 8px 25px rgba(34, 197, 94, 0.45); }
+    #melliss-btn:active { transform: scale(0.95); }
+  &lt;/style&gt;
 
-        &lt;!-- CSS Styles for Widget --&gt;
-        &lt;style&gt;
-        :root { --meliss-primary: linear-gradient(135deg, #14532d 0%, #22c55e 100%); }
-        #meliss-btn:hover { transform: scale(1.08); box-shadow: 0 8px 25px rgba(34, 197, 94, 0.45); }
-        #meliss-btn:active { transform: scale(0.95); }
-        &lt;/style&gt;
+  &lt;!-- Floating Chat Button --&gt;
+  &lt;button id="melliss-btn" aria-label="Open Chat" style="width: 65px; height: 65px; border-radius: 50%; background: var(--melliss-primary); border: none; cursor: pointer; box-shadow: 0 5px 20px rgba(20, 83, 45, 0.3); display: flex; align-items: center; justify-content: center; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);"&gt;
+    &lt;svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"&gt;
+      &lt;path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"&gt;&lt;/path&gt;
+    &lt;/svg&gt;
+  &lt;/button&gt;
 
-        &lt;!-- Floating Chat Button --&gt;
-        &lt;button id="meliss-btn" aria-label="Open Chat" style="width: 65px; height: 65px; border-radius: 50%;
-        background: var(--meliss-primary); border: none; cursor: pointer; box-shadow: 0 5px 20px rgba(20, 83, 45, 0.3);
-        display: flex; align-items: center; justify-content: center; transition: all 0.3s cubic-bezier(0.175, 0.885,
-        0.32, 1.275);"&gt;
-        &lt;svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"
-        stroke-linecap="round" stroke-linejoin="round"&gt;
-        &lt;path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"&gt;&lt;/path&gt;
-        &lt;/svg&gt;
-        &lt;/button&gt;
+  &lt;!-- Chat Window --&gt;
+  &lt;div id="melliss-window" style="display: none; position: absolute; bottom: 85px; right: 0; width: 420px; height: 650px; border-radius: 20px; overflow: hidden; box-shadow: 0 25px 60px rgba(0,0,0,0.2); background: white; border: 1px solid rgba(0,0,0,0.08); transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); transform: translateY(20px); opacity: 0;"&gt;
+    &lt;iframe src="https://melissa-ai.vercel.app/widget.html" style="width: 100%; height: 100%; border: none;" title="MelissAI Assistant" id="melliss-iframe"&gt;&lt;/iframe&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
 
-        &lt;!-- Chat Window --&gt;
-        &lt;div id="meliss-window" style="display: none; position: absolute; bottom: 85px; right: 0; width: 420px;
-        height: 650px; border-radius: 20px; overflow: hidden; box-shadow: 0 25px 60px rgba(0,0,0,0.2); background:
-        white; border: 1px solid rgba(0,0,0,0.08); transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); transform:
-        translateY(20px); opacity: 0;"&gt;
-        &lt;iframe src="https://melissa-ai.vercel.app/widget.html" style="width: 100%; height: 100%; border: none;"
-        title="MelissAI Assistant" id="meliss-iframe"&gt;&lt;/iframe&gt;
-        &lt;/div&gt;
-        &lt;/div&gt;
+&lt;script&gt;
+(function() {
+  const btn = document.getElementById('melliss-btn');
+  const win = document.getElementById('melliss-window');
+  let isOpen = false;
 
-        &lt;script&gt;
-        (function() {
-        const btn = document.getElementById('meliss-btn');
-        const win = document.getElementById('meliss-window');
-        let isOpen = false;
-
-        // Toggle Chat Window logic
-        btn.onclick = () =&gt; {
-        isOpen = !isOpen;
-        if (isOpen) {
-        win.style.display = 'block';
-        setTimeout(() =&gt; {
+  btn.onclick = () =&gt; {
+    isOpen = !isOpen;
+    if (isOpen) {
+      win.style.display = 'block';
+      setTimeout(() =&gt; {
         win.style.transform = 'translateY(0)';
         win.style.opacity = '1';
-        }, 10);
-        // Change icon to 'X' (Close)
-        btn.innerHTML = '&lt;svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white"
-        stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;line x1="18" y1="6" x2="6"
-        y2="18"&gt;&lt;/line&gt;&lt;line x1="6" y1="6" x2="18" y2="18"&gt;&lt;/line&gt;&lt;/svg&gt;';
-        } else {
-        win.style.transform = 'translateY(20px)';
-        win.style.opacity = '0';
-        setTimeout(() =&gt; { win.style.display = 'none'; }, 300);
-        // Change icon back to Chat Bubble
-        btn.innerHTML = '&lt;svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white"
-        stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2
-        2 0 0 1 2-2h14a2 2 0 0 1 2 2z"&gt;&lt;/path&gt;&lt;/svg&gt;';
-        }
-        };
+      }, 10);
+      btn.innerHTML = '&lt;svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;line x1="18" y1="6" x2="6" y2="18"&gt;&lt;/line&gt;&lt;line x1="6" y1="6" x2="18" y2="18"&gt;&lt;/line&gt;&lt;/svg&gt;';
+    } else {
+      win.style.transform = 'translateY(20px)';
+      win.style.opacity = '0';
+      setTimeout(() =&gt; { win.style.display = 'none'; }, 300);
+      btn.innerHTML = '&lt;svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"&gt;&lt;/path&gt;&lt;/svg&gt;';
+    }
+  };
 
-        // Allow widget to close itself
-        window.addEventListener('message', function(event) {
-        if (event.data === 'closeWidget' || event.data?.type === 'closeWidget') {
-        isOpen = false;
-        win.style.transform = 'translateY(20px)';
-        win.style.opacity = '0';
-        setTimeout(() =&gt; { win.style.display = 'none'; }, 300);
-        btn.innerHTML = '&lt;svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white"
-        stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2
-        2 0 0 1 2-2h14a2 2 0 0 1 2 2z"&gt;&lt;/path&gt;&lt;/svg&gt;';
-        }
-        });
+  window.addEventListener('message', function(event) {
+    if (event.data === 'closeWidget') {
+      isOpen = false;
+      win.style.transform = 'translateY(20px)';
+      win.style.opacity = '0';
+      setTimeout(() =&gt; { win.style.display = 'none'; }, 300);
+      btn.innerHTML = '&lt;svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"&gt;&lt;/path&gt;&lt;/svg&gt;';
+    }
+  });
 
-        // Handle Mobile Responsiveness
-        function checkMobile() {
-        if (window.innerWidth &lt; 480) {
-        win.style.width = 'calc(100vw - 40px)';
-        win.style.height = 'calc(80vh)';
-        win.style.right = '-10px';
-        } else {
-        win.style.width = '420px';
-        win.style.height = '650px';
-        win.style.right = '0';
-        }
-        }
-        window.addEventListener('resize', checkMobile);
-        checkMobile();
-        })();
-        &lt;/script&gt;
-        &lt;!-- MelissAI Chatbot Integration - END --&gt;</div>
+  function checkMobile() {
+    if (window.innerWidth &lt; 480) {
+      win.style.width = 'calc(100vw - 40px)';
+      win.style.height = 'calc(80vh)';
+      win.style.right = '-10px';
+    } else {
+      win.style.width = '420px';
+      win.style.height = '650px';
+      win.style.right = '0';
+    }
+  }
+  window.addEventListener('resize', checkMobile);
+  checkMobile();
+})();
+&lt;/script&gt;
+&lt;!-- MelissAI Chatbot Integration - END --&gt;</pre>
+    </div>
+
+    <div class="note">
+      <strong>💡 Note:</strong> This embed code loads the chat widget from <strong>melissa-ai.vercel.app</strong>. It
+      works on any website — WordPress, Webflow, Wix, Squarespace, or plain HTML. No additional setup required.
     </div>
   </div>
 
   <script>
-    function copyCode(elementId) {
-      const codeElement = document.getElementById(elementId);
-      // Create a temporary textarea to decode HTML entities
-      const doc = new DOMParser().parseFromString(codeElement.innerHTML, 'text/html');
-      const decodedCode = doc.documentElement.textContent;
+    function copyCode() {
+      const raw = `<!-- MelissAI Chatbot Integration - START -->
+<div id="melliss-ai-bot" style="position: fixed; bottom: 25px; right: 25px; z-index: 999999; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
 
-      navigator.clipboard.writeText(decodedCode).then(() => {
-        const btn = event.currentTarget;
-        const originalText = btn.innerText;
-        btn.innerText = '✅ Copied!';
-        btn.style.background = '#14532d';
+  <!-- CSS Styles for Widget -->
+  <style>
+    :root { --melliss-primary: linear-gradient(135deg, #14532d 0%, #22c55e 100%); }
+    #melliss-btn:hover { transform: scale(1.08); box-shadow: 0 8px 25px rgba(34, 197, 94, 0.45); }
+    #melliss-btn:active { transform: scale(0.95); }
+  </style>
+
+  <!-- Floating Chat Button -->
+  <button id="melliss-btn" aria-label="Open Chat" style="width: 65px; height: 65px; border-radius: 50%; background: var(--melliss-primary); border: none; cursor: pointer; box-shadow: 0 5px 20px rgba(20, 83, 45, 0.3); display: flex; align-items: center; justify-content: center; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+    </svg>
+  </button>
+
+  <!-- Chat Window -->
+  <div id="melliss-window" style="display: none; position: absolute; bottom: 85px; right: 0; width: 420px; height: 650px; border-radius: 20px; overflow: hidden; box-shadow: 0 25px 60px rgba(0,0,0,0.2); background: white; border: 1px solid rgba(0,0,0,0.08); transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); transform: translateY(20px); opacity: 0;">
+    <iframe src="https://melissa-ai.vercel.app/widget.html" style="width: 100%; height: 100%; border: none;" title="MelissAI Assistant" id="melliss-iframe"></iframe>
+  </div>
+</div>
+
+<script>
+(function() {
+  const btn = document.getElementById('melliss-btn');
+  const win = document.getElementById('melliss-window');
+  let isOpen = false;
+
+  btn.onclick = () => {
+    isOpen = !isOpen;
+    if (isOpen) {
+      win.style.display = 'block';
+      setTimeout(() => {
+        win.style.transform = 'translateY(0)';
+        win.style.opacity = '1';
+      }, 10);
+      btn.innerHTML = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
+    } else {
+      win.style.transform = 'translateY(20px)';
+      win.style.opacity = '0';
+      setTimeout(() => { win.style.display = 'none'; }, 300);
+      btn.innerHTML = '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>';
+    }
+  };
+
+  window.addEventListener('message', function(event) {
+    if (event.data === 'closeWidget') {
+      isOpen = false;
+      win.style.transform = 'translateY(20px)';
+      win.style.opacity = '0';
+      setTimeout(() => { win.style.display = 'none'; }, 300);
+      btn.innerHTML = '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>';
+    }
+  });
+
+  function checkMobile() {
+    if (window.innerWidth < 480) {
+      win.style.width = 'calc(100vw - 40px)';
+      win.style.height = 'calc(80vh)';
+      win.style.right = '-10px';
+    } else {
+      win.style.width = '420px';
+      win.style.height = '650px';
+      win.style.right = '0';
+    }
+  }
+  window.addEventListener('resize', checkMobile);
+  checkMobile();
+})();
+<\/script>
+<!-- MelissAI Chatbot Integration - END -->`;
+
+      navigator.clipboard.writeText(raw).then(() => {
+        const btn = document.getElementById('copyBtn');
+        btn.classList.add('copied');
+        btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Copied!';
         setTimeout(() => {
-          btn.innerText = originalText;
-          btn.style.background = '';
-        }, 2000);
-      }).catch(err => {
-        console.error('Failed to copy code: ', err);
-        alert('Failed to copy code. Please select and copy manually.');
+          btn.classList.remove('copied');
+          btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> Copy Code';
+        }, 3000);
       });
     }
   </script>
