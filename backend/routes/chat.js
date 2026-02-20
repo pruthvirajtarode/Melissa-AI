@@ -10,9 +10,37 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 // In-memory conversation storage (use database in production)
 const conversations = new Map();
 
+// ─── Simple query-level response cache (avoids re-embedding same questions) ───
+const queryCache = new Map();
+const CACHE_MAX = 50;  // max entries before evicting oldest
+const CACHE_TTL = 10 * 60 * 1000; // 10 minutes
+
+function getCached(query) {
+    const key = query.toLowerCase().trim();
+    const entry = queryCache.get(key);
+    if (entry && Date.now() - entry.ts < CACHE_TTL) return entry.context;
+    return null;
+}
+
+function setCache(query, context) {
+    const key = query.toLowerCase().trim();
+    if (queryCache.size >= CACHE_MAX) {
+        // Evict the first (oldest) entry
+        queryCache.delete(queryCache.keys().next().value);
+    }
+    queryCache.set(key, { context, ts: Date.now() });
+}
+
 // ─── Helper: build context from vector search ────────────────────────────────
 async function buildContext(message) {
-    const relevantDocs = await vectorStore.search(message, 3);
+    // Check cache first to avoid redundant OpenAI embedding calls
+    const cached = getCached(message);
+    if (cached !== null) {
+        console.log(`⚡ Cache hit for query`);
+        return cached;
+    }
+
+    const relevantDocs = await vectorStore.search(message, 2); // 2 docs is enough
     let context = '';
     let maxSimilarity = 0;
 
@@ -23,10 +51,11 @@ async function buildContext(message) {
         }
     });
 
-    // Cap to keep request payload small
-    if (context.length > 1500) context = context.substring(0, 1500) + '...';
+    // Cap context to keep prompt small and fast
+    if (context.length > 800) context = context.substring(0, 800) + '...';
 
     console.log(`🔍 Max similarity: ${maxSimilarity.toFixed(3)}, context: ${context.length} chars`);
+    setCache(message, context);
     return context;
 }
 
@@ -64,8 +93,9 @@ router.post('/stream', async (req, res) => {
         const stream = await openai.chat.completions.create({
             model: 'gpt-4o-mini',
             messages: [{ role: 'system', content: systemContent }, ...conversation],
-            temperature: 0.2,
-            max_tokens: 200,
+            temperature: 0.1,
+            max_tokens: 150,
+            top_p: 0.9,
             stream: true,
         });
 

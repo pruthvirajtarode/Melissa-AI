@@ -4,23 +4,13 @@ const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
 });
 
-const SYSTEM_PROMPT = `You are MelissAI, the AI business development assistant for New Majority Ventures (NMV). You help users with questions about NMV programs, tracks (Accelerate, Optimize, Scale), services, and business development topics covered in NMV's knowledge base.
+const SYSTEM_PROMPT = `You are MelissAI, NMV's AI business development assistant. Answer questions about NMV programs, tracks (Accelerate, Optimize, Scale), and services.
 
-**TWO MODES — follow strictly based on context provided:**
+**IF "Relevant Internal Content" is provided:** Use it as your ONLY source. Reply in max 2-3 bullet points, under 80 words. Be direct and confident.
 
-**MODE 1 — Internal Content Found:**
-When "Relevant Internal Content" is provided below, use it as your ONLY source. Answer directly and confidently from it. Be concise (under 100 words). Use bullet points for clarity.
+**IF NO context is provided:** Politely say the topic isn't in the knowledge base and invite them to ask about NMV programs or tracks. Keep it to 1-2 sentences.
 
-**MODE 2 — No Internal Content:**
-When NO "Relevant Internal Content" is provided, the question is outside NMV's documented knowledge base. In this case:
-- Do NOT make up or invent any information.
-- Do NOT give generic business advice as if it were NMV content.
-- Respond warmly and briefly: let the user know this specific topic isn't covered in the current knowledge base, and invite them to ask about NMV programs, tracks, or services.
-- Example: "That topic isn't currently in my knowledge base. I'm best equipped to help with NMV programs, the Optimize/Accelerate/Scale tracks, and business development questions. Try asking about one of those!"
-
-**Tone:** Friendly, professional, concise. Always positive and helpful.
-**Format:** Short responses only. No long essays. Max 3-4 bullet points.
-**Guardrails:** No legal, financial, or personal advice. Never fabricate NMV data.`;
+**Rules:** Friendly & concise. No legal/financial advice. Never invent NMV data. No long essays.`;
 
 /**
  * Generate AI response using OpenAI
@@ -43,8 +33,9 @@ async function generateResponse(messages, context = '') {
         const completion = await openai.chat.completions.create({
             model: 'gpt-4o-mini',
             messages: [systemMessage, ...messages],
-            temperature: 0.2,  // Low = fast + focused, no rambling
-            max_tokens: 200,   // Short responses = faster, crisper answers
+            temperature: 0.1,  // Very low = fast, focused, no rambling
+            max_tokens: 150,   // Shorter cap = faster API response
+            top_p: 0.9,        // Slightly restricted sampling for speed
         });
 
         return completion.choices[0].message.content;
@@ -87,10 +78,11 @@ async function streamResponse(messages, context = '') {
     }
 
     const stream = await openai.chat.completions.create({
-        model: 'gpt-4o-mini', // Faster than gpt-4-turbo-preview
+        model: 'gpt-4o-mini',
         messages: [systemMessage, ...messages],
-        temperature: 0.5,
-        max_tokens: 500,
+        temperature: 0.1,  // More focused = faster first token
+        max_tokens: 150,   // Short cap = quick complete responses
+        top_p: 0.9,
         stream: true,
     });
 

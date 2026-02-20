@@ -84,7 +84,18 @@ class VectorStore {
 
             if (activeDocs.length === 0) return [];
 
-            const queryEmbedding = await generateEmbedding(query);
+            // Use cached embedding if available (avoids extra OpenAI call)
+            if (!this._embCache) this._embCache = new Map();
+            const cacheKey = query.toLowerCase().trim();
+            let queryEmbedding;
+            const cached = this._embCache.get(cacheKey);
+            if (cached && Date.now() - cached.ts < 10 * 60 * 1000) {
+                queryEmbedding = cached.emb;
+            } else {
+                queryEmbedding = await generateEmbedding(query);
+                if (this._embCache.size >= 100) this._embCache.delete(this._embCache.keys().next().value);
+                this._embCache.set(cacheKey, { emb: queryEmbedding, ts: Date.now() });
+            }
 
             // Compute similarity - dot product is fast for normalized vectors
             const results = activeDocs.map(doc => ({
@@ -101,6 +112,7 @@ class VectorStore {
             return [];
         }
     }
+
 
     cosineSimilarity(vecA, vecB) {
         if (!vecA || !vecB || vecA.length !== vecB.length) return 0;

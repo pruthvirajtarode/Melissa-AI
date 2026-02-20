@@ -266,6 +266,22 @@ async function loadDocuments() {
     }
 }
 
+// Helper: get a rich icon + label for a document based on its mime/type
+function getFileTypeLabel(doc) {
+    if (doc.type === 'webpage') return { icon: '🌐', label: 'Web Page' };
+    const mime = (doc.mimetype || '').toLowerCase();
+    if (mime.includes('pdf')) return { icon: '📕', label: 'PDF' };
+    if (mime.includes('word') || mime.includes('docx') || mime.includes('doc')) return { icon: '📘', label: 'Word' };
+    if (mime.includes('sheet') || mime.includes('xlsx') || mime.includes('xls')) return { icon: '📗', label: 'Excel' };
+    if (mime.includes('presentation') || mime.includes('pptx') || mime.includes('ppt')) return { icon: '📙', label: 'PowerPoint' };
+    if (mime.includes('text')) return { icon: '📄', label: 'Text' };
+    return { icon: '📁', label: doc.mimetype || 'File' };
+}
+
+// Active filter state
+let docFilter = 'all';
+let docSearch = '';
+
 // Display Documents
 function displayDocuments(documents) {
     if (!documents || documents.length === 0) {
@@ -287,22 +303,69 @@ function displayDocuments(documents) {
         return a.isActive ? 1 : -1; // Pending (false) comes before active (true)
     });
 
-    documentsList.innerHTML = sortedDocs.map(doc => `
+    const activeCount = documents.filter(d => d.isActive).length;
+    const pendingCount = documents.length - activeCount;
+
+    // Build filter + search toolbar
+    const toolbar = `
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:14px;">
+            <input
+                id="docSearchInput"
+                type="text"
+                placeholder="🔍 Search documents..."
+                value="${escapeHtml(docSearch)}"
+                style="flex:1; min-width:180px; padding:8px 12px; border:1px solid var(--border-color); border-radius:8px; font-size:0.9rem; background:var(--bg-secondary); color:var(--text-primary);"
+            />
+            <div style="display:flex; gap:6px;">
+                <button onclick="setDocFilter('all')" class="filter-pill ${docFilter === 'all' ? 'active' : ''}" style="padding:6px 14px; border-radius:20px; border:1px solid var(--border-color); cursor:pointer; font-size:0.82rem; background:${docFilter === 'all' ? 'var(--text-accent)' : 'var(--bg-secondary)'}; color:${docFilter === 'all' ? '#fff' : 'var(--text-secondary)'}; font-weight:600;">
+                    All (${documents.length})
+                </button>
+                <button onclick="setDocFilter('active')" class="filter-pill ${docFilter === 'active' ? 'active' : ''}" style="padding:6px 14px; border-radius:20px; border:1px solid var(--border-color); cursor:pointer; font-size:0.82rem; background:${docFilter === 'active' ? '#22c55e' : 'var(--bg-secondary)'}; color:${docFilter === 'active' ? '#fff' : 'var(--text-secondary)'}; font-weight:600;">
+                    ✅ Active (${activeCount})
+                </button>
+                <button onclick="setDocFilter('pending')" class="filter-pill ${docFilter === 'pending' ? 'active' : ''}" style="padding:6px 14px; border-radius:20px; border:1px solid var(--border-color); cursor:pointer; font-size:0.82rem; background:${docFilter === 'pending' ? '#f59e0b' : 'var(--bg-secondary)'}; color:${docFilter === 'pending' ? '#fff' : 'var(--text-secondary)'}; font-weight:600;">
+                    ⏳ Pending (${pendingCount})
+                </button>
+            </div>
+        </div>
+    `;
+
+    // Apply filter + search
+    const filtered = sortedDocs.filter(doc => {
+        if (docFilter === 'active' && !doc.isActive) return false;
+        if (docFilter === 'pending' && doc.isActive) return false;
+        if (docSearch) {
+            const q = docSearch.toLowerCase();
+            return (doc.filename || '').toLowerCase().includes(q) ||
+                (doc.source || '').toLowerCase().includes(q) ||
+                (doc.category || '').toLowerCase().includes(q);
+        }
+        return true;
+    });
+
+    const itemsHtml = filtered.length === 0
+        ? `<div class="empty-state"><p>No documents match your filter.</p></div>`
+        : filtered.map(doc => {
+            const ft = getFileTypeLabel(doc);
+            return `
         <div class="document-item ${doc.isActive ? 'active-border' : 'pending-border'}">
             <div class="document-info">
-                <div class="document-title">${escapeHtml(doc.filename)}</div>
-                <div class="document-meta">
-                    ${doc.category ? `<span class="category-badge">${escapeHtml(doc.category)}</span>` : ''}
-                    <span>${doc.type === 'webpage' ? '🌐 URL' : '📄 ' + doc.mimetype}</span>
-                    <span>🧩 ${doc.chunks} parts</span>
-                    <span>🕒 ${formatDate(doc.createdAt)}</span>
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+                    <span style="font-size:1.4rem;">${ft.icon}</span>
+                    <div class="document-title" style="flex:1;">${escapeHtml(doc.filename || doc.source)}</div>
                     <span class="status-badge ${doc.isActive ? 'active' : 'pending'}">
-                        ${doc.isActive ? '✅ Included in Chat' : '⏳ Pending Review'}
+                        ${doc.isActive ? '✅ Active' : '⏳ Pending'}
                     </span>
                 </div>
+                <div class="document-meta">
+                    <span style="background:rgba(0,0,0,0.06);padding:2px 8px;border-radius:12px;font-size:0.78rem;font-weight:600;">${ft.label}</span>
+                    ${doc.category ? `<span class="category-badge">${escapeHtml(doc.category)}</span>` : ''}
+                    <span>🧩 ${doc.chunks} chunks</span>
+                    <span>🕒 ${formatDate(doc.createdAt)}</span>
+                </div>
                 ${doc.summary ? `
-                <div class="document-summary">
-                    <strong>🤖 AI Training Highlights:</strong>
+                <div class="document-summary" style="margin-top:6px;">
+                    <strong>🤖 AI Summary:</strong>
                     <p>${escapeHtml(doc.summary)}</p>
                 </div>
                 ` : ''}
@@ -335,8 +398,28 @@ function displayDocuments(documents) {
                 </button>
             </div>
         </div>
-    `).join('');
+        `;
+        }).join('');
+
+    documentsList.innerHTML = toolbar + itemsHtml;
+
+    // Bind search input
+    const searchInput = document.getElementById('docSearchInput');
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            docSearch = e.target.value;
+            displayDocuments(documents);
+        });
+    }
 }
+
+// Helper to set active filter and re-render with last fetched docs
+function setDocFilter(filter) {
+    docFilter = filter;
+    loadDocuments();
+}
+
+
 
 // Download Document By Source
 async function downloadDocumentBySource(source) {

@@ -51,12 +51,33 @@
         transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     `;
 
-    // Button Icon (SVG)
-    button.innerHTML = `
+    // Button Icon — dynamically loaded from settings
+    const defaultButtonIcon = `
         <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
         </svg>
     `;
+    button.innerHTML = defaultButtonIcon;
+
+    // Async: try to load Avatar from settings API
+    (async function loadBotAvatar() {
+        try {
+            const res = await fetch(`${config.apiUrl}/api/settings`);
+            if (!res.ok) return;
+            const settings = await res.json();
+            const avatarSrc = settings.avatarUrl || settings.avatarData;
+            if (avatarSrc) {
+                button.innerHTML = `<img
+                    src="${avatarSrc}"
+                    alt="${settings.botName || config.botName}"
+                    style="width:52px;height:52px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,0.6);"
+                    onerror="this.parentElement.innerHTML='${defaultButtonIcon.replace(/"/g, "'")}';"
+                />`;
+            }
+        } catch (e) {
+            // Keep default icon on failure
+        }
+    })();
 
     // Create Iframe
     const iframe = document.createElement('iframe');

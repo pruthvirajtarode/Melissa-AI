@@ -7,7 +7,11 @@ const connectDB = async () => {
             console.error('❌ MongoDB URI not found in environment variables');
             return;
         }
-        const conn = await mongoose.connect(uri);
+        const conn = await mongoose.connect(uri, {
+            minPoolSize: 2,       // Keep min 2 connections alive to avoid cold-start delay
+            maxPoolSize: 10,      // Allow up to 10 concurrent connections
+            serverSelectionTimeoutMS: 5000, // Fail fast if Atlas is unreachable
+        });
         console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
     } catch (error) {
         console.error(`❌ Error: ${error.message}`);

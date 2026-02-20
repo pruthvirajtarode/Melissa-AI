@@ -164,11 +164,10 @@ router.get('/analytics', authenticateAdmin, async (req, res) => {
         const grouped = await vectorStore.getGroupedDocuments();
         const totalChunks = await Knowledge.countDocuments();
 
-        // MongoDB doesn't have a single file size, but we can return chunk count
         const analytics = {
             totalDocuments: grouped.length,
             totalChunks: totalChunks,
-            storageSize: totalChunks * 1024, // Rough estimate in bytes (1KB per chunk)
+            storageSize: totalChunks * 1024,
         };
 
         res.json(analytics);
@@ -177,6 +176,47 @@ router.get('/analytics', authenticateAdmin, async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch analytics' });
     }
 });
+
+/**
+ * GET /api/admin/data-summary
+ * Get a breakdown of documents by type and status for the admin listing header
+ */
+router.get('/data-summary', authenticateAdmin, async (req, res) => {
+    try {
+        const grouped = await vectorStore.getGroupedDocuments();
+
+        const typeCounts = {};
+        let activeCount = 0;
+        let pendingCount = 0;
+
+        grouped.forEach(doc => {
+            const mime = (doc.mimetype || '').toLowerCase();
+            let type = 'Other';
+            if (doc.source && typeof doc.source === 'string' && doc.source.startsWith('http')) {
+                type = 'Web';
+            } else if (mime.includes('pdf')) {
+                type = 'PDF';
+            } else if (mime.includes('word') || mime.includes('docx')) {
+                type = 'Word';
+            } else if (mime.includes('sheet') || mime.includes('xlsx')) {
+                type = 'Excel';
+            } else if (mime.includes('presentation') || mime.includes('pptx')) {
+                type = 'PowerPoint';
+            } else if (mime.includes('text')) {
+                type = 'Text';
+            }
+            typeCounts[type] = (typeCounts[type] || 0) + 1;
+            if (doc.isActive) activeCount++;
+            else pendingCount++;
+        });
+
+        res.json({ total: grouped.length, activeCount, pendingCount, byType: typeCounts });
+    } catch (error) {
+        console.error('Data summary error:', error);
+        res.status(500).json({ error: 'Failed to fetch data summary' });
+    }
+});
+
 
 /**
  * GET /api/admin/system-prompt
