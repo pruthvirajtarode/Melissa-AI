@@ -40,19 +40,19 @@ async function buildContext(message) {
         return cached;
     }
 
-    const relevantDocs = await vectorStore.search(message, 2); // 2 docs is enough
+    const relevantDocs = await vectorStore.search(message, 3); // 3 docs for better coverage
     let context = '';
     let maxSimilarity = 0;
 
     relevantDocs.forEach(doc => {
         if (doc.similarity > maxSimilarity) maxSimilarity = doc.similarity;
-        if (doc.similarity > 0.72) {
+        if (doc.similarity > 0.62) { // Lowered from 0.72 — more permissive matching
             context += `\n[Source: ${doc.source}]\n${doc.text}\n`;
         }
     });
 
     // Cap context to keep prompt small and fast
-    if (context.length > 800) context = context.substring(0, 800) + '...';
+    if (context.length > 1200) context = context.substring(0, 1200) + '...';
 
     console.log(`🔍 Max similarity: ${maxSimilarity.toFixed(3)}, context: ${context.length} chars`);
     setCache(message, context);
@@ -94,7 +94,7 @@ router.post('/stream', async (req, res) => {
             model: 'gpt-4o-mini',
             messages: [{ role: 'system', content: systemContent }, ...conversation],
             temperature: 0.1,
-            max_tokens: 150,
+            max_tokens: 200,  // Slightly more room for complete answers
             top_p: 0.9,
             stream: true,
         });

@@ -74,7 +74,7 @@ class VectorStore {
      * Note: Standard MongoDB Atlas Vector Search requires specific setup. 
      * For now we'll fetch active docs and rank in memory if the dataset is small (<2000 chunks).
      */
-    async search(query, topK = 5) {
+    async search(query, topK = 6) {
         try {
             // Fetch only necessary fields for performance, using lean() to avoid Mongoose overhead
             const activeDocs = await Knowledge.find(
