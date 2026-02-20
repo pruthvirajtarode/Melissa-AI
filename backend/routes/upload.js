@@ -54,17 +54,18 @@ router.post('/', upload.single('file'), async (req, res) => {
             req.file.originalname
         );
 
-        // Prepare chunks for vector store (TEXT only — no binary storage)
+        // Prepare chunks for vector store
+        // isActive: true — admin uploads are trusted and immediately active
         const chunksToAdd = processed.chunks.map((chunk, index) => ({
             text: chunk,
             metadata: {
                 source: processed.filename,
                 filename: processed.filename,
                 mimetype: processed.mimetype,
-                summary: processed.summary,
+                summary: processed.summary || '',
                 chunkIndex: index,
                 totalChunks: processed.chunks.length,
-                isActive: false // Pending admin review
+                isActive: true  // ✅ Auto-approve admin uploads — show immediately
             }
         }));
 
@@ -91,11 +92,11 @@ router.post('/', upload.single('file'), async (req, res) => {
         await vectorStore.addDocuments(chunksToAdd);
 
         res.json({
-            message: 'Document processed and pending review',
+            message: `Document uploaded and active! ${processed.chunks.length} chunks indexed.`,
             filename: processed.filename,
-            chunks: processed.chunks.length
+            chunks: processed.chunks.length,
+            status: 'active'
         });
-
 
 
     } catch (error) {

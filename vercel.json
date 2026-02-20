@@ -5,6 +5,7 @@
             "src": "backend/index.js",
             "use": "@vercel/node",
             "config": {
+                "maxLambdaSize": "50mb",
                 "includeFiles": [
                     "frontend/**",
                     "data/vectors/store.json",
@@ -18,5 +19,10 @@
             "src": "/(.*)",
             "dest": "backend/index.js"
         }
-    ]
+    ],
+    "functions": {
+        "backend/index.js": {
+            "maxDuration": 60
+        }
+    }
 }
