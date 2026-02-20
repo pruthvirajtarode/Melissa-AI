@@ -199,4 +199,24 @@ router.delete('/clear-all', authenticateAdmin, async (req, res) => {
     }
 });
 
+/**
+ * DELETE /api/admin/purge-originals
+ * Delete all stored original document binaries to free MongoDB space.
+ * This does NOT delete the Knowledge chunks — the chatbot continues to work.
+ */
+router.delete('/purge-originals', authenticateAdmin, async (req, res) => {
+    try {
+        const OriginalDocument = require('../models/OriginalDocument');
+        const result = await OriginalDocument.deleteMany({});
+        console.log(`🗑️ Purged ${result.deletedCount} original document binaries to free storage`);
+        res.json({
+            message: `Storage freed! Deleted ${result.deletedCount} stored file binaries from database.`,
+            deletedCount: result.deletedCount
+        });
+    } catch (error) {
+        console.error('Purge originals error:', error);
+        res.status(500).json({ error: 'Failed to purge original documents' });
+    }
+});
+
 module.exports = router;

@@ -102,6 +102,12 @@ function setupEventListeners() {
     reindexBtn.addEventListener('click', handleReindex);
     clearAllBtn.addEventListener('click', handleClearAll);
 
+    // Free Up DB Space button
+    const purgeOriginalsBtn = document.getElementById('purgeOriginalsBtn');
+    if (purgeOriginalsBtn) {
+        purgeOriginalsBtn.addEventListener('click', handlePurgeOriginals);
+    }
+
     // File input label update
     fileInput.addEventListener('change', (e) => {
         const fileName = e.target.files[0]?.name || 'Choose File';
@@ -133,6 +139,38 @@ function setupEventListeners() {
         if (e.target === conversationModal) conversationModal.style.display = 'none';
     });
 }
+
+// ─── Purge Originals: Free Up DB Space ────────────────────────────────────────
+async function handlePurgeOriginals() {
+    if (!confirm('This will delete the stored file binaries from the database to free space.\n\nYour chatbot knowledge (text chunks) will NOT be affected.\n\nProceed?')) return;
+
+    const btn = document.getElementById('purgeOriginalsBtn');
+    if (btn) { btn.disabled = true; btn.textContent = '⏳ Freeing space...'; }
+
+    try {
+        const response = await fetch(`${API_URL}/api/admin/purge-originals`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            showToast(`✅ ${data.message}`, 'success', 6000);
+            loadAnalytics(); // Refresh the storage size card
+        } else if (response.status === 401) {
+            handleLogout();
+        } else {
+            showToast(`❌ Failed: ${data.error}`, 'error');
+        }
+    } catch (err) {
+        console.error('Purge error:', err);
+        showToast('❌ Failed to free space. Check your connection.', 'error');
+    } finally {
+        if (btn) { btn.disabled = false; btn.textContent = '🗑️ Free Up DB Space'; }
+    }
+}
+
 
 // Login
 async function handleLogin(e) {

@@ -47,14 +47,14 @@ router.post('/', upload.single('file'), async (req, res) => {
         console.log(`📥 Received file: ${req.file.originalname} (${req.file.mimetype}), Size: ${req.file.size} bytes`);
         const buffer = req.file.buffer;
 
-        // Process document
+        // Process document — extract text, chunk, summarize
         const processed = await processDocument(
             buffer,
             req.file.mimetype,
             req.file.originalname
         );
 
-        // Prepare chunks for bulk addition
+        // Prepare chunks for vector store (TEXT only — no binary storage)
         const chunksToAdd = processed.chunks.map((chunk, index) => ({
             text: chunk,
             metadata: {
@@ -64,31 +64,15 @@ router.post('/', upload.single('file'), async (req, res) => {
                 summary: processed.summary,
                 chunkIndex: index,
                 totalChunks: processed.chunks.length,
-                isActive: false // Set to false by default for admin review
+                isActive: false // Pending admin review
             }
         }));
 
-        // Save original document for download
-        const OriginalDocument = require('../models/OriginalDocument');
-        try {
-            await OriginalDocument.findOneAndUpdate(
-                { source: processed.filename },
-                {
-                    filename: processed.filename,
-                    mimetype: processed.mimetype,
-                    data: buffer,
-                    size: req.file.size,
-                    source: processed.filename
-                },
-                { upsert: true, new: true }
-            );
-            console.log(`✅ Original document saved: ${processed.filename}`);
-        } catch (saveErr) {
-            console.error('❌ Failed to save original document:', saveErr.message);
-            // We continue processing even if original save fails, though ideally it shouldn't
-        }
+        // NOTE: We do NOT store the raw file binary in MongoDB to preserve storage quota.
+        // Only the text chunks + embeddings are stored (already efficient).
+        console.log(`ℹ️ Skipping binary storage to preserve MongoDB quota (${req.file.size} bytes saved)`);
 
-        // Add documents in bulk
+        // Add text chunks + embeddings to vector store
         await vectorStore.addDocuments(chunksToAdd);
 
         res.json({
@@ -105,6 +89,7 @@ router.post('/', upload.single('file'), async (req, res) => {
         });
     }
 });
+
 
 /**
  * POST /api/upload/url
