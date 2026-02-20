@@ -1,7 +1,7 @@
 {
-    "name": "MellissAI",
-    "short_name": "MellissAI",
-    "description": "AI-Powered Business Intelligence by New Majority Ventures",
+    "name": "MelissAI",
+    "short_name": "MelissAI",
+    "description": "AI-Powered Business Intelligence by MelissAI",
     "start_url": "/index.html",
     "display": "standalone",
     "background_color": "#ffffff",

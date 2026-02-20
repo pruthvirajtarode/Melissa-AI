@@ -598,9 +598,9 @@ async function loadSettings() {
             const settings = await response.json();
             originalSettings = { ...settings }; // Store original state
 
-            botNameInput.value = settings.botName || 'MellissAI';
+            botNameInput.value = settings.botName || 'MelissAI';
             welcomeMessageInput.value = settings.welcomeMessage || '';
-            currentAvatarImg.src = settings.avatarUrl || 'images/mellissai-new-avatar.jpg';
+            currentAvatarImg.src = settings.avatarUrl || 'images/melissai-new-avatar.jpg';
 
             // Initialize previous states
             previousAvatarUrl = null;
@@ -773,7 +773,7 @@ async function restoreAvatar(url) {
 function handleUndoIdentity() {
     if (!previousIdentity) {
         // If no previous save, just reset to original loaded state
-        botNameInput.value = originalSettings.botName || 'MellissAI';
+        botNameInput.value = originalSettings.botName || 'MelissAI';
         welcomeMessageInput.value = originalSettings.welcomeMessage || '';
         showStatus(settingsStatus, 'Restored to last saved values', 'success');
         return;
@@ -872,7 +872,7 @@ function displayConversationDetails(messages) {
 
     modalBody.innerHTML = messages.map(m => `
         <div class="modal-message ${m.role}">
-            <strong>${m.role === 'user' ? 'User' : 'MellissAI'}</strong>
+            <strong>${m.role === 'user' ? 'User' : 'MelissAI'}</strong>
             <p>${m.content.replace(/\n/g, '<br>')}</p>
         </div>
     `).join('');
@@ -885,7 +885,7 @@ function handleDownloadConversation() {
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(currentViewedConversation, null, 2));
     const downloadAnchorNode = document.createElement('a');
     downloadAnchorNode.setAttribute("href", dataStr);
-    downloadAnchorNode.setAttribute("download", `Melliss_ai_conv_${sessionID}.json`);
+    downloadAnchorNode.setAttribute("download", `Meliss_ai_conv_${sessionID}.json`);
     document.body.appendChild(downloadAnchorNode);
     downloadAnchorNode.click();
     downloadAnchorNode.remove();

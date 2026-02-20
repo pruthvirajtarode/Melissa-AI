@@ -3,9 +3,9 @@ const API_URL = window.location.origin;
 let conversationId = generateConversationId();
 let isProcessing = false;
 let botSettings = {
-    avatarUrl: '/images/melliss-avatar.svg',
-    botName: 'MellissAI',
-    welcomeMessage: "Hi! I'm MellissAI, your business development assistant. How can I help you today?"
+    avatarUrl: '/images/meliss-avatar.svg',
+    botName: 'MelissAI',
+    welcomeMessage: "Hi! I'm MelissAI, your business development assistant. How can I help you today?"
 };
 
 // DOM Elements
@@ -189,20 +189,52 @@ function addMessage(role, content, meta = {}) {
 
 // Format Message (simple markdown-like formatting)
 function formatMessage(text) {
-    // Convert line breaks
-    text = text.replace(/\n/g, '<br>');
-
-    // Bold text
+    // 1. Convert bold markdown **text** to <strong>text</strong>
     text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
-    // Bullet points
-    text = text.replace(/^- (.*?)(<br>|$)/gm, '<li>$1</li>');
-    text = text.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
+    // 2. Handle unordered lists starting with -
+    // First, split by lines to handle each line properly
+    const lines = text.split('\n');
+    let inList = false;
+    let inOrderedList = false;
+    let formattedLines = [];
 
-    // Numbered lists
-    text = text.replace(/^\d+\. (.*?)(<br>|$)/gm, '<li>$1</li>');
+    lines.forEach(line => {
+        const trimmedLine = line.trim();
 
-    return text;
+        // Unordered list block
+        if (trimmedLine.startsWith('- ')) {
+            if (!inList) {
+                formattedLines.push('<ul>');
+                inList = true;
+            }
+            formattedLines.push(`<li>${trimmedLine.substring(2)}</li>`);
+        }
+        // Ordered list block
+        else if (/^\d+\. /.test(trimmedLine)) {
+            if (!inOrderedList) {
+                formattedLines.push('<ol>');
+                inOrderedList = true;
+            }
+            formattedLines.push(`<li>${trimmedLine.replace(/^\d+\. /, '')}</li>`);
+        }
+        else {
+            if (inList) {
+                formattedLines.push('</ul>');
+                inList = false;
+            }
+            if (inOrderedList) {
+                formattedLines.push('</ol>');
+                inOrderedList = false;
+            }
+            formattedLines.push(line + (line.trim() ? '<br>' : ''));
+        }
+    });
+
+    if (inList) formattedLines.push('</ul>');
+    if (inOrderedList) formattedLines.push('</ol>');
+
+    return formattedLines.join('');
 }
 
 // Typing Indicator

@@ -1,6 +1,6 @@
 # Backend
 
-This directory contains all the backend files for the MellissAI Business Development Chatbot.
+This directory contains all the backend files for the MelissAI Business Development Chatbot.
 
 ## Structure
 

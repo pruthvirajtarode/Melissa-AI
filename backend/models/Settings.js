@@ -3,15 +3,15 @@ const mongoose = require('mongoose');
 const settingsSchema = new mongoose.Schema({
     botName: {
         type: String,
-        default: 'MellissAI'
+        default: 'MelissAI'
     },
     welcomeMessage: {
         type: String,
-        default: "Hi! I'm MellissAI, your business development assistant. How can I help you today?"
+        default: "Hi! I'm MelissAI, your business development assistant. How can I help you today?"
     },
     avatarUrl: {
         type: String,
-        default: 'images/mellissai-new-avatar.jpg'
+        default: 'images/MelissAI-new-avatar.jpg'
     },
     // For storing uploaded avatars directly in MongoDB (Base64/Buffer)
     avatarData: {

@@ -93,7 +93,7 @@ All configuration files were updated to reflect the new structure:
 ## 📂 New Project Structure
 
 ```
-MellissAI/
+MelissAI/
 │
 ├── frontend/           # 🎨 All frontend files
 │   ├── index.html

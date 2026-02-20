@@ -65,10 +65,10 @@ Updated **vercel.json** to properly route requests for the new `frontend/` and `
 1. Open: https://melissa-ai.vercel.app/
 2. Should load without 404 errors in console
 3. Check: https://melissa-ai.vercel.app/api/health
-4. Should return: `{"status":"ok","message":"MellissAI Server Running"}`
+4. Should return: `{"status":"ok","message":"MelissAI Server Running"}`
 
 **Mobile APK Test:**
-1. Open MellissAI app on your phone
+1. Open MelissAI app on your phone
 2. Wait 10-20 seconds
 3. Try sending a message
 4. Should get AI response!

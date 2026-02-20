@@ -1,8 +1,8 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-    appId: 'com.melliss.ai',
-    appName: 'MellissAI',
+    appId: 'com.meliss.ai',
+    appName: 'MelissAI',
     webDir: 'frontend',
     server: {
         // Updated with your actual live Vercel URL

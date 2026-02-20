@@ -1,6 +1,6 @@
-# Self-Hosting Guide - MellissAI
+# Self-Hosting Guide - MelissAI
 
-MellissAI is designed to be easily self-hosted on your own infrastructure (VPS, Local Server, or Cloud).
+MelissAI is designed to be easily self-hosted on your own infrastructure (VPS, Local Server, or Cloud).
 
 ## Prerequisites
 - Node.js 18 or higher
@@ -12,7 +12,7 @@ MellissAI is designed to be easily self-hosted on your own infrastructure (VPS, 
 1. **Clone the repository**:
    ```bash
    git clone <repository-url>
-   cd "MellissAI-Business-Development-Chatbot"
+   cd "MelissAI-Business-Development-Chatbot"
    ```
 
 2. **Install dependencies**:

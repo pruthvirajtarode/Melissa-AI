@@ -1,8 +1,8 @@
-# 🎉 MellissAI - Project Complete!
+# 🎉 MelissAI - Project Complete!
 
 ## ✅ What We've Built
 
-Congratulations! Your **MellissAI - Business Development Chatbot** is now ready. Here's everything that has been created:
+Congratulations! Your **MelissAI - Business Development Chatbot** is now ready. Here's everything that has been created:
 
 ---
 
@@ -121,7 +121,7 @@ http://localhost:3000/widget.html
 ## 📁 Project Structure
 
 ```
-MellissAI-Business Development Chatbot/
+MelissAI-Business Development Chatbot/
 ├── 📄 README.md                    # Complete documentation
 ├── 📄 QUICKSTART.md                # Quick start guide
 ├── 📄 WIDGET_INTEGRATION.md        # Widget embedding guide
@@ -272,7 +272,7 @@ Check README.md for detailed deployment instructions!
 
 ## 🎊 Success!
 
-Your MellissAI chatbot is **fully functional** and ready to use!
+Your MelissAI chatbot is **fully functional** and ready to use!
 
 **What makes this special:**
 

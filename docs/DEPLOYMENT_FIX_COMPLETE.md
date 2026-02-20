@@ -30,7 +30,7 @@ Your APK **IS WORKING** - it just needs the Vercel deployment to finish!
 
 After Vercel deployment completes:
 
-1. **Open the MellissAI app** on your phone
+1. **Open the MelissAI app** on your phone
 2. **Wait for it to load** (may take 10-20 seconds first time)
 3. **Try typing a message** in the chat
 
@@ -39,7 +39,7 @@ After Vercel deployment completes:
 ## ✅ Expected Result:
 
 The app should now:
-- ✅ Load the MellissAI interface
+- ✅ Load the MelissAI interface
 - ✅ Connect to the backend successfully
 - ✅ Show chat interface
 - ✅ Respond to your messages
@@ -66,7 +66,7 @@ Both should load without errors.
 
 ### Option 3: Clear App Cache
 
-1. Go to phone Settings → Apps → MellissAI
+1. Go to phone Settings → Apps → MelissAI
 2. Clear cache & data
 3. Reinstall the APK
 

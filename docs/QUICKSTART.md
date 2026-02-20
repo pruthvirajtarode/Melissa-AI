@@ -1,4 +1,4 @@
-# Quick Start Guide - MellissAI
+# Quick Start Guide - MelissAI
 
 ## 🚀 Getting Started in 3 Minutes
 

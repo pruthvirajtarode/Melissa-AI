@@ -49,7 +49,7 @@ If you want the app to work without internet, we need to:
    // capacitor.config.ts
    const config: CapacitorConfig = {
        appId: 'com.melissa.ai',
-       appName: 'MellissAI',
+       appName: 'MelissAI',
        webDir: 'frontend',
        // Remove or comment out the server section
        // server: {

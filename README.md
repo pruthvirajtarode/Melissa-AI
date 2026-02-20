@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🚀 MellissAI × NMV
+# 🚀 MelissAI
 
 ### *Your Expert AI Business Development Assistant*
 
@@ -9,23 +9,23 @@
 [![Node.js](https://img.shields.io/badge/Node.js-18+-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://nodejs.org)
 [![Vercel](https://img.shields.io/badge/Deployed_on-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://vercel.com)
 
-**Powered by New Majority Ventures' proprietary strategy and execution frameworks**
+**Powered by MelissAI**
 
 [🎯 Live Demo](https://melissa-ai.vercel.app) • [📱 Features](#-features) • [🚀 Quick Start](#-quick-start) • [📖 Documentation](#-documentation)
 
 ---
 
-![MellissAI Banner](https://img.shields.io/badge/AI_Powered-Business_Guidance-gradient?style=flat&labelColor=667eea&color=764ba2)
+![MelissAI Banner](https://img.shields.io/badge/AI_Powered-Business_Guidance-gradient?style=flat&labelColor=667eea&color=764ba2)
 
 </div>
 
 ---
 
-## 🌟 What is MellissAI?
+## 🌟 What is MelissAI?
 
-**MellissAI** is an intelligent conversational chatbot designed specifically for business development, strategy, and execution. Built with cutting-edge AI technology and powered by OpenAI's GPT-4, it combines proprietary business frameworks with RAG (Retrieval Augmented Generation) to deliver actionable, expert-level guidance.
+**MelissAI** is an intelligent conversational chatbot designed specifically for business development, strategy, and execution. Built with cutting-edge AI technology and powered by OpenAI's GPT-4, it combines proprietary business frameworks with RAG (Retrieval Augmented Generation) to deliver actionable, expert-level guidance.
 
-### 💡 Why MellissAI?
+### 💡 Why MelissAI?
 
 | Feature | Benefit |
 |---------|---------|
@@ -61,11 +61,12 @@
 
 </div>
 
-- **📄 Document Management** - Upload PDFs, DOCX, TXT files to expand knowledge base
+- **📄 Advanced Document Support** - Process PDF, DOCX, **XLSX**, **PPTX**, and TXT files
+- **📚 NMV Content Library** - Integrated bulk indexer for massive training data (500+ documents)
 - **🌐 Web Scraping** - Import content directly from URLs
 - **📊 Analytics Dashboard** - Track usage, performance, and knowledge metrics
-- **🔄 Auto-Processing** - Automatic chunking, embedding, and indexing
-- **🎛️ Admin Controls** - Manage content, re-index, clear database
+- **🚀 High-Performance RAG** - Optimized vector search with parallel batch processing
+- **🎛️ Admin Controls** - Detailed document management with Category/Path visibility
 - **🔐 Secure Authentication** - JWT-based admin access
 
 ---
@@ -118,7 +119,7 @@ Password: admin123
 
 ### 🌐 **Try it now!**
 
-[![Open MellissAI](https://img.shields.io/badge/🚀_Launch_App-melissa--ai.vercel.app-667eea?style=for-the-badge&labelColor=764ba2)](https://melissa-ai.vercel.app)
+[![Open MelissAI](https://img.shields.io/badge/🚀_Launch_App-melissa--ai.vercel.app-667eea?style=for-the-badge&labelColor=764ba2)](https://melissa-ai.vercel.app)
 
 **No installation required • Works on all devices • Try it instantly!**
 
@@ -210,7 +211,7 @@ Additional detailed documentation can be found in the [docs](./docs) directory:
 
 ### 🔗 Embed as Widget
 
-Add MellissAI to any website:
+Add MelissAI to any website:
 
 ```html
 <iframe 
@@ -370,7 +371,7 @@ npx cap sync android
 ## 🎯 Project Structure
 
 ```
-MellissAI/
+MelissAI/
 ├── frontend/                 # Frontend application
 │   ├── index.html           # Main chat UI
 │   ├── admin.html           # Admin dashboard

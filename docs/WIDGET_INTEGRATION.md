@@ -1,8 +1,8 @@
-# MellissAI Widget Integration Guide
+# MelissAI Widget Integration Guide
 
-## 📦 Embedding MellissAI on Your Website
+## 📦 Embedding MelissAI on Your Website
 
-This guide shows you how to add the MellissAI chatbot to your website.
+This guide shows you how to add the MelissAI chatbot to your website.
 
 ---
 
@@ -16,7 +16,7 @@ Add this code to your website's HTML, just before the closing `</body>` tag:
 <iframe 
   src="http://localhost:3000/widget.html" 
   style="position: fixed; bottom: 0; right: 0; width: 450px; height: 700px; border: none; z-index: 9999;"
-  title="MellissAI Chat"
+  title="MelissAI Chat"
 ></iframe>
 ```
 
@@ -29,7 +29,7 @@ Add this code to your website's HTML, just before the closing `</body>` tag:
   src="http://localhost:3000/widget.html" 
   style="position: fixed; bottom: 0; right: 0; border: none; z-index: 9999;"
   class="melissa-widget"
-  title="MellissAI Chat"
+  title="MelissAI Chat"
 ></iframe>
 
 <style>
@@ -63,7 +63,7 @@ Add this before the closing `</body>` tag:
   var iframe = document.createElement('iframe');
   iframe.src = 'http://localhost:3000/widget.html';
   iframe.style.cssText = 'position:fixed;bottom:0;right:0;width:450px;height:700px;border:none;z-index:9999;';
-  iframe.title = 'MellissAI Chat';
+  iframe.title = 'MelissAI Chat';
   
   // Wait for DOM to load
   if (document.readyState === 'loading') {
@@ -285,7 +285,7 @@ function App() {
           border: 'none',
           zIndex: 9999
         }}
-        title="MellissAI"
+        title="MelissAI"
       />
     </div>
   );
@@ -302,7 +302,7 @@ function App() {
     <iframe
       src="https://your-melissa-ai.com/widget.html"
       :style="widgetStyle"
-      title="MellissAI"
+      title="MelissAI"
     />
   </div>
 </template>

@@ -30,7 +30,7 @@ app.use('/api/settings', settingsRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', message: 'MellissAI Server Running' });
+  res.json({ status: 'ok', message: 'MelissAI Server Running' });
 });
 
 // Serve main app
@@ -57,7 +57,7 @@ app.use((err, req, res, next) => {
 
 if (!process.env.VERCEL) {
   app.listen(PORT, () => {
-    console.log(`🚀 MellissAI Server running on port ${PORT}`);
+    console.log(`🚀 MelissAI Server running on port ${PORT}`);
     console.log(`📊 Admin dashboard: http://localhost:${PORT}/admin.html`);
     console.log(`💬 Chat interface: http://localhost:${PORT}`);
   });

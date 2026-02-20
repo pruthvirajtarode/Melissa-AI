@@ -17,7 +17,7 @@ npx cap sync android
 2. Click **"Open an Existing Project"**
 3. Navigate to:
    ```
-   c:\Users\pruth\OneDrive\Desktop\MellissAI-Business Development Chatbot\android
+   c:\Users\pruth\OneDrive\Desktop\MelissAI-Business Development Chatbot\android
    ```
 4. Click **"OK"**
 
@@ -81,7 +81,7 @@ If you don't want to use Android Studio, you can try building with Java directly
 
 ```bash
 # Make sure you're in the android folder
-cd "c:\Users\pruth\OneDrive\Desktop\MellissAI-Business Development Chatbot\android"
+cd "c:\Users\pruth\OneDrive\Desktop\MelissAI-Business Development Chatbot\android"
 
 # Build with gradlew
 .\gradlew.bat assembleDebug
@@ -98,7 +98,7 @@ After building the APK:
 1. **Install on phone**
 2. **Test it** - The app should:
    - Open without crashing
-   - Show MellissAI interface
+   - Show MelissAI interface
    - Connect to the chatbot (requires internet)
 
 If the app still doesn't work after rebuilding, let me know what error you see!

@@ -17,7 +17,9 @@ function walk(dir) {
             results = results.concat(walk(fullPath));
         } else {
             const ext = path.extname(fullPath).toLowerCase();
-            if (ext === '.docx' || ext === '.pdf' || ext === '.txt' || ext === '.pptx' || ext === '.xlsx') {
+            const fileName = path.basename(fullPath);
+            if ((ext === '.docx' || ext === '.pdf' || ext === '.txt' || ext === '.pptx' || ext === '.xlsx' || ext === '.csv') &&
+                !fileName.startsWith('~$') && !fileName.startsWith('.')) {
                 results.push(path.relative(CONTENT_DIR, fullPath));
             }
         }
@@ -42,6 +44,7 @@ async function verifyAll() {
         console.log('STATUS: COMPLETE_SUCCESS');
     } else {
         console.log('STATUS: IN_PROGRESS');
+        console.log('SAMPLE_MISSING:', missing.slice(0, 5));
     }
 
     process.exit(0);

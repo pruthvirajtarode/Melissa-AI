@@ -2,7 +2,7 @@
 
 ## ✨ **What Changed**
 
-Your MellissAI now has a **realistic, professional hero section** perfect for a business SaaS application!
+Your MelissAI now has a **realistic, professional hero section** perfect for a business SaaS application!
 
 ---
 
@@ -40,7 +40,7 @@ Your MellissAI now has a **realistic, professional hero section** perfect for a 
 - **Animation:** Gentle floating effect
 
 ### **Typography:**
-- **Main Title:** "MellissAI" - 3rem, bold, white
+- **Main Title:** "MelissAI" - 3rem, bold, white
 - **Tagline:** "AI-Powered Business Intelligence"
 - **Font:** Space Grotesk (display font)
 - **Shadow:** Subtle text shadows for depth
@@ -125,7 +125,7 @@ background: linear-gradient(
 
 ### **Conversion Optimized:**
 - Professional first impression
-- Clear branding ("MellissAI")
+- Clear branding ("MelissAI")
 - Compelling tagline
 
 ---

@@ -1,8 +1,8 @@
 ---
-description: Melissa AI Implementation Plan
+description: MelissAI Implementation Plan
 ---
 
-# Melissa AI - Business Development Chatbot
+# MelissAI - Business Development Chatbot
 ## Implementation Plan
 
 ### Phase 1: Project Setup & Structure ✓

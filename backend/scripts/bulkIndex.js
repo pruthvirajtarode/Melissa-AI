@@ -19,8 +19,11 @@ function walk(dir) {
         if (stat && stat.isDirectory()) {
             results = results.concat(walk(file));
         } else {
+            const fileName = path.basename(file);
             const ext = path.extname(file).toLowerCase();
-            if (ext === '.docx' || ext === '.pdf' || ext === '.txt' || ext === '.pptx' || ext === '.xlsx') {
+            // Exclude temporary files and hidden system files
+            if ((ext === '.docx' || ext === '.pdf' || ext === '.txt' || ext === '.pptx' || ext === '.xlsx' || ext === '.csv') &&
+                !fileName.startsWith('~$') && !fileName.startsWith('.')) {
                 results.push(file);
             }
         }
@@ -41,7 +44,7 @@ async function bulkIndex() {
     console.log(`Found ${files.length} supported files to process.`);
 
     let totalChunks = 0;
-    const CONCURRENCY = 5; // Process 5 files at once
+    const CONCURRENCY = 10; // Process 10 files at once
 
     async function processFile(filePath, i) {
         const relativePath = path.relative(CONTENT_DIR, filePath);
@@ -51,18 +54,24 @@ async function bulkIndex() {
         console.log(`[${i + 1}/${files.length}] Starting: ${relativePath}`);
 
         try {
-            // Check if source already exists (using relativePath for uniqueness) to avoid duplicates
-            const Knowledge = require('../models/Knowledge');
-            const exists = await Knowledge.findOne({ 'metadata.source': relativePath });
-            if (exists) {
-                console.log(`   ⏭️ Skipping already indexed: ${relativePath}`);
-                return 0;
-            }
-
             const buffer = fs.readFileSync(filePath);
             const mimetype = getMimetype(filePath);
 
             const processed = await processDocument(buffer, mimetype, fileName);
+
+            // Save to OriginalDocument so the "Download" button works for these files too
+            const OriginalDocument = require('../models/OriginalDocument');
+            await OriginalDocument.findOneAndUpdate(
+                { source: relativePath },
+                {
+                    filename: fileName,
+                    mimetype: processed.mimetype,
+                    data: buffer,
+                    source: relativePath,
+                    size: buffer.length
+                },
+                { upsert: true }
+            );
 
             const docsToAdd = processed.chunks.map((chunk, index) => ({
                 text: chunk,

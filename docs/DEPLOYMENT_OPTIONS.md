@@ -1,6 +1,6 @@
-# 🚀 MellissAI - Deployment Options Guide
+# 🚀 MelissAI - Deployment Options Guide
 
-This guide provides **all the ways** you can deploy and share MellissAI with your users.
+This guide provides **all the ways** you can deploy and share MelissAI with your users.
 
 ---
 
@@ -68,7 +68,7 @@ ADMIN_PASSWORD=admin123
 1. Go to https://railway.app
 2. Sign in with GitHub
 3. Click **"New Project"** → **"Deploy from GitHub repo"**
-4. Select `Melliss-AI`
+4. Select `Meliss-AI`
 5. Railway auto-detects Node.js
 6. Add environment variables in Settings
 7. Deploy!
@@ -133,7 +133,7 @@ app.whenReady().then(createWindow);
   },
   "build": {
     "appId": "com.nmv.melissa-ai",
-    "productName": "MellissAI",
+    "productName": "MelissAI",
     "win": {
       "target": "nsis",
       "icon": "frontend/images/icon.ico"
@@ -253,7 +253,7 @@ NODE_ENV=production
 
 Once deployed, share this with users:
 
-**Access MellissAI:**
+**Access MelissAI:**
 ```
 URL: https://your-deployed-url.com
 

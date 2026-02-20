@@ -1,11 +1,11 @@
 # Project Structure
 
-This document describes the organization of the MellissAI Business Development Chatbot codebase.
+This document describes the organization of the MelissAI Business Development Chatbot codebase.
 
 ## 📁 Directory Overview
 
 ```
-MellissAI-Business Development Chatbot/
+MelissAI-Business Development Chatbot/
 │
 ├── frontend/              # All frontend files (HTML, CSS, JS)
 │   ├── index.html        # Main chat interface

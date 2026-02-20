@@ -15,7 +15,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
     appId: 'com.melissa.ai',
-    appName: 'MellissAI',
+    appName: 'MelissAI',
     webDir: 'frontend',
     // Comment out or remove the server section:
     // server: {

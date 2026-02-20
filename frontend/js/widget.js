@@ -1,9 +1,9 @@
 // Configuration - Update this with your server URL
 const API_URL = window.location.origin;
 let botSettings = {
-    avatarUrl: 'images/melliss-avatar.svg',
-    botName: 'MellissAI',
-    welcomeMessage: "Hi! I'm MellissAI, your business development assistant. How can I help you today?"
+    avatarUrl: 'images/meliss-avatar.svg',
+    botName: 'MelissAI',
+    welcomeMessage: "Hi! I'm MelissAI, your business development assistant. How can I help you today?"
 };
 
 // Global variables

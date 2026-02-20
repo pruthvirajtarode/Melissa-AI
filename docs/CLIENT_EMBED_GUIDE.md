@@ -1,6 +1,6 @@
-# MellissAI Website Integration Guide
+# MelissAI Website Integration Guide
 
-This guide provides the necessary code and instructions to embed the MellissAI Chatbot into your website. You can choose from the options below depending on how you want the bot to appear.
+This guide provides the necessary code and instructions to embed the MelissAI Chatbot into your website. You can choose from the options below depending on how you want the bot to appear.
 
 ---
 
@@ -10,25 +10,25 @@ This is the most popular way to add a chatbot. It appears as a floating button i
 Add this code just before the closing `</body>` tag of your website:
 
 ```html
-<!-- MellissAI Professional Chat Widget -->
-<div id="melliss-ai-bot" style="position: fixed; bottom: 25px; right: 25px; z-index: 999999; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+<!-- MelissAI Professional Chat Widget -->
+<div id="meliss-ai-bot" style="position: fixed; bottom: 25px; right: 25px; z-index: 999999; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
 
   <!-- Global Branding Colors -->
   <style>
-    :root { --melliss-primary: linear-gradient(135deg, #14532d 0%, #22c55e 100%); }
-    #melliss-btn:hover { transform: scale(1.08); box-shadow: 0 8px 25px rgba(34, 197, 94, 0.45); }
-    #melliss-btn:active { transform: scale(0.95); }
+    :root { --meliss-primary: linear-gradient(135deg, #14532d 0%, #22c55e 100%); }
+    #meliss-btn:hover { transform: scale(1.08); box-shadow: 0 8px 25px rgba(34, 197, 94, 0.45); }
+    #meliss-btn:active { transform: scale(0.95); }
   </style>
 
   <!-- Floating Trigger Button -->
   <button
-    id="melliss-btn"
+    id="meliss-btn"
     aria-label="Open Chat"
     style="
       width: 65px;
       height: 65px;
       border-radius: 50%;
-      background: var(--melliss-primary);
+      background: var(--meliss-primary);
       border: none;
       cursor: pointer;
       box-shadow: 0 5px 20px rgba(20, 83, 45, 0.3);
@@ -45,7 +45,7 @@ Add this code just before the closing `</body>` tag of your website:
   </button>
 
   <!-- Chat Window Container -->
-  <div id="melliss-window" style="
+  <div id="meliss-window" style="
     display: none; 
     position: absolute; 
     bottom: 85px; 
@@ -64,16 +64,16 @@ Add this code just before the closing `</body>` tag of your website:
     <iframe 
         src="https://melissa-ai.vercel.app/widget.html" 
         style="width: 100%; height: 100%; border: none;" 
-        title="MellissAI Assistant"
-        id="melliss-iframe">
+        title="MelissAI Assistant"
+        id="meliss-iframe">
     </iframe>
   </div>
 </div>
 
 <script>
 (function() {
-  const btn = document.getElementById('melliss-btn');
-  const win = document.getElementById('melliss-window');
+  const btn = document.getElementById('meliss-btn');
+  const win = document.getElementById('meliss-window');
   let isOpen = false;
 
   // Toggle Function with Smooth Animation
@@ -136,7 +136,7 @@ Use this option if you want to place the chatbot inside a specific section of yo
     width="100%" 
     height="100%" 
     style="border: none;" 
-    title="MellissAI">
+    title="MelissAI">
   </iframe>
 </div>
 ```
@@ -151,7 +151,7 @@ If you want the app to take up a significant portion of the screen or be fully r
   <iframe 
     src="https://melissa-ai.vercel.app/" 
     style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;" 
-    title="MellissAI">
+    title="MelissAI">
   </iframe>
 </div>
 ```

@@ -1,9 +1,9 @@
 /**
- * MellissAI - Client Embed Script
- * This script dynamically creates the chat button and iframe for the MellissAI widget.
+ * MelissAI - Client Embed Script
+ * This script dynamically creates the chat button and iframe for the MelissAI widget.
  */
 (function () {
-    // Detect script origin to find where MellissAI is hosted
+    // Detect script origin to find where MelissAI is hosted
     const scriptTag = document.currentScript;
     const scriptUrl = scriptTag ? scriptTag.src : '';
     const scriptOrigin = scriptUrl ? new URL(scriptUrl).origin : window.location.origin;
@@ -13,15 +13,15 @@
         apiUrl: scriptOrigin,
         buttonColor: 'linear-gradient(135deg, #14532d 0%, #22c55e 100%)',
         position: 'bottom-right', // bottom-right, bottom-left
-        botName: 'MellissAI'
+        botName: 'MelissAI'
     };
 
     // Merge user config if available
-    const config = window.MELLISS_CONFIG ? { ...defaultConfig, ...window.MELLISS_CONFIG } : defaultConfig;
+    const config = window.MELISS_CONFIG ? { ...defaultConfig, ...window.MELISS_CONFIG } : defaultConfig;
 
     // Create Container
     const container = document.createElement('div');
-    container.id = 'melliss-ai-widget-container';
+    container.id = 'meliss-ai-widget-container';
     container.style.cssText = 'position: fixed; z-index: 999999;';
 
     // Apply position
@@ -35,7 +35,7 @@
 
     // Create Button
     const button = document.createElement('button');
-    button.id = 'melliss-widget-button';
+    button.id = 'meliss-widget-button';
     button.setAttribute('aria-label', `Chat with ${config.botName}`);
     button.style.cssText = `
         width: 65px;
@@ -60,7 +60,7 @@
 
     // Create Iframe
     const iframe = document.createElement('iframe');
-    iframe.id = 'melliss-widget-iframe';
+    iframe.id = 'meliss-widget-iframe';
     iframe.src = `${config.apiUrl}/widget.html`;
     iframe.style.cssText = `
         position: fixed;
@@ -99,7 +99,7 @@
             button.style.transform = 'scale(0.8) rotate(90deg)';
             button.style.opacity = '0.5';
         }, 10);
-        window.dispatchEvent(new Event('melliss:opened'));
+        window.dispatchEvent(new Event('meliss:opened'));
     }
 
     function closeWidget() {
@@ -111,7 +111,7 @@
         setTimeout(() => {
             iframe.style.display = 'none';
         }, 300);
-        window.dispatchEvent(new Event('melliss:closed'));
+        window.dispatchEvent(new Event('meliss:closed'));
     }
 
     // Listen for messages from the widget
@@ -162,7 +162,7 @@
     checkMobile();
 
     // Export public API
-    window.MellissAI = {
+    window.MelissAI = {
         open: openWidget,
         close: closeWidget,
         toggle: () => isOpen ? closeWidget() : openWidget()

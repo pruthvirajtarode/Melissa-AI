@@ -2,7 +2,7 @@
 
 ## ✨ **CUSTOM GENERATED REALISTIC IMAGE ADDED!**
 
-Your MellissAI now has a **professionally generated, photorealistic hero image** that looks like real corporate photography!
+Your MelissAI now has a **professionally generated, photorealistic hero image** that looks like real corporate photography!
 
 ---
 
@@ -31,7 +31,7 @@ Your MellissAI now has a **professionally generated, photorealistic hero image**
 - Photorealistic rendering
 - High resolution (suitable for hero section)
 - Professional corporate aesthetic
-- Matches MellissAI brand colors
+- Matches MelissAI brand colors
 - Premium business photography style
 
 **Perfect For:**
@@ -74,7 +74,7 @@ The image is now local to your project and will load instantly:
 
 ### **vs Stock Photos:**
 - ✅ **Unique** - AI-generated, not found elsewhere
-- ✅ **Customized** - Made specifically for MellissAI
+- ✅ **Customized** - Made specifically for MelissAI
 - ✅ **Brand-aligned** - Purple/blue color scheme
 - ✅ **No licensing issues** - You own it
 - ✅ **No watermarks** - Clean, professional

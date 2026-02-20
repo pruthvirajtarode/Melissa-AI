@@ -2,7 +2,7 @@
 
 ## ✨ What's New!
 
-Your MellissAI has been completely transformed into a **modern, professional light SaaS application**!
+Your MelissAI has been completely transformed into a **modern, professional light SaaS application**!
 
 ---
 
@@ -221,7 +221,7 @@ The light theme is perfect for:
 
 ## 🎉 **Enjoy Your New Professional SaaS UI!**
 
-Your MellissAI now has a **modern, professional light theme** perfect for business applications!
+Your MelissAI now has a **modern, professional light theme** perfect for business applications!
 
 **Refresh http://localhost:3000 to see it in action!** 🚀
 

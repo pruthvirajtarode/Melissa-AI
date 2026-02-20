@@ -13,7 +13,7 @@ The Android WebView (used by Capacitor) is **caching the old error response**. E
 ### **On Your Phone:**
 
 1. Go to **Settings**
-2. Go to **Apps** → **MellissAI**
+2. Go to **Apps** → **MelissAI**
 3. Tap **Storage**
 4. Tap **Clear Data** ← IMPORTANT (not just cache!)
 5. Tap **Clear Cache** too
@@ -48,7 +48,7 @@ I've updated the Android configuration to prevent caching issues. You need to re
 
 If clearing data doesn't work:
 
-1. **Uninstall** MellissAI completely from phone
+1. **Uninstall** MelissAI completely from phone
 2. **Restart** your phone (optional but recommended)
 3. **Reinstall** the APK
 4. **Open** the app
@@ -104,7 +104,7 @@ This allows better HTTP/HTTPS handling and prevents caching issues.
 
 After clearing data OR installing new APK:
 - ✅ App opens successfully
-- ✅ Shows MellissAI welcome screen
+- ✅ Shows MelissAI welcome screen
 - ✅ No 404 error
 - ✅ Can type and send messages
 - ✅ Gets AI responses

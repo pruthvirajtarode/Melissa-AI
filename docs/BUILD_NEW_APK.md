@@ -29,7 +29,7 @@ I've already synced the latest files to the Android project. ✅
 2. Click **"Open"** or **"Open an Existing Project"**
 3. Navigate to and select this folder:
    ```
-   c:\Users\pruth\OneDrive\Desktop\MellissAI-Business Development Chatbot\android
+   c:\Users\pruth\OneDrive\Desktop\MelissAI-Business Development Chatbot\android
    ```
 4. Click **"OK"**
 
@@ -58,13 +58,13 @@ Android Studio will automatically:
 
 Click **"locate"** in the success notification, or find it at:
 ```
-c:\Users\pruth\OneDrive\Desktop\MellissAI-Business Development Chatbot\android\app\build\outputs\apk\debug\app-debug.apk
+c:\Users\pruth\OneDrive\Desktop\MelissAI-Business Development Chatbot\android\app\build\outputs\apk\debug\app-debug.apk
 ```
 
 ### **Step 6: Install on Phone**
 
 1. **Copy `app-debug.apk`** to your phone
-2. **Uninstall** the old MellissAI app completely
+2. **Uninstall** the old MelissAI app completely
 3. **Install** the new APK
 4. **Open** the app
 
@@ -127,11 +127,11 @@ android\app\build\outputs\apk\debug\app-debug.apk
 
 After installing the new APK on your phone:
 
-1. **Open** MellissAI app
+1. **Open** MelissAI app
 2. **Wait 10-15 seconds** for initial load
 3. **Expected result:**
    - ✅ Shows welcome screen (not 404!)
-   - ✅ Can see "Welcome to MellissAI"
+   - ✅ Can see "Welcome to MelissAI"
    - ✅ Chat input box at bottom
    - ✅ Can type and send messages
 

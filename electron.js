@@ -22,7 +22,7 @@ function createWindow() {
         },
         backgroundColor: '#ffffff',
         show: false,
-        title: 'MellissAI × NMV'
+        title: 'MelissAI × NMV'
     });
 
     // Wait for server to start
@@ -85,7 +85,7 @@ function createWindow() {
             label: 'Help',
             submenu: [
                 {
-                    label: 'About MellissAI',
+                    label: 'About MelissAI',
                     click: () => {
                         const aboutWindow = new BrowserWindow({
                             width: 400,
@@ -98,10 +98,10 @@ function createWindow() {
                         aboutWindow.loadURL(`data:text/html,
                             <html>
                             <body style="font-family: Arial; padding: 20px; text-align: center;">
-                                <h2>MellissAI × NMV</h2>
+                                <h2>MelissAI × NMV</h2>
                                 <p>Version 1.0.0</p>
                                 <p>AI-Powered Business Intelligence</p>
-                                <p>Powered by New Majority Ventures</p>
+                                <p>Powered by MelissAI</p>
                             </body>
                             </html>
                         `);

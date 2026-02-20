@@ -1,6 +1,6 @@
 # Frontend
 
-This directory contains all the frontend files for the MellissAI Business Development Chatbot.
+This directory contains all the frontend files for the MelissAI Business Development Chatbot.
 
 ## Structure
 
@@ -24,7 +24,7 @@ frontend/
 
 ## Features
 
-- **Chat Interface**: Modern, responsive chat UI for interacting with MellissAI
+- **Chat Interface**: Modern, responsive chat UI for interacting with MelissAI
 - **Admin Dashboard**: Management interface for uploaded documents
 - **Widget**: Embeddable chatbot widget for external websites
 - **Progressive Web App**: Installable web app with offline support

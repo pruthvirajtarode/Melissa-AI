@@ -18,7 +18,7 @@ The Gradle command line build is failing. **Use Android Studio instead** - it's 
 
 1. In the file browser, navigate to:
    ```
-   C:\Users\pruth\OneDrive\Desktop\MellissAI-Business Development Chatbot\android
+   C:\Users\pruth\OneDrive\Desktop\MelissAI-Business Development Chatbot\android
    ```
    
 2. **Select the `android` folder** (not any file inside it)
@@ -53,7 +53,7 @@ When build completes, you'll see a notification:
 
 **Or manually find it at:**
 ```
-C:\Users\pruth\OneDrive\Desktop\MellissAI-Business Development Chatbot\android\app\build\outputs\apk\debug\app-debug.apk
+C:\Users\pruth\OneDrive\Desktop\MelissAI-Business Development Chatbot\android\app\build\outputs\apk\debug\app-debug.apk
 ```
 
 ### **Step 6: Install on Phone**
@@ -69,7 +69,7 @@ C:\Users\pruth\OneDrive\Desktop\MellissAI-Business Development Chatbot\android\a
    - Tap **"Install"**
 
 3. **Uninstall old app first** if already installed
-   - Go to Settings → Apps → MellissAI → Uninstall
+   - Go to Settings → Apps → MelissAI → Uninstall
    - Then install the new APK
 
 ---
@@ -117,11 +117,11 @@ In the terminal at the bottom of Android Studio, run:
 
 ## 📱 **After Installing New APK:**
 
-1. **Open MellissAI** on your phone
+1. **Open MelissAI** on your phone
 2. **Wait 15-20 seconds** (first load)
 3. **Should show:**
    - ✅ Welcome screen (not 404!)
-   - ✅ MellissAI interface
+   - ✅ MelissAI interface
    - ✅ Chat input box
    - ✅ No errors!
 

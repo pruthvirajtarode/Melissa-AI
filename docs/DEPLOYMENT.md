@@ -1,8 +1,8 @@
-# Deployment Guide - MellissAI
+# Deployment Guide - MelissAI
 
 ## 🚀 Deploying to Production
 
-This guide covers deploying MellissAI to various hosting platforms.
+This guide covers deploying MelissAI to various hosting platforms.
 
 ---
 
@@ -71,7 +71,7 @@ railway login
 ### Step 2: Deploy
 
 ```bash
-cd "MellissAI-Business Development Chatbot"
+cd "MelissAI-Business Development Chatbot"
 railway init
 railway up
 ```
@@ -98,7 +98,7 @@ Download from: https://devcenter.heroku.com/articles/heroku-cli
 ### Step 2: Deploy
 
 ```bash
-cd "MellissAI-Business Development Chatbot"
+cd "MelissAI-Business Development Chatbot"
 heroku login
 heroku create melissa-ai-chatbot
 git push heroku main
