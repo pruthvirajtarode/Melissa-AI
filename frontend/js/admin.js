@@ -476,11 +476,13 @@ async function handleFileUpload(e) {
                 loadDocuments();
             }, 500);
         } else {
-            showStatus(fileUploadStatus, `❌ ${data.error}`, 'error');
+            // Show full server error + detail message
+            const detail = data.message ? `: ${data.message}` : '';
+            showStatus(fileUploadStatus, `❌ ${data.error || 'Upload failed'}${detail}`, 'error');
         }
     } catch (error) {
         console.error('Upload error:', error);
-        showStatus(fileUploadStatus, '❌ Upload failed', 'error');
+        showStatus(fileUploadStatus, '❌ Upload failed — check your connection and try again', 'error');
     }
 }
 

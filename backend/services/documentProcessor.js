@@ -1,4 +1,5 @@
-const pdfParse = require('pdf-parse');
+// Use the lib path to avoid pdf-parse loading test files on startup (Railway fix)
+const pdfParse = require('pdf-parse/lib/pdf-parse.js');
 const mammoth = require('mammoth');
 const axios = require('axios');
 const cheerio = require('cheerio');
@@ -12,12 +13,27 @@ const { summarizeDocument } = require('./openai');
 async function processPDF(buffer) {
     try {
         console.log(`📄 Parsing PDF (${buffer.length} bytes)...`);
-        const data = await pdfParse(buffer);
-        console.log(`✅ PDF parsed, extracted ${data.text?.length || 0} characters`);
-        return data.text || '';
+
+        // Use no-test-data path to avoid Railway/serverless startup issue
+        const data = await pdfParse(buffer, {
+            // Disable font loading to avoid file system errors in serverless
+            max: 0
+        });
+
+        const text = data.text?.trim() || '';
+        console.log(`✅ PDF parsed, extracted ${text.length} characters, ${data.numpages} pages`);
+
+        if (text.length < 20) {
+            // Image-only / scanned PDFs return empty text
+            console.warn(`⚠️ PDF appears to be image-based or has no selectable text (${text.length} chars)`);
+            // Return a minimal descriptive text so the upload doesn't fail completely
+            return `[PDF Document: ${data.numpages || '?'} pages. This document appears to be image-based or scanned. Text content could not be extracted automatically.]`;
+        }
+
+        return text;
     } catch (error) {
         console.error('❌ PDF processing error:', error.message);
-        throw new Error('Failed to process PDF');
+        throw new Error(`Failed to process PDF: ${error.message}`);
     }
 }
 

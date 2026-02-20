@@ -11,19 +11,24 @@ const storage = multer.memoryStorage();
 const upload = multer({
     storage,
     limits: {
-        fileSize: 10 * 1024 * 1024 // 10MB limit
+        fileSize: 20 * 1024 * 1024 // 20MB limit (increased from 10MB)
     },
     fileFilter: (req, file, cb) => {
         const allowedTypes = [
             'application/pdf',
-            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-            'text/plain'
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // DOCX
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',       // XLSX
+            'application/vnd.openxmlformats-officedocument.presentationml.presentation', // PPTX
+            'text/plain',
+            // Some browsers send these MIME types for office files
+            'application/octet-stream',
+            'application/msword'
         ];
 
         if (allowedTypes.includes(file.mimetype)) {
             cb(null, true);
         } else {
-            cb(new Error('Invalid file type. Only PDF, DOCX, and TXT files are allowed.'));
+            cb(new Error(`Unsupported file type: ${file.mimetype}. Allowed: PDF, DOCX, XLSX, PPTX, TXT`));
         }
     }
 });
@@ -96,7 +101,7 @@ router.post('/', upload.single('file'), async (req, res) => {
         console.error('Upload error:', error);
         res.status(500).json({
             error: 'Failed to process document',
-            message: error.message
+            message: error.message || 'Unknown error occurred during processing'
         });
     }
 });
