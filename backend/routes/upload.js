@@ -65,9 +65,11 @@ router.post('/', upload.single('file'), async (req, res) => {
                 summary: processed.summary || '',
                 chunkIndex: index,
                 totalChunks: processed.chunks.length,
-                isActive: true  // ✅ Auto-approve admin uploads — show immediately
+                isActive: true,        // ✅ Auto-approve admin uploads — show immediately
+                adminUploaded: true    // ✅ Tag so admin panel shows ONLY these docs
             }
         }));
+
 
         // ✅ Store original file binary in MongoDB for download support
         // M10 cluster has 10GB dedicated storage — safe to store originals

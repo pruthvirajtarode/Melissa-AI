@@ -173,8 +173,12 @@ class VectorStore {
      */
     async getGroupedDocuments() {
         try {
-            // Use MongoDB aggregation for efficient grouping
+            // ✅ Only show documents uploaded by the admin through the upload panel
+            // Bulk-trained NMV documents (948) are NOT shown here — they're already active in the chatbot
             const grouped = await Knowledge.aggregate([
+                {
+                    $match: { 'metadata.adminUploaded': true } // Only admin-uploaded docs
+                },
                 {
                     $group: {
                         _id: "$metadata.source",
@@ -185,6 +189,7 @@ class VectorStore {
                         mimetype: { $first: "$metadata.mimetype" },
                         summary: { $first: "$metadata.summary" },
                         isActive: { $first: "$metadata.isActive" },
+                        adminUploaded: { $first: "$metadata.adminUploaded" },
                         chunks: { $sum: 1 },
                         createdAt: { $min: "$createdAt" },
                         lastModified: { $max: "$createdAt" }
@@ -205,7 +210,7 @@ class VectorStore {
                     id: g._id || Math.random().toString(36).substr(2, 9),
                     source,
                     type: (source && typeof source === 'string' && source.startsWith('http')) ? 'webpage' : 'file',
-                    hasOriginal: originalSourceSet.has(source) // ← tells frontend if download is available
+                    hasOriginal: originalSourceSet.has(source)
                 };
             });
         } catch (error) {
