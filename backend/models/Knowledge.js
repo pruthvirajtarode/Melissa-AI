@@ -18,6 +18,7 @@ const knowledgeSchema = new mongoose.Schema({
         summary: String,
         chunkIndex: Number,
         totalChunks: Number,
+        adminUploaded: { type: Boolean, default: false },
         isActive: {
             type: Boolean,
             default: false

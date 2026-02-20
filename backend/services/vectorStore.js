@@ -177,7 +177,12 @@ class VectorStore {
             // Bulk-trained NMV documents (948) are NOT shown here — they're already active in the chatbot
             const grouped = await Knowledge.aggregate([
                 {
-                    $match: { 'metadata.adminUploaded': true } // Only admin-uploaded docs
+                    $match: {
+                        $or: [
+                            { 'metadata.adminUploaded': true },
+                            { 'metadata.category': { $exists: false } } // bulk script sets category, admin panel doesn't
+                        ]
+                    }
                 },
                 {
                     $group: {
