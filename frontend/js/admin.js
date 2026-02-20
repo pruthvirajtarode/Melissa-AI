@@ -302,6 +302,20 @@ function displayDocuments(documents) {
 
 // Download Document By Source
 async function downloadDocumentBySource(source) {
+    // Find and update the download button to show loading state
+    const buttons = document.querySelectorAll('.btn-icon.download');
+    let clickedBtn = null;
+    buttons.forEach(btn => {
+        if (btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(source.replace(/'/g, "\\'"))) {
+            clickedBtn = btn;
+        }
+    });
+
+    if (clickedBtn) {
+        clickedBtn.disabled = true;
+        clickedBtn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10" stroke-dasharray="30" stroke-dashoffset="10" stroke-width="2"><animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur="0.8s" repeatCount="indefinite"/></circle></svg>`;
+    }
+
     try {
         const response = await fetch(`${API_URL}/api/admin/document/download?source=${encodeURIComponent(source)}`, {
             method: 'GET',
@@ -316,11 +330,11 @@ async function downloadDocumentBySource(source) {
             const a = document.createElement('a');
             a.href = url;
 
-            // Try to get filename from content-disposition
+            // Try to get filename from content-disposition header
             const contentDisposition = response.headers.get('content-disposition');
-            let filename = source.split('/').pop();
+            let filename = source.split('/').pop() || source;
             if (contentDisposition && contentDisposition.indexOf('filename=') !== -1) {
-                filename = contentDisposition.split('filename=')[1].replace(/["']/g, '');
+                filename = contentDisposition.split('filename=')[1].replace(/['"]/g, '').trim();
             }
 
             a.download = filename;
@@ -328,13 +342,25 @@ async function downloadDocumentBySource(source) {
             a.click();
             window.URL.revokeObjectURL(url);
             document.body.removeChild(a);
+
+            showToast('✅ Download started!', 'success');
+        } else if (response.status === 404) {
+            showToast('⚠️ Original file not available. This document was indexed but the original file was not stored. Please re-upload the document to enable downloads.', 'warning');
+        } else if (response.status === 401) {
+            handleLogout();
         } else {
-            const error = await response.json();
-            alert(`Download failed: ${error.error || 'Server error'}`);
+            const error = await response.json().catch(() => ({ error: 'Server error' }));
+            showToast(`❌ Download failed: ${error.error || 'Server error'}`, 'error');
         }
     } catch (error) {
         console.error('Download error:', error);
-        alert('Failed to download document');
+        showToast('❌ Failed to download document. Please check your connection.', 'error');
+    } finally {
+        // Restore button
+        if (clickedBtn) {
+            clickedBtn.disabled = false;
+            clickedBtn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+        }
     }
 }
 
@@ -889,6 +915,44 @@ function handleDownloadConversation() {
     document.body.appendChild(downloadAnchorNode);
     downloadAnchorNode.click();
     downloadAnchorNode.remove();
+}
+
+// ─── Toast Notification System ────────────────────────────────────────────────
+function showToast(message, type = 'info', duration = 4000) {
+    // Create container if it doesn't exist
+    let container = document.getElementById('toastContainer');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toastContainer';
+        document.body.appendChild(container);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+
+    const icons = {
+        success: '✅',
+        error: '❌',
+        warning: '⚠️',
+        info: 'ℹ️'
+    };
+
+    toast.innerHTML = `
+        <span class="toast-icon">${icons[type] || icons.info}</span>
+        <span class="toast-message">${message}</span>
+        <button class="toast-close" onclick="this.parentElement.remove()">×</button>
+    `;
+
+    container.appendChild(toast);
+
+    // Trigger animation
+    requestAnimationFrame(() => toast.classList.add('toast-visible'));
+
+    // Auto-dismiss
+    setTimeout(() => {
+        toast.classList.remove('toast-visible');
+        setTimeout(() => toast.remove(), 400);
+    }, duration);
 }
 
 function escapeHtml(text) {
