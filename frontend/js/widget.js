@@ -172,7 +172,7 @@ window.addEventListener('load', async function () {
 
         const avatar = document.createElement('div');
         avatar.className = 'widget-avatar';
-        avatar.innerHTML = `<img src="${botSettings.avatarUrl}" alt="${botSettings.botName}" class="widget-avatar-image" />`;
+        avatar.innerHTML = `<img src="${botSettings.avatarUrl}" alt="${botSettings.botName}" class="widget-avatar-image" onerror="this.style.display='none';this.parentElement.textContent='🤖';" />`;
 
         const contentDiv = document.createElement('div');
         contentDiv.className = 'widget-message-content streaming';
@@ -194,7 +194,7 @@ window.addEventListener('load', async function () {
         avatar.className = 'widget-avatar';
 
         if (role === 'assistant') {
-            avatar.innerHTML = `<img src="${botSettings.avatarUrl}" alt="${botSettings.botName}" class="widget-avatar-image" />`;
+            avatar.innerHTML = `<img src="${botSettings.avatarUrl}" alt="${botSettings.botName}" class="widget-avatar-image" onerror="this.style.display='none';this.parentElement.textContent='🤖';" />`;
         } else {
             avatar.textContent = '👤';
         }
@@ -228,7 +228,7 @@ window.addEventListener('load', async function () {
         typingDiv.className = 'widget-message assistant';
         typingDiv.innerHTML = `
             <div class="widget-avatar">
-                <img src="${botSettings.avatarUrl}" alt="${botSettings.botName}" class="widget-avatar-image" />
+                <img src="${botSettings.avatarUrl}" alt="${botSettings.botName}" class="widget-avatar-image" onerror="this.style.display='none';this.parentElement.textContent='🤖';" />
             </div>
             <div class="widget-message-content">
                 <div class="widget-typing">
