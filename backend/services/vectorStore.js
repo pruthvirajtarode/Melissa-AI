@@ -148,13 +148,19 @@ class VectorStore {
                 { $sort: { lastModified: -1 } }
             ]);
 
+            // Check which sources have an original file stored (for download button)
+            const OriginalDocument = require('../models/OriginalDocument');
+            const originalSources = await OriginalDocument.distinct('source');
+            const originalSourceSet = new Set(originalSources);
+
             return grouped.map(g => {
                 const source = g.source || 'Unknown Source';
                 return {
                     ...g,
                     id: g._id || Math.random().toString(36).substr(2, 9),
                     source,
-                    type: (source && typeof source === 'string' && source.startsWith('http')) ? 'webpage' : 'file'
+                    type: (source && typeof source === 'string' && source.startsWith('http')) ? 'webpage' : 'file',
+                    hasOriginal: originalSourceSet.has(source) // ← tells frontend if download is available
                 };
             });
         } catch (error) {
