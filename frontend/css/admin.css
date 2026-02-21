@@ -1002,6 +1002,6 @@
 }
 
 #scrollToTopBtn.visible {
-    display: flex;
-    opacity: 1;
+    display: flex !important;
+    opacity: 1 !important;
 }

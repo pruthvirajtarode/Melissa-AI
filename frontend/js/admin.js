@@ -117,7 +117,7 @@ function setupEventListeners() {
 
     // Scroll to top functionality
     window.onscroll = function () {
-        if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+        if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
             scrollToTopBtn.classList.add('visible');
         } else {
             scrollToTopBtn.classList.remove('visible');
