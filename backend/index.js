@@ -52,7 +52,7 @@ app.use('/api/settings', settingsRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', message: 'MelissAI Server Running' });
+  res.json({ status: 'ok', message: 'MelissAI Server Running', version: '1.3.1' });
 });
 
 // Serve main app
