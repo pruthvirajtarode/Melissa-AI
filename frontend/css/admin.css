@@ -970,3 +970,18 @@
         max-width: unset;
     }
 }
+
+/* Scroll to Top Button */
+#scrollToTopBtn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 25px rgba(20, 83, 45, 0.5);
+}
+
+#scrollToTopBtn:active {
+    transform: scale(0.9);
+}
+
+#scrollToTopBtn.visible {
+    display: flex !important;
+    opacity: 1 !important;
+}

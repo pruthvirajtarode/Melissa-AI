@@ -53,6 +53,7 @@ const closeModalBtn = document.getElementById('closeModalBtn');
 const downloadConvBtn = document.getElementById('downloadConvBtn');
 const modalBody = document.getElementById('modalBody');
 const modalTitle = document.getElementById('modalTitle');
+const scrollToTopBtn = document.getElementById('scrollToTopBtn');
 let currentViewedConversation = null;
 
 // Initialize
@@ -112,6 +113,22 @@ function setupEventListeners() {
     fileInput.addEventListener('change', (e) => {
         const fileName = e.target.files[0]?.name || 'Choose File';
         document.querySelector('.file-label-text').textContent = fileName;
+    });
+
+    // Scroll to top functionality
+    window.onscroll = function () {
+        if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+            scrollToTopBtn.classList.add('visible');
+        } else {
+            scrollToTopBtn.classList.remove('visible');
+        }
+    };
+
+    scrollToTopBtn.addEventListener('click', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
     });
 
     // Avatar input label update
