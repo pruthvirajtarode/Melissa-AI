@@ -472,12 +472,13 @@ async function downloadDocumentBySource(source) {
 
             showToast('✅ Download started!', 'success');
         } else if (response.status === 404) {
-            showToast('⚠️ Original file not available. This document was indexed but the original file was not stored. Please re-upload the document to enable downloads.', 'warning');
+            const errData = await response.json().catch(() => ({}));
+            showToast(`⚠️ ${errData.error || 'Original file not available. Please re-upload to enable download.'}`, 'warning', 8000);
         } else if (response.status === 401) {
             handleLogout();
         } else {
             const error = await response.json().catch(() => ({ error: 'Server error' }));
-            showToast(`❌ Download failed: ${error.error || 'Server error'}`, 'error');
+            showToast(`❌ Download failed: ${error.error || 'Server error'}`, 'error', 8000);
         }
     } catch (error) {
         console.error('Download error:', error);

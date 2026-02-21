@@ -121,22 +121,40 @@ router.get('/document/download', authenticateAdmin, async (req, res) => {
         if (!source) return res.status(400).json({ error: 'Source is required' });
 
         const OriginalDocument = require('../models/OriginalDocument');
+
+        console.log(`📥 Download requested for source: "${source}"`);
+
         const doc = await OriginalDocument.findOne({ source });
 
         if (!doc) {
-            return res.status(404).json({ error: 'Original document not found' });
+            console.warn(`⚠️ No original file stored for: "${source}" — was it purged or not uploaded via admin panel?`);
+            return res.status(404).json({
+                error: 'Original file not found. The file binary was either purged to free DB space, or this document was indexed without saving the original. Please re-upload the document.'
+            });
         }
 
+        if (!doc.data || doc.data.length === 0) {
+            console.warn(`⚠️ Document found but binary data is empty for: "${source}"`);
+            return res.status(404).json({
+                error: 'File data is empty. Please re-upload the document.'
+            });
+        }
+
+        // Sanitize filename to prevent header injection
+        const safeFilename = (doc.filename || source.split('/').pop() || 'download').replace(/["\r\n]/g, '_');
+
+        console.log(`✅ Serving download: "${safeFilename}" (${doc.data.length} bytes, ${doc.mimetype})`);
+
         res.set({
-            'Content-Type': doc.mimetype,
-            'Content-Disposition': `attachment; filename="${doc.filename}"`,
+            'Content-Type': doc.mimetype || 'application/octet-stream',
+            'Content-Disposition': `attachment; filename="${safeFilename}"`,
             'Content-Length': doc.data.length
         });
 
         res.send(doc.data);
     } catch (error) {
-        console.error('Download error:', error);
-        res.status(500).json({ error: 'Failed to download document' });
+        console.error('❌ Download route error:', error.message, error.stack);
+        res.status(500).json({ error: `Download failed: ${error.message}` });
     }
 });
 

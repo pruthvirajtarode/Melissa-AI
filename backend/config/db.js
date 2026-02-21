@@ -16,7 +16,8 @@ const connectDB = async () => {
         maxPoolSize: 10,
         serverSelectionTimeoutMS: 30000, // Wait up to 30s for Atlas to respond
         socketTimeoutMS: 60000,          // Allow longer operations (large insertMany)
-        bufferCommands: false,           // Don't silently buffer — fail fast if not connected
+        // Note: bufferCommands is intentionally left as default (true)
+        // The DB-ready guard in index.js handles connection timing for all /api routes
     }).then(conn => {
         console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
         return conn;
