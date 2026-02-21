@@ -496,6 +496,75 @@
             if (e.target === this) closeEmbedModal();
         });
     </script>
+    <!-- FINAL SCROLL TO TOP VERSION 1.2.0 (Self-Contained) -->
+    <style>
+        #finalScrollTopBtn {
+            position: fixed !important;
+            bottom: 30px !important;
+            right: 30px !important;
+            z-index: 999999999 !important;
+            width: 55px !important;
+            height: 55px !important;
+            border-radius: 50% !important;
+            background: #ff4d4d !important;
+            /* Bright Red/Orange like Toonify */
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%) !important;
+            color: white !important;
+            border: none !important;
+            cursor: pointer !important;
+            box-shadow: 0 10px 25px rgba(255, 75, 43, 0.4) !important;
+            display: none;
+            /* Controlled by JS */
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        #finalScrollTopBtn.is-visible {
+            display: flex !important;
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+        }
+
+        #finalScrollTopBtn:hover {
+            transform: scale(1.1) !important;
+            box-shadow: 0 15px 30px rgba(255, 75, 43, 0.6) !important;
+        }
+
+        #finalScrollTopBtn svg {
+            width: 28px !important;
+            height: 28px !important;
+        }
+    </style>
+
+    <button id="finalScrollTopBtn" title="Go to top">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+            stroke-linejoin="round">
+            <polyline points="18 15 12 9 6 15"></polyline>
+        </svg>
+    </button>
+
+    <script>
+        (function () {
+            const btn = document.getElementById('finalScrollTopBtn');
+            function checkScroll() {
+                const y = window.pageYOffset || document.documentElement.scrollTop;
+                if (y > 100) {
+                    btn.classList.add('is-visible');
+                } else {
+                    btn.classList.remove('is-visible');
+                }
+            }
+            window.addEventListener('scroll', checkScroll, { passive: true });
+            btn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+            // Initial check
+            checkScroll();
+        })();
+    </script>
 </body>
 
 </html>
