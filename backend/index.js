@@ -1,4 +1,5 @@
 require('dotenv').config();
+console.log('--- MelissAI Deployment 1.3.1 ---');
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
