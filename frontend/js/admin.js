@@ -115,24 +115,34 @@ function setupEventListeners() {
         document.querySelector('.file-label-text').textContent = fileName;
     });
 
-    // Aggressive Scroll-to-top functionality
+    // v1.1.0 Absolute Scroll Detection
     function handleScroll() {
         const btn = document.getElementById('scrollToTopBtn');
         if (!btn) return;
 
-        const scrollAmount = window.pageYOffset || document.documentElement.scrollTop;
-        if (scrollAmount > 150) {
-            btn.classList.add('visible');
+        const scrollAmount = window.pageYOffset || window.scrollY || document.documentElement.scrollTop || document.body.scrollTop;
+
+        if (scrollAmount > 100) {
+            if (!btn.classList.contains('visible')) {
+                btn.classList.add('visible');
+                btn.style.display = 'flex';
+            }
         } else {
             btn.classList.remove('visible');
+            btn.style.display = 'none';
         }
     }
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    document.addEventListener('scroll', handleScroll, { passive: true });
+    // Attach to everything
+    window.addEventListener('scroll', handleScroll, true);
+    document.addEventListener('scroll', handleScroll, true);
+
+    // Check every 1 second just in case
+    setInterval(handleScroll, 1000);
 
     if (scrollToTopBtn) {
-        scrollToTopBtn.addEventListener('click', () => {
+        scrollToTopBtn.addEventListener('click', (e) => {
+            e.preventDefault();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
     }
