@@ -115,16 +115,23 @@ function setupEventListeners() {
         document.querySelector('.file-label-text').textContent = fileName;
     });
 
-    // Scroll to top functionality
-    if (scrollToTopBtn) {
-        window.addEventListener('scroll', () => {
-            if (window.pageYOffset > 200) {
-                scrollToTopBtn.classList.add('visible');
-            } else {
-                scrollToTopBtn.classList.remove('visible');
-            }
-        });
+    // Aggressive Scroll-to-top functionality
+    function handleScroll() {
+        const btn = document.getElementById('scrollToTopBtn');
+        if (!btn) return;
 
+        const scrollAmount = window.pageYOffset || document.documentElement.scrollTop;
+        if (scrollAmount > 150) {
+            btn.classList.add('visible');
+        } else {
+            btn.classList.remove('visible');
+        }
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    document.addEventListener('scroll', handleScroll, { passive: true });
+
+    if (scrollToTopBtn) {
         scrollToTopBtn.addEventListener('click', () => {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
