@@ -1,5 +1,5 @@
 require('dotenv').config();
-console.log('--- MelissAI Deployment 1.3.1 ---');
+console.log('--- MelissAI Deployment 1.3.2 ---');
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -52,7 +52,7 @@ app.use('/api/settings', settingsRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', message: 'MelissAI Server Running', version: '1.3.1' });
+  res.json({ status: 'ok', message: 'MelissAI Server Running', version: '1.3.2' });
 });
 
 // Serve main app

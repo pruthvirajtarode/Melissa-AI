@@ -1,5 +1,4 @@
 {
-    "name": "meliss-ai-v1-3-1",
     "version": 2,
     "builds": [
         {
@@ -19,22 +18,6 @@
         {
             "src": "/(.*)",
             "dest": "backend/index.js"
-        }
-    ],
-    "functions": {
-        "backend/index.js": {
-            "maxDuration": 61
-        }
-    },
-    "headers": [
-        {
-            "source": "/(.*).html",
-            "headers": [
-                {
-                    "key": "Cache-Control",
-                    "value": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0"
-                }
-            ]
         }
     ]
 }
