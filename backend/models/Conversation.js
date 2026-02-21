@@ -13,9 +13,8 @@ const ConversationSchema = new mongoose.Schema({
     updatedAt: { type: Date, default: Date.now }
 });
 
-ConversationSchema.pre('save', function (next) {
+ConversationSchema.pre('save', function () {
     this.updatedAt = new Date();
-    next();
 });
 
 module.exports = mongoose.model('Conversation', ConversationSchema);
