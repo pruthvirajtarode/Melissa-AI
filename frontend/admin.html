@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Deployment: 2026-02-21 14:40 -->
+<!-- Deployment: 2026-02-21 21:10 (v1.3.2 Production) -->
 <html lang="en">
 
 <head>
@@ -114,7 +114,7 @@
                             </linearGradient>
                         </defs>
                     </svg>
-                    <span class="logo-text">MelissAI Admin v1.3.1</span>
+                    <span class="logo-text">MelissAI Admin v1.3.2</span>
                 </div>
                 <nav class="nav">
                     <a href="index.html" class="nav-link">← Back to Chat</a>
@@ -497,15 +497,15 @@
             if (e.target === this) closeEmbedModal();
         });
     </script>
-    <!-- SCROLL TO TOP v1.3.0 (DEBUG MODE) -->
+    <!-- SCROLL TO TOP v1.3.2 (Production Mode) -->
     <style>
         #finalScrollTopBtn {
             position: fixed !important;
             bottom: 30px !important;
             right: 30px !important;
             z-index: 2147483647 !important;
-            width: 60px !important;
-            height: 60px !important;
+            width: 55px !important;
+            height: 55px !important;
             border-radius: 50% !important;
             background: #ff5e3a !important;
             background: linear-gradient(135deg, #ff5e3a 0%, #ff2a68 100%) !important;
@@ -513,13 +513,25 @@
             border: none !important;
             cursor: pointer !important;
             box-shadow: 0 10px 30px rgba(255, 42, 104, 0.4) !important;
-            display: flex !important;
-            /* Force visible for testing */
+            display: none !important;
+            /* Start hidden */
             align-items: center;
             justify-content: center;
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+            opacity: 0;
+            transform: translateY(20px);
+            outline: none !important;
+        }
+
+        #finalScrollTopBtn.is-visible {
+            display: flex !important;
             opacity: 1 !important;
             transform: translateY(0) !important;
+        }
+
+        #finalScrollTopBtn:hover {
+            transform: scale(1.1) translateY(-3px) !important;
+            box-shadow: 0 15px 35px rgba(255, 42, 104, 0.6) !important;
         }
 
         #finalScrollTopBtn svg {
@@ -536,18 +548,23 @@
     </button>
 
     <script>
-        console.log('🚀 Scroll-to-Top v1.3.0 initialized');
         (function () {
+            console.log('🚀 Scroll-to-Top v1.3.2 (Production) initialized');
             const btn = document.getElementById('finalScrollTopBtn');
+            function checkScroll() {
+                const y = window.pageYOffset || document.documentElement.scrollTop;
+                if (y > 150) {
+                    btn.classList.add('is-visible');
+                } else {
+                    btn.classList.remove('is-visible');
+                }
+            }
+            window.addEventListener('scroll', checkScroll, { passive: true });
             btn.addEventListener('click', () => {
-                console.log('🔝 Scrolling to top...');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             });
-            window.addEventListener('scroll', () => {
-                const y = window.pageYOffset || document.documentElement.scrollTop;
-                console.log('Scroll position:', y);
-                // In final version we would toggle visibility here
-            }, { passive: true });
+            // Initial check
+            checkScroll();
         })();
     </script>
 </body>
