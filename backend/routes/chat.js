@@ -158,25 +158,26 @@ router.post('/', async (req, res) => {
  */
 router.get('/conversations', async (req, res) => {
     try {
-        const convs = await Conversation.find({}, {
-            conversationId: 1,
-            messages: { $slice: -1 }, // only last message
-            updatedAt: 1,
-            createdAt: 1
-        }).sort({ updatedAt: -1 }).limit(50).lean();
+        const convs = await Conversation.find({})
+            .sort({ updatedAt: -1 })
+            .limit(50)
+            .lean();
 
         const conversationList = convs.map(c => ({
-            id: c.conversationId,
-            messageCount: c.messages?.length || 0,
-            lastMessage: c.messages?.[0] || null,
-            updatedAt: c.updatedAt,
+            id: c.conversationId || c._id,
+            messageCount: Array.isArray(c.messages) ? c.messages.length : 0,
+            lastMessage: Array.isArray(c.messages) && c.messages.length > 0
+                ? c.messages[c.messages.length - 1]
+                : null,
+            updatedAt: c.updatedAt || c.createdAt,
             createdAt: c.createdAt
         }));
 
+        console.log(`📊 Admin: Fetched ${conversationList.length} recent conversations`);
         res.json({ conversations: conversationList });
     } catch (error) {
-        console.error('Get conversations error:', error);
-        res.json({ conversations: [] });
+        console.error('❌ Get conversations error:', error.message);
+        res.status(500).json({ conversations: [], error: error.message });
     }
 });
 
