@@ -57,7 +57,13 @@ class VectorStore {
             });
 
             if (chunksToInsert.length > 0) {
-                await Knowledge.insertMany(chunksToInsert);
+                // Insert in batches of 50 to avoid MongoDB timeout on large documents
+                const BATCH_SIZE = 50;
+                for (let i = 0; i < chunksToInsert.length; i += BATCH_SIZE) {
+                    const batch = chunksToInsert.slice(i, i + BATCH_SIZE);
+                    await Knowledge.insertMany(batch, { timeout: false });
+                    console.log(`   ✅ Inserted batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(chunksToInsert.length / BATCH_SIZE)} (${batch.length} chunks)`);
+                }
             }
 
             this.groupedCache = null; // Invalidate cache

@@ -1,25 +1,35 @@
 const mongoose = require('mongoose');
 
+let _connectionPromise = null;
+
 const connectDB = async () => {
-    try {
-        const uri = process.env.MONGODB_URI || process.env.MONGO_URI;
-        if (!uri) {
-            console.error('❌ MongoDB URI not found in environment variables');
-            return;
-        }
-        const conn = await mongoose.connect(uri, {
-            minPoolSize: 2,       // Keep min 2 connections alive to avoid cold-start delay
-            maxPoolSize: 10,      // Allow up to 10 concurrent connections
-            serverSelectionTimeoutMS: 5000, // Fail fast if Atlas is unreachable
-        });
+    if (_connectionPromise) return _connectionPromise; // reuse existing connection promise
+
+    const uri = process.env.MONGODB_URI || process.env.MONGO_URI;
+    if (!uri) {
+        console.error('❌ MongoDB URI not found in environment variables');
+        return;
+    }
+
+    _connectionPromise = mongoose.connect(uri, {
+        minPoolSize: 2,
+        maxPoolSize: 10,
+        serverSelectionTimeoutMS: 30000, // Wait up to 30s for Atlas to respond
+        socketTimeoutMS: 60000,          // Allow longer operations (large insertMany)
+        bufferCommands: false,           // Don't silently buffer — fail fast if not connected
+    }).then(conn => {
         console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
-    } catch (error) {
-        console.error(`❌ Error: ${error.message}`);
-        // Don't exit process in production (Vercel), just log error
+        return conn;
+    }).catch(error => {
+        console.error(`❌ MongoDB connection error: ${error.message}`);
+        _connectionPromise = null; // allow retry on next request
         if (!process.env.VERCEL) {
             process.exit(1);
         }
-    }
+        throw error;
+    });
+
+    return _connectionPromise;
 };
 
 module.exports = connectDB;

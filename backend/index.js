@@ -7,20 +7,41 @@ const chatRoutes = require('./routes/chat');
 const adminRoutes = require('./routes/admin');
 const uploadRoutes = require('./routes/upload');
 const settingsRoutes = require('./routes/settings');
+const mongoose = require('mongoose');
 
 const app = express();
 
-// Connect to MongoDB
-connectDB();
+// Start DB connection immediately (non-blocking, but tracked)
+const dbReady = connectDB();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '25mb' }));
+app.use(express.urlencoded({ extended: true, limit: '25mb' }));
 
 // Serve static files from frontend directory
 app.use(express.static(path.join(__dirname, '../frontend')));
+
+// ✅ DB-ready guard: wait for MongoDB before handling any API request
+// This prevents the "buffering timed out" error on cold starts
+app.use('/api', async (req, res, next) => {
+  if (mongoose.connection.readyState === 1) {
+    return next(); // Already connected — proceed immediately
+  }
+  try {
+    await Promise.race([
+      dbReady,
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Database connection timed out. Please try again.')), 15000)
+      )
+    ]);
+    next();
+  } catch (err) {
+    console.error('❌ DB guard rejected request:', err.message);
+    res.status(503).json({ error: 'Service temporarily unavailable. Database is not ready. Please retry in a moment.' });
+  }
+});
 
 // API Routes
 app.use('/api/chat', chatRoutes);
