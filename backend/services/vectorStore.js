@@ -144,15 +144,34 @@ class VectorStore {
             // ─── Phase 2: Fetch ALL chunks from top sources only ─────────────
             const fullChunks = await Knowledge.find(
                 { 'metadata.isActive': true, 'metadata.source': { $in: topSources } },
-                { embedding: 1, text: 1, 'metadata.source': 1 }
+                { embedding: 1, text: 1, 'metadata.source': 1, 'metadata.filename': 1, 'metadata.summary': 1 }
             ).lean();
 
             // Final semantic scoring on the focused set
-            const results = fullChunks.map(doc => ({
-                text: doc.text,
-                source: doc.metadata.source,
-                similarity: this.cosineSimilarity(queryEmbedding, doc.embedding)
-            }));
+            const results = fullChunks.map(doc => {
+                let score = this.cosineSimilarity(queryEmbedding, doc.embedding);
+
+                // Re-apply boosts for final score
+                const filename = (doc.metadata.filename || doc.metadata.source || '').toLowerCase().replace(/[_\-\.]/g, ' ');
+                const filenameMatchCount = queryWords.filter(w => filename.includes(w)).length;
+                if (filenameMatchCount > 0) {
+                    score += 0.15 * Math.min(filenameMatchCount, 3);
+                }
+
+                if (doc.metadata.summary) {
+                    const summaryLower = doc.metadata.summary.toLowerCase();
+                    const summaryMatchCount = queryWords.filter(w => summaryLower.includes(w)).length;
+                    if (summaryMatchCount > 0) {
+                        score += 0.08 * Math.min(summaryMatchCount, 4);
+                    }
+                }
+
+                return {
+                    text: doc.text,
+                    source: doc.metadata.source,
+                    similarity: score
+                };
+            });
 
             results.sort((a, b) => b.similarity - a.similarity);
             return results.slice(0, topK);
