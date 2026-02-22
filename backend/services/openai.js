@@ -75,8 +75,8 @@ async function generateEmbedding(text) {
 
         return response.data[0].embedding;
     } catch (error) {
-        console.error('Embedding Error:', error);
-        throw new Error('Failed to generate embedding');
+        console.error('Embedding Error:', error.message || error);
+        throw new Error(`Failed to generate embedding: ${error.message || 'Unknown error'}`);
     }
 }
 

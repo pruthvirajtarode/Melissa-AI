@@ -1,0 +1,26 @@
+{
+  "query": "Research_Paper.",
+  "count": 5,
+  "docs": [
+    {
+      "source": "Research_Paper.pdf",
+      "similarity": 1.04336057853787
+    },
+    {
+      "source": "Research_Paper.pdf",
+      "similarity": 1.034931442319334
+    },
+    {
+      "source": "Research_Paper.pdf",
+      "similarity": 1.0275726146381041
+    },
+    {
+      "source": "Research_Paper.pdf",
+      "similarity": 1.0221259231172597
+    },
+    {
+      "source": "Research_Paper.pdf",
+      "similarity": 1.0211758720725195
+    }
+  ]
+}
