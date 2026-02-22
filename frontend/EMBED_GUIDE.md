@@ -8,79 +8,54 @@ Add the following code snippet to your website's HTML (before closing `</body>` 
 
 ```html
 <!-- MelissAI Chatbot Integration - START -->
-<div id="meliss-ai-bot" style="position: fixed; bottom: 25px; right: 25px; z-index: 999999; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-  
-  <!-- CSS Styles for Widget -->
+<div id="melliss-ai-bot" style="position: fixed; bottom: 25px; right: 25px; z-index: 999999; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
   <style>
-    :root { --meliss-primary: linear-gradient(135deg, #14532d 0%, #22c55e 100%); }
-    #meliss-btn:hover { transform: scale(1.08); box-shadow: 0 8px 25px rgba(34, 197, 94, 0.45); }
-    #meliss-btn:active { transform: scale(0.95); }
+    :root { --melliss-primary: linear-gradient(135deg, #14532d 0%, #22c55e 100%); }
+    #melliss-btn:hover { transform: scale(1.08); box-shadow: 0 8px 25px rgba(34, 197, 94, 0.45); }
+    #melliss-btn:active { transform: scale(0.95); }
   </style>
-
-  <!-- Floating Chat Button -->
-  <button id="meliss-btn" aria-label="Open Chat" style="width: 65px; height: 65px; border-radius: 50%; background: var(--meliss-primary); border: none; cursor: pointer; box-shadow: 0 5px 20px rgba(20, 83, 45, 0.3); display: flex; align-items: center; justify-content: center; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+  <button id="melliss-btn" aria-label="Open Chat" style="width: 65px; height: 65px; border-radius: 50%; background: var(--melliss-primary); border: none; cursor: pointer; box-shadow: 0 5px 20px rgba(20, 83, 45, 0.3); display: flex; align-items: center; justify-content: center; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
     <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
       <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
     </svg>
   </button>
-
-  <!-- Chat Window -->
-  <div id="meliss-window" style="display: none; position: absolute; bottom: 85px; right: 0; width: 420px; height: 650px; border-radius: 20px; overflow: hidden; box-shadow: 0 25px 60px rgba(0,0,0,0.2); background: white; border: 1px solid rgba(0,0,0,0.08); transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); transform: translateY(20px); opacity: 0;">
-    <iframe src="https://melissa-ai.vercel.app/widget.html?v=1.0.5" style="width: 100%; height: 100%; border: none;" title="MelissAI Assistant" id="meliss-iframe"></iframe>
+  <div id="melliss-window" style="display: none; position: absolute; bottom: 85px; right: 0; width: 420px; height: 650px; border-radius: 20px; overflow: hidden; box-shadow: 0 25px 60px rgba(0,0,0,0.2); background: white; border: 1px solid rgba(0,0,0,0.08); transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); transform: translateY(20px); opacity: 0;">
+    <iframe src="https://melissa-ai.vercel.app/widget.html?v=1.0.5" style="width: 100%; height: 100%; border: none;" title="MelissAI Assistant"></iframe>
   </div>
 </div>
-
 <script>
 (function() {
-  const btn = document.getElementById('meliss-btn');
-  const win = document.getElementById('meliss-window');
+  const btn = document.getElementById('melliss-btn');
+  const win = document.getElementById('melliss-window');
   let isOpen = false;
-
-  // Toggle Chat Window logic
-  btn.onclick = () => {
+  
+  function toggleWidget() {
     isOpen = !isOpen;
     if (isOpen) {
       win.style.display = 'block';
-      setTimeout(() => {
-        win.style.transform = 'translateY(0)';
-        win.style.opacity = '1';
-      }, 10);
-      // Change icon to 'X' (Close)
-      btn.innerHTML = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
+      setTimeout(() => { win.style.transform = 'translateY(0)'; win.style.opacity = '1'; }, 10);
+      btn.innerHTML = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
     } else {
-      win.style.transform = 'translateY(20px)';
-      win.style.opacity = '0';
+      win.style.transform = 'translateY(20px)'; win.style.opacity = '0';
       setTimeout(() => { win.style.display = 'none'; }, 300);
-      // Change icon back to Chat Bubble
-      btn.innerHTML = '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>';
+      btn.innerHTML = '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>';
     }
-  };
-
-  // Allow widget to close itself
-  window.addEventListener('message', function(event) {
-    if (event.data === 'closeWidget' || event.data?.type === 'closeWidget') {
-      isOpen = false;
-      win.style.transform = 'translateY(20px)';
-      win.style.opacity = '0';
-      setTimeout(() => { win.style.display = 'none'; }, 300);
-      btn.innerHTML = '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>';
+  }
+  
+  btn.onclick = toggleWidget;
+  
+  window.addEventListener('message', (e) => {
+    if (e.data === 'closeWidget' && isOpen) {
+      toggleWidget();
     }
   });
 
-  // Handle Mobile Responsiveness
   function checkMobile() {
-    if (window.innerWidth < 480) {
-      win.style.width = 'calc(100vw - 40px)';
-      win.style.height = 'calc(80vh)';
-      win.style.right = '-10px';
-    } else {
-      win.style.width = '420px';
-      win.style.height = '650px';
-      win.style.right = '0';
-    }
+    win.style.width = window.innerWidth < 480 ? 'calc(100vw - 40px)' : '420px';
+    win.style.height = window.innerWidth < 480 ? 'calc(80vh)' : '650px';
+    win.style.right = window.innerWidth < 480 ? '-10px' : '0';
   }
-  window.addEventListener('resize', checkMobile);
-  checkMobile();
+  window.addEventListener('resize', checkMobile); checkMobile();
 })();
 </script>
 <!-- MelissAI Chatbot Integration - END -->
