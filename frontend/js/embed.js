@@ -83,7 +83,7 @@
     const iframe = document.createElement('iframe');
     iframe.id = 'meliss-widget-iframe';
     // ✅ Renamed path to forcefully bust Vercel cache
-    iframe.src = `${config.apiUrl}/widget.html?v=1.0.3`;
+    iframe.src = `${config.apiUrl}/widget.html?v=1.0.4`;
     iframe.style.cssText = `
         position: fixed;
         bottom: 100px;

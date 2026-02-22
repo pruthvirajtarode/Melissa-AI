@@ -45,9 +45,7 @@ function closeWidgetDirectly() {
 }
 
 // Initialize widget
-window.addEventListener('load', async function () {
-    await loadSettings();
-
+window.addEventListener('load', function () {
     const widgetButton = document.getElementById('widgetButton');
     const widgetContainer = document.getElementById('widgetContainer');
     const widgetClose = document.getElementById('widgetClose');
@@ -77,6 +75,11 @@ window.addEventListener('load', async function () {
     widgetClose.onclick = closeWidgetDirectly;
     widgetSend.onclick = sendMessage;
     widgetInput.onkeypress = (e) => { if (e.key === 'Enter') sendMessage(); };
+
+    // Fetch avatar and name asynchronously without blocking the UI
+    loadSettings().then(() => {
+        updateWidgetUI();
+    });
 
     async function sendMessage() {
         const message = widgetInput.value.trim();
