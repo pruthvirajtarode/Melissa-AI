@@ -77,15 +77,8 @@ async function main() {
             const existing = await OriginalDocument.findOne({ source: filename });
 
             // ── Store original binary ──────────────────────────────────────
-            if (!existing) {
-                await OriginalDocument.create({
-                    source: filename,
-                    filename,
-                    mimetype,
-                    data: buffer,
-                    size: buffer.length
-                });
-            }
+            // Skipped storing original binary to save MongoDB quota space
+
 
             // ── Process text + embeddings ──────────────────────────────────
             // Check if chunks already exist for this source
@@ -111,7 +104,8 @@ async function main() {
                     category: path.relative(NMV_FOLDER, path.dirname(filePath)), // e.g. "Accelerate Track"
                     chunkIndex: index,
                     totalChunks: processed.chunks.length,
-                    isActive: true  // Auto-approve NMV content
+                    isActive: true,  // Auto-approve NMV content
+                    adminUploaded: true // Show in Admin Dashboard
                 }
             }));
 
