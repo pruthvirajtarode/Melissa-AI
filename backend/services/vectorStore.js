@@ -82,23 +82,14 @@ class VectorStore {
      */
     async search(query, topK = 6) {
         try {
-            // ─── Phase 1: Load ONE representative chunk + filename per source ──
-            const repDocs = await Knowledge.aggregate([
-                { $match: { 'metadata.isActive': true } },
-                {
-                    $group: {
-                        _id: '$metadata.source',
-                        text: { $first: '$text' },
-                        embedding: { $first: '$embedding' },
-                        source: { $first: '$metadata.source' },
-                        summary: { $first: '$metadata.summary' },
-                        filename: { $first: '$metadata.filename' }
-                    }
-                },
-                { $limit: 1500 }
-            ]);
+            // Fetch ALL active chunks. For datasets < 5000 chunks, in-memory cosine similarity is effectively instantaneous.
+            // This prevents the issue where the first chunk of a document is not representative of its subsequent pages/content.
+            const fullChunks = await Knowledge.find(
+                { 'metadata.isActive': true },
+                { embedding: 1, text: 1, 'metadata.source': 1, 'metadata.filename': 1, 'metadata.summary': 1 }
+            ).lean();
 
-            if (repDocs.length === 0) return [];
+            if (fullChunks.length === 0) return [];
 
             // ─── Get query embedding (cached) ────────────────────────────────
             if (!this._embCache) this._embCache = new Map();
@@ -113,42 +104,11 @@ class VectorStore {
                 this._embCache.set(cacheKey, { emb: queryEmbedding, ts: Date.now() });
             }
 
-            // ─── Phase 1 scoring: semantic + filename keyword boost ───────────
             const queryWords = query.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter(w => w.length > 2);
 
-            const phase1 = repDocs.map(doc => {
-                let score = this.cosineSimilarity(queryEmbedding, doc.embedding);
-
-                // Filename keyword boost — fixes Excel/PPTX files where first chunk is headers
-                const filename = (doc.filename || doc.source || '').toLowerCase().replace(/[_\-\.]/g, ' ');
-                const filenameMatchCount = queryWords.filter(w => filename.includes(w)).length;
-                if (filenameMatchCount > 0) {
-                    score += 0.15 * Math.min(filenameMatchCount, 3); // up to +0.45 boost
-                }
-
-                // Summary keyword boost — summaries describe the full doc content
-                if (doc.summary) {
-                    const summaryLower = doc.summary.toLowerCase();
-                    const summaryMatchCount = queryWords.filter(w => summaryLower.includes(w)).length;
-                    if (summaryMatchCount > 0) {
-                        score += 0.08 * Math.min(summaryMatchCount, 4); // up to +0.32 boost
-                    }
-                }
-
-                return { source: doc.source, similarity: score };
-            }).sort((a, b) => b.similarity - a.similarity);
-
-            // Take top sources from phase 1 (wider net: topK * 4)
-            const topSources = phase1.slice(0, topK * 4).map(d => d.source);
-
-            // ─── Phase 2: Fetch ALL chunks from top sources only ─────────────
-            const fullChunks = await Knowledge.find(
-                { 'metadata.isActive': true, 'metadata.source': { $in: topSources } },
-                { embedding: 1, text: 1, 'metadata.source': 1, 'metadata.filename': 1, 'metadata.summary': 1 }
-            ).lean();
-
-            // Final semantic scoring on the focused set
+            // ─── Score all chunks ─────────────
             const results = fullChunks.map(doc => {
+                if (!doc.embedding) return { similarity: -1 };
                 let score = this.cosineSimilarity(queryEmbedding, doc.embedding);
 
                 // Re-apply boosts for final score
@@ -171,7 +131,7 @@ class VectorStore {
                     source: doc.metadata.source,
                     similarity: score
                 };
-            });
+            }).filter(res => res.similarity > 0);
 
             results.sort((a, b) => b.similarity - a.similarity);
             return results.slice(0, topK);

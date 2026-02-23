@@ -36,12 +36,15 @@ async function buildContext(message) {
 
     relevantDocs.forEach(doc => {
         if (doc.similarity > maxSim) maxSim = doc.similarity;
-        if (doc.similarity > 0.62) {
+        // Make similarity threshold slightly more permissive
+        if (doc.similarity > 0.55) {
             context += `\n[Source: ${doc.source}]\n${doc.text}\n`;
         }
     });
 
-    if (context.length > 1200) context = context.substring(0, 1200) + '...';
+    // Provide a larger context window (12,000 characters instead of 1,200)
+    // to give the AI enough material to answer accurately without hallucinations.
+    if (context.length > 12000) context = context.substring(0, 12000) + '...';
     console.log(`🔍 Max similarity: ${maxSim.toFixed(3)}, context: ${context.length} chars`);
     setCache(message, context);
     return context;

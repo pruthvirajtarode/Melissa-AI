@@ -124,7 +124,18 @@ router.get('/document/download', authenticateAdmin, async (req, res) => {
 
         console.log(`📥 Download requested for source: "${source}"`);
 
-        const doc = await OriginalDocument.findOne({ source });
+        let doc = await OriginalDocument.findOne({ source });
+
+        // Fallback: If source included a folder path, OriginalDocument might only have the basename
+        if (!doc) {
+            const basename = source.split(/[\\/]/).pop();
+            doc = await OriginalDocument.findOne({
+                $or: [
+                    { filename: basename },
+                    { source: basename }
+                ]
+            });
+        }
 
         if (!doc) {
             console.warn(`⚠️ No original file stored for: "${source}" — was it purged or not uploaded via admin panel?`);

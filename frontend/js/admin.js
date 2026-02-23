@@ -191,6 +191,7 @@ async function handlePurgeOriginals() {
         if (response.ok) {
             showToast(`✅ ${data.message}`, 'success', 6000);
             loadAnalytics(); // Refresh the storage size card
+            loadDocuments(); // IMPORTANT: Refresh UI so phantom download buttons are removed
         } else if (response.status === 401) {
             handleLogout();
         } else {
@@ -405,20 +406,20 @@ function displayDocuments(documents) {
             </div>
             <div class="document-actions">
                 ${!doc.isActive ? `
-                <button class="btn-icon approve" title="Include in Chatbot" onclick="approveDocumentBySource('${escapeHtml(doc.source)}')">
+                <button class="btn-icon approve" title="Include in Chatbot" data-source="${escapeHtml(doc.source)}" onclick="approveDocumentBySource(this.getAttribute('data-source'))">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                         <path d="M20 6L9 17L4 12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                 </button>
                 ` : `
-                <button class="btn-icon deactivate" title="Exclude from Chatbot" onclick="deactivateDocumentBySource('${escapeHtml(doc.source)}')">
+                <button class="btn-icon deactivate" title="Exclude from Chatbot" data-source="${escapeHtml(doc.source)}" onclick="deactivateDocumentBySource(this.getAttribute('data-source'))">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                         <path d="M18 6L6 18M6 6l12 12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                 </button>
                 `}
                 ${doc.type !== 'webpage' ? (doc.hasOriginal ? `
-                <button class="btn-icon download" title="Download Original File" onclick="downloadDocumentBySource('${escapeHtml(doc.source)}')">
+                <button class="btn-icon download" title="Download Original File" data-source="${escapeHtml(doc.source)}" onclick="downloadDocumentBySource(this.getAttribute('data-source'))">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
@@ -430,7 +431,7 @@ function displayDocuments(documents) {
                     </svg>
                 </button>
                 `) : ''}
-                <button class="btn-icon delete" title="Delete Document" onclick="deleteDocumentBySource('${escapeHtml(doc.source)}')">
+                <button class="btn-icon delete" title="Delete Document" data-source="${escapeHtml(doc.source)}" onclick="deleteDocumentBySource(this.getAttribute('data-source'))">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                         <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>

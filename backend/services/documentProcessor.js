@@ -197,7 +197,7 @@ async function processDocument(buffer, mimetype, filename) {
         // Generate summary - even if text is small
         let summary = 'Summary of the uploaded content.';
         try {
-            if (text.length > 50) {
+            if (text.length > 0) {
                 summary = await summarizeDocument(text);
                 console.log('✅ Generated summary');
             }
