@@ -67,6 +67,7 @@ class VectorStore {
             }
 
             this.groupedCache = null; // Invalidate cache
+            this._activeChunksCache = null;
             const duration = ((Date.now() - startTime) / 1000).toFixed(1);
             console.log(`✅ Bulk addition to MongoDB complete in ${duration}s`);
         } catch (error) {
@@ -82,12 +83,19 @@ class VectorStore {
      */
     async search(query, topK = 6) {
         try {
-            // Fetch ALL active chunks. For datasets < 5000 chunks, in-memory cosine similarity is effectively instantaneous.
-            // This prevents the issue where the first chunk of a document is not representative of its subsequent pages/content.
-            const fullChunks = await Knowledge.find(
-                { 'metadata.isActive': true },
-                { embedding: 1, text: 1, 'metadata.source': 1, 'metadata.filename': 1, 'metadata.summary': 1 }
-            ).lean();
+            // Fetch ALL active chunks. Cached in memory to avoid huge latency and DB load on every single chat message.
+            if (!this._activeChunksCache || Date.now() - this._activeChunksCache.ts > 10 * 60 * 1000) {
+                console.log('🔄 Refreshing vector knowledge base cache into memory...');
+                this._activeChunksCache = {
+                    data: await Knowledge.find(
+                        { 'metadata.isActive': true },
+                        { embedding: 1, text: 1, 'metadata.source': 1, 'metadata.filename': 1, 'metadata.summary': 1 }
+                    ).lean(),
+                    ts: Date.now()
+                };
+                console.log(`✅ Loaded ${this._activeChunksCache.data.length} chunks into memory cache.`);
+            }
+            const fullChunks = this._activeChunksCache.data;
 
             if (fullChunks.length === 0) return [];
 
@@ -211,6 +219,7 @@ class VectorStore {
             { $set: { 'metadata.isActive': true } }
         );
         this.groupedCache = null;
+        this._activeChunksCache = null;
         return result.modifiedCount;
     }
 
@@ -220,6 +229,7 @@ class VectorStore {
             { $set: { 'metadata.isActive': false } }
         );
         this.groupedCache = null;
+        this._activeChunksCache = null;
         return result.modifiedCount;
     }
 
@@ -231,6 +241,7 @@ class VectorStore {
         await OriginalDocument.deleteMany({ source });
 
         this.groupedCache = null;
+        this._activeChunksCache = null;
         return result.deletedCount;
     }
 
@@ -242,6 +253,7 @@ class VectorStore {
         await OriginalDocument.deleteMany({});
 
         this.groupedCache = null;
+        this._activeChunksCache = null;
     }
 
     async reindex() {
@@ -261,6 +273,7 @@ class VectorStore {
 
         console.log('✅ Re-indexing completed.');
         this.groupedCache = null;
+        this._activeChunksCache = null;
     }
 }
 
