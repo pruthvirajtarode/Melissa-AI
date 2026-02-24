@@ -83,23 +83,24 @@ class VectorStore {
      */
     async search(query, topK = 6) {
         try {
-            // Fetch ALL active chunks. Cached in memory to avoid huge latency and DB load on every single chat message.
-            if (!this._activeChunksCache || Date.now() - this._activeChunksCache.ts > 10 * 60 * 1000) {
-                console.log('🔄 Refreshing vector knowledge base cache into memory...');
-                this._activeChunksCache = {
-                    data: await Knowledge.find(
-                        { 'metadata.isActive': true },
-                        { embedding: 1, text: 1, 'metadata.source': 1, 'metadata.filename': 1, 'metadata.summary': 1 }
-                    ).lean(),
-                    ts: Date.now()
-                };
-                console.log(`✅ Loaded ${this._activeChunksCache.data.length} chunks into memory cache.`);
+            const queryWords = query.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter(w => w.length > 2);
+
+            // HYBRID SEARCH: Fetch top 400 chunks based on MongoDB native $text search
+            let fullChunks = await Knowledge.find(
+                { $text: { $search: query }, "metadata.isActive": true },
+                { score: { $meta: "textScore" }, embedding: 1, text: 1, 'metadata.source': 1, 'metadata.filename': 1, 'metadata.summary': 1 }
+            ).sort({ score: { $meta: "textScore" } }).limit(400).lean();
+
+            // Fallback: If no keyword match, fetch latest 1000 chunks
+            if (fullChunks.length === 0) {
+                fullChunks = await Knowledge.find({ 'metadata.isActive': true }, { embedding: 1, text: 1, 'metadata.source': 1, 'metadata.filename': 1, 'metadata.summary': 1 })
+                    .sort({ createdAt: -1 })
+                    .limit(1000)
+                    .lean();
             }
-            const fullChunks = this._activeChunksCache.data;
 
             if (fullChunks.length === 0) return [];
 
-            // ─── Get query embedding (cached) ────────────────────────────────
             if (!this._embCache) this._embCache = new Map();
             const cacheKey = query.toLowerCase().trim();
             let queryEmbedding;
@@ -112,33 +113,21 @@ class VectorStore {
                 this._embCache.set(cacheKey, { emb: queryEmbedding, ts: Date.now() });
             }
 
-            const queryWords = query.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter(w => w.length > 2);
-
-            // ─── Score all chunks ─────────────
             const results = fullChunks.map(doc => {
                 if (!doc.embedding) return { similarity: -1 };
                 let score = this.cosineSimilarity(queryEmbedding, doc.embedding);
 
-                // Re-apply boosts for final score
                 const filename = (doc.metadata.filename || doc.metadata.source || '').toLowerCase().replace(/[_\-\.]/g, ' ');
                 const filenameMatchCount = queryWords.filter(w => filename.includes(w)).length;
-                if (filenameMatchCount > 0) {
-                    score += 0.15 * Math.min(filenameMatchCount, 3);
-                }
+                if (filenameMatchCount > 0) score += 0.15 * Math.min(filenameMatchCount, 3);
 
                 if (doc.metadata.summary) {
                     const summaryLower = doc.metadata.summary.toLowerCase();
                     const summaryMatchCount = queryWords.filter(w => summaryLower.includes(w)).length;
-                    if (summaryMatchCount > 0) {
-                        score += 0.08 * Math.min(summaryMatchCount, 4);
-                    }
+                    if (summaryMatchCount > 0) score += 0.08 * Math.min(summaryMatchCount, 4);
                 }
 
-                return {
-                    text: doc.text,
-                    source: doc.metadata.source,
-                    similarity: score
-                };
+                return { text: doc.text, source: doc.metadata.source, similarity: score };
             }).filter(res => res.similarity > 0);
 
             results.sort((a, b) => b.similarity - a.similarity);
