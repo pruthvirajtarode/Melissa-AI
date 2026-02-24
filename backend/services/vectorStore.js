@@ -89,6 +89,10 @@ class VectorStore {
                 .split(/\s+/)
                 .filter(w => w.length > 2 && !STOP_WORDS.has(w));
 
+            // Add synonyms context
+            if (queryWords.includes('nmvu') && !queryWords.includes('nmv')) queryWords.push('nmv');
+            if (queryWords.includes('nmv') && !queryWords.includes('nmvu')) queryWords.push('nmvu');
+
             // HYBRID SEARCH: Fetch chunks per important keyword to ensure diversity (prevents one widespread keyword from monopolizing the 400 chunk limit)
             let fullChunks = [];
             if (queryWords.length > 0) {
@@ -103,8 +107,9 @@ class VectorStore {
                     { embedding: 1, text: 1, 'metadata.source': 1, 'metadata.filename': 1, 'metadata.summary': 1 }
                 ).limit(300).lean();
 
-                // If no perfect multi-word matches exist, pool limit(100) chunks PER KEYWORD to guarantee diverse context for cosine routing
-                if (fullChunks.length === 0) {
+                // If perfect multi-word matches are sparse (fewer than 50 chunks), 
+                // pool chunks PER KEYWORD to guarantee a diverse search pool for cosine similarity.
+                if (fullChunks.length < 50) {
                     for (const r of regexes) {
                         const chunksForWord = await Knowledge.find(
                             {
@@ -112,7 +117,7 @@ class VectorStore {
                                 "metadata.isActive": true
                             },
                             { embedding: 1, text: 1, 'metadata.source': 1, 'metadata.filename': 1, 'metadata.summary': 1 }
-                        ).limit(100).lean();
+                        ).limit(150).lean(); // Increased limit per word for broader coverage
                         fullChunks.push(...chunksForWord);
                     }
 
