@@ -83,15 +83,47 @@ class VectorStore {
      */
     async search(query, topK = 6) {
         try {
-            const queryWords = query.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter(w => w.length > 2);
+            const STOP_WORDS = new Set(['the', 'is', 'in', 'at', 'of', 'on', 'and', 'a', 'to', 'for', 'it', 'what', 'who', 'how', 'tell', 'me', 'about', 'can', 'you', 'explain', 'describe', 'details', 'know']);
+            const queryWords = query.toLowerCase()
+                .replace(/[^a-z0-9\s]/g, ' ')
+                .split(/\s+/)
+                .filter(w => w.length > 2 && !STOP_WORDS.has(w));
 
-            // HYBRID SEARCH: Fetch top 400 chunks based on MongoDB native $text search
-            let fullChunks = await Knowledge.find(
-                { $text: { $search: query }, "metadata.isActive": true },
-                { score: { $meta: "textScore" }, embedding: 1, text: 1, 'metadata.source': 1, 'metadata.filename': 1, 'metadata.summary': 1 }
-            ).sort({ score: { $meta: "textScore" } }).limit(400).lean();
+            // HYBRID SEARCH: Fetch chunks per important keyword to ensure diversity (prevents one widespread keyword from monopolizing the 400 chunk limit)
+            let fullChunks = [];
+            if (queryWords.length > 0) {
+                const regexes = queryWords.map(w => new RegExp(w, 'i'));
 
-            // Fallback: If no keyword match, fetch latest 1000 chunks
+                // Try to find perfect matches first (contains ALL keywords)
+                const andConditions = regexes.map(r => ({
+                    $or: [{ text: r }, { "metadata.filename": r }, { "metadata.source": r }]
+                }));
+                fullChunks = await Knowledge.find(
+                    { $and: andConditions, "metadata.isActive": true },
+                    { embedding: 1, text: 1, 'metadata.source': 1, 'metadata.filename': 1, 'metadata.summary': 1 }
+                ).limit(300).lean();
+
+                // If no perfect multi-word matches exist, pool limit(100) chunks PER KEYWORD to guarantee diverse context for cosine routing
+                if (fullChunks.length === 0) {
+                    for (const r of regexes) {
+                        const chunksForWord = await Knowledge.find(
+                            {
+                                $or: [{ text: r }, { "metadata.filename": r }, { "metadata.source": r }],
+                                "metadata.isActive": true
+                            },
+                            { embedding: 1, text: 1, 'metadata.source': 1, 'metadata.filename': 1, 'metadata.summary': 1 }
+                        ).limit(100).lean();
+                        fullChunks.push(...chunksForWord);
+                    }
+
+                    // Deduplicate results
+                    const uniqueMap = new Map();
+                    fullChunks.forEach(c => uniqueMap.set(c._id.toString(), c));
+                    fullChunks = Array.from(uniqueMap.values());
+                }
+            }
+
+            // Absolute Fallback: If no keyword match or query was entirely stop-words, fetch latest 1000 chunks
             if (fullChunks.length === 0) {
                 fullChunks = await Knowledge.find({ 'metadata.isActive': true }, { embedding: 1, text: 1, 'metadata.source': 1, 'metadata.filename': 1, 'metadata.summary': 1 })
                     .sort({ createdAt: -1 })
