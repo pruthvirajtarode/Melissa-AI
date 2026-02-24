@@ -4,6 +4,8 @@
 
 ### *Your Expert AI Business Development Assistant*
 
+<img src="docs/images/banner.png" alt="MelissAI Banner" width="100%" />
+
 [![Live Demo](https://img.shields.io/badge/🌐_Live_Demo-melissa--ai.vercel.app-667eea?style=for-the-badge)](https://melissa-ai.vercel.app)
 [![Made with OpenAI](https://img.shields.io/badge/Powered_by-OpenAI_GPT--4-412991?style=for-the-badge&logo=openai&logoColor=white)](https://openai.com)
 [![Node.js](https://img.shields.io/badge/Node.js-18+-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://nodejs.org)
@@ -14,8 +16,6 @@
 [🎯 Live Demo](https://melissa-ai.vercel.app) • [📱 Features](#-features) • [🚀 Quick Start](#-quick-start) • [📖 Documentation](#-documentation)
 
 ---
-
-![MelissAI Banner](https://img.shields.io/badge/AI_Powered-Business_Guidance-gradient?style=flat&labelColor=667eea&color=764ba2)
 
 </div>
 
@@ -129,7 +129,7 @@ Password: admin123
 
 | Main Chat Interface | Admin Dashboard | Mobile Experience |
 |:---:|:---:|:---:|
-| ![Chat](https://via.placeholder.com/300x200/667eea/ffffff?text=Chat+Interface) | ![Admin](https://via.placeholder.com/300x200/764ba2/ffffff?text=Admin+Dashboard) | ![Mobile](https://via.placeholder.com/300x200/667eea/ffffff?text=Mobile+Optimized) |
+| <img src="docs/images/chat-interface.png" width="300" /> | <img src="docs/images/admin-dashboard.png" width="300" /> | <img src="docs/images/mobile-interface.png" width="300" /> |
 
 </div>
 
