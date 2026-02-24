@@ -30,14 +30,14 @@ async function buildContext(message) {
     const cached = getCached(message);
     if (cached !== null) { console.log('⚡ Cache hit'); return cached; }
 
-    const relevantDocs = await vectorStore.search(message, 3);
+    const relevantDocs = await vectorStore.search(message, 8);
     let context = '';
     let maxSim = 0;
 
     relevantDocs.forEach(doc => {
         if (doc.similarity > maxSim) maxSim = doc.similarity;
-        // Make similarity threshold slightly more permissive
-        if (doc.similarity > 0.55) {
+        // Make similarity threshold more permissive to capture relevant content
+        if (doc.similarity > 0.48) {
             context += `\n[Source: ${doc.source}]\n${doc.text}\n`;
         }
     });
