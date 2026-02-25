@@ -37,7 +37,7 @@ async function buildContext(message) {
     relevantDocs.forEach(doc => {
         if (doc.similarity > maxSim) maxSim = doc.similarity;
         // Make similarity threshold more permissive to capture relevant content
-        if (doc.similarity > 0.48) {
+        if (doc.similarity > 0.40) {
             context += `\n[Source: ${doc.source}]\n${doc.text}\n`;
         }
     });
@@ -102,7 +102,7 @@ router.post('/stream', async (req, res) => {
             model: 'gpt-4o-mini',
             messages: [{ role: 'system', content: systemContent }, ...conv.messages.slice(-6).map(m => ({ role: m.role, content: m.content }))],
             temperature: 0.1,
-            max_tokens: 200,
+            max_tokens: 400,
             top_p: 0.9,
             stream: true,
         });
