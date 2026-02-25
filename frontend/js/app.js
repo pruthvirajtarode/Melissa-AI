@@ -189,11 +189,18 @@ function addMessage(role, content, meta = {}) {
 
 // Format Message (simple markdown-like formatting)
 function formatMessage(text) {
-    // 1. Convert bold markdown **text** to <strong>text</strong>
+    if (!text) return '';
+
+    // 1. Convert markdown links: [text](url) -> <a href="url" target="_blank">text</a>
+    text = text.replace(/\[([^\]]+)\]\s*\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" style="color: var(--text-accent, #22c55e); text-decoration: underline;">$1</a>');
+
+    // 2. Handle bare URLs
+    text = text.replace(/(^|\s)(https?:\/\/[^\s<]+[^.,\s<])/g, '$1<a href="$2" target="_blank" rel="noopener noreferrer" style="color: var(--text-accent, #22c55e); text-decoration: underline;">$2</a>');
+
+    // 2. Convert bold markdown **text** to <strong>text</strong>
     text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
-    // 2. Handle unordered lists starting with -
-    // First, split by lines to handle each line properly
+    // 3. Handle unordered lists starting with -
     const lines = text.split('\n');
     let inList = false;
     let inOrderedList = false;

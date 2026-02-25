@@ -711,10 +711,18 @@ async function handleFileUpload(e) {
 async function handleUrlUpload(e) {
     e.preventDefault();
 
-    const url = urlInput.value.trim();
-    if (!url) return;
+    const urlRaw = urlInput.value.trim();
+    if (!urlRaw) return;
 
-    showStatus(urlUploadStatus, 'Fetching and processing...', 'loading');
+    // Split by newlines and filter empty lines
+    const urlList = urlRaw.split('\n').map(u => u.trim()).filter(u => u.length > 0);
+    if (urlList.length === 0) return;
+
+    const autoApprove = document.getElementById('urlAutoApprove')?.checked || false;
+
+    showStatus(urlUploadStatus, urlList.length > 1
+        ? `Fetching and processing ${urlList.length} URLs...`
+        : 'Fetching and processing...', 'loading');
 
     try {
         const response = await fetch(`${API_URL}/api/upload/url`, {
@@ -722,22 +730,38 @@ async function handleUrlUpload(e) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ url })
+            body: JSON.stringify({
+                urls: urlList,
+                autoApprove: autoApprove
+            })
         });
 
         const data = await response.json();
 
         if (response.ok) {
-            showStatus(urlUploadStatus, '✅ URL processed and ready for review', 'success');
+            let msg = '✅ URL(s) processed';
+            if (data.errors && data.errors.length > 0) {
+                msg = `✅ Processed ${data.results.length} URLs, but ${data.errors.length} failed.`;
+            } else if (autoApprove) {
+                msg = `✅ ${urlList.length} URL(s) indexed and active!`;
+            } else {
+                msg = `✅ ${urlList.length} URL(s) pending review.`;
+            }
+
+            showStatus(urlUploadStatus, msg, 'success');
             urlInput.value = '';
-            loadDocuments();
-            loadAnalytics();
+
+            // Refresh counts and lists
+            setTimeout(() => {
+                loadDocuments();
+                loadAnalytics();
+            }, 800);
         } else {
-            showStatus(urlUploadStatus, `❌ ${data.error || 'Failed to process URL'}`, 'error');
+            showStatus(urlUploadStatus, `❌ ${data.error || 'Failed to process URLs'}`, 'error');
         }
     } catch (error) {
         console.error('URL upload error:', error);
-        showStatus(urlUploadStatus, '❌ Processing failed', 'error');
+        showStatus(urlUploadStatus, '❌ Processing failed. Check your connection.', 'error');
     }
 }
 
@@ -1092,6 +1116,35 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
+function formatMessage(text) {
+    if (!text) return '';
+
+    // 1. Convert markdown links: [text](url) -> <a href="url" target="_blank">text</a>
+    text = text.replace(/\[([^\]]+)\]\s*\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" style="color: #22c55e; text-decoration: underline;">$1</a>');
+
+    // 2. Handle bare URLs
+    text = text.replace(/(^|\s)(https?:\/\/[^\s<]+[^.,\s<])/g, '$1<a href="$2" target="_blank" rel="noopener noreferrer" style="color: #22c55e; text-decoration: underline;">$2</a>');
+
+    // 2. Convert bold markdown **text** to <strong>text</strong>
+    text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+    // 3. Handle simple lists
+    const lines = text.split('\n');
+    let formattedLines = [];
+    lines.forEach(line => {
+        const trimmed = line.trim();
+        if (trimmed.startsWith('- ')) {
+            formattedLines.push(`<li style="margin-left: 20px;">${trimmed.substring(2)}</li>`);
+        } else if (/^\d+\. /.test(trimmed)) {
+            formattedLines.push(`<li style="margin-left: 20px;">${trimmed}</li>`);
+        } else {
+            formattedLines.push(line.trim() ? `<p style="margin: 4px 0;">${line}</p>` : '<br>');
+        }
+    });
+
+    return formattedLines.join('');
+}
+
 // ─── Conversations ────────────────────────────────────────────────────────────
 
 async function loadConversations() {
@@ -1167,7 +1220,7 @@ async function viewConversation(convId) {
             : messages.map(m => `
                 <div style="display:flex;gap:10px;margin-bottom:14px;flex-direction:${m.role === 'user' ? 'row-reverse' : 'row'};">
                     <div style="width:32px;height:32px;border-radius:50%;background:${m.role === 'user' ? '#6b7280' : '#22c55e'};display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">${m.role === 'user' ? '👤' : '🤖'}</div>
-                    <div style="max-width:75%;background:${m.role === 'user' ? '#f3f4f6' : 'white'};border:1px solid #e5e7eb;border-radius:10px;padding:10px 14px;font-size:13px;line-height:1.5;">${escapeHtml(m.content || '')}</div>
+                    <div style="max-width:75%;background:${m.role === 'user' ? '#f3f4f6' : 'white'};border:1px solid #e5e7eb;border-radius:10px;padding:10px 14px;font-size:13px;line-height:1.5;">${formatMessage(m.content || '')}</div>
                 </div>`).join('');
 
         conversationModal.style.display = 'flex';

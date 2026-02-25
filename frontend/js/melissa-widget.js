@@ -215,6 +215,14 @@ window.addEventListener('load', function () {
     function formatMessage(text) {
         if (!text) return '';
 
+        // 1. Convert markdown links: [text](url) -> <a href="url" target="_blank">text</a>
+        // We use \s* to handle cases where there might be a newline or space between ] and (
+        text = text.replace(/\[([^\]]+)\]\s*\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" style="color: #22c55e; text-decoration: underline; font-weight: 500;">$1</a>');
+
+        // 2. Handle "bare" URLs (e.g. https://google.com) not already converted
+        // This regex looks for URLs that aren't preceded by href=" or >
+        text = text.replace(/(^|\s)(https?:\/\/[^\s<]+[^.,\s<])/g, '$1<a href="$2" target="_blank" rel="noopener noreferrer" style="color: #22c55e; text-decoration: underline; font-weight: 500;">$2</a>');
+
         // Process line by line for proper list rendering
         const lines = text.split('\n');
         let html = '';
