@@ -11,7 +11,7 @@ const settingsSchema = new mongoose.Schema({
     },
     avatarUrl: {
         type: String,
-        default: 'images/MelissAI-new-avatar.jpg'
+        default: 'images/bot-silhouette.svg'
     },
     // For storing uploaded avatars directly in MongoDB (Base64/Buffer)
     avatarData: {

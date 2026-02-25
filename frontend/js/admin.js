@@ -849,7 +849,7 @@ async function loadSettings() {
 
             botNameInput.value = settings.botName || 'MelissAI';
             welcomeMessageInput.value = settings.welcomeMessage || '';
-            currentAvatarImg.src = settings.avatarUrl || 'images/melissai-new-avatar.jpg';
+            currentAvatarImg.src = settings.avatarUrl || 'images/bot-silhouette.svg';
 
             // Initialize previous states
             previousAvatarUrl = null;

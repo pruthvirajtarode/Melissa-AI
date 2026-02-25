@@ -3,7 +3,7 @@ const API_URL = window.location.origin;
 let conversationId = generateConversationId();
 let isProcessing = false;
 let botSettings = {
-    avatarUrl: '/images/meliss-avatar.svg',
+    avatarUrl: 'images/bot-silhouette.svg',
     botName: 'MelissAI',
     welcomeMessage: "Hi! I'm MelissAI, your business development assistant. How can I help you today?"
 };
