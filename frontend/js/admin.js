@@ -40,6 +40,7 @@ let previousIdentity = null;
 
 // Documents elements
 const documentsList = document.getElementById('documentsList');
+const documentsToolbar = document.getElementById('documentsToolbar');
 const refreshDocsBtn = document.getElementById('refreshDocsBtn');
 const reindexBtn = document.getElementById('reindexBtn');
 const clearAllBtn = document.getElementById('clearAllBtn');
@@ -316,9 +317,99 @@ function getFileTypeLabel(doc) {
 let docFilter = 'all';
 let docSearch = '';
 
-// Display Documents
+// Render Document Toolbar (Search + Filters)
+function renderDocumentsToolbar(documents) {
+    if (!documentsToolbar) return;
+
+    // Only render once or if empty to preserve input focus
+    if (documentsToolbar.innerHTML.trim() !== '') {
+        updateToolbarCounts(documents);
+        return;
+    }
+
+    const activeCount = documents.filter(d => d.isActive).length;
+    const pendingCount = documents.length - activeCount;
+
+    documentsToolbar.innerHTML = `
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:14px;">
+            <input
+                id="docSearchInput"
+                type="text"
+                placeholder="🔍 Search documents..."
+                value="${escapeHtml(docSearch)}"
+                style="flex:1; min-width:180px; padding:8px 12px; border:1px solid var(--border-color); border-radius:8px; font-size:0.9rem; background:var(--bg-secondary); color:var(--text-primary);"
+            />
+            <div style="display:flex; gap:6px;">
+                <button onclick="changeDocFilter('all')" id="filter-all" class="filter-pill ${docFilter === 'all' ? 'active' : ''}" style="padding:6px 14px; border-radius:20px; border:1px solid var(--border-color); cursor:pointer; font-size:0.82rem; background:${docFilter === 'all' ? 'var(--text-accent)' : 'var(--bg-secondary)'}; color:${docFilter === 'all' ? '#fff' : 'var(--text-secondary)'}; font-weight:600;">
+                    All (<span class="count">${documents.length}</span>)
+                </button>
+                <button onclick="changeDocFilter('active')" id="filter-active" class="filter-pill ${docFilter === 'active' ? 'active' : ''}" style="padding:6px 14px; border-radius:20px; border:1px solid var(--border-color); cursor:pointer; font-size:0.82rem; background:${docFilter === 'active' ? '#22c55e' : 'var(--bg-secondary)'}; color:${docFilter === 'active' ? '#fff' : 'var(--text-secondary)'}; font-weight:600;">
+                    ✅ Active (<span class="count">${activeCount}</span>)
+                </button>
+                <button onclick="changeDocFilter('pending')" id="filter-pending" class="filter-pill ${docFilter === 'pending' ? 'active' : ''}" style="padding:6px 14px; border-radius:20px; border:1px solid var(--border-color); cursor:pointer; font-size:0.82rem; background:${docFilter === 'pending' ? '#f59e0b' : 'var(--bg-secondary)'}; color:${docFilter === 'pending' ? '#fff' : 'var(--text-secondary)'}; font-weight:600;">
+                    ⏳ Pending (<span class="count">${pendingCount}</span>)
+                </button>
+            </div>
+        </div>
+    `;
+
+    // Bind search input — it will stay in the DOM
+    const searchInput = document.getElementById('docSearchInput');
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            docSearch = e.target.value;
+            // IMPORTANT: We only re-render the list, NOT the toolbar
+            const allDocuments = window.lastFetchedDocuments || [];
+            displayDocumentsListOnly(allDocuments);
+        });
+    }
+}
+
+// Update counts in existing toolbar buttons without re-rendering
+function updateToolbarCounts(documents) {
+    const activeCount = documents.filter(d => d.isActive).length;
+    const pendingCount = documents.length - activeCount;
+
+    const allBtn = document.querySelector('#filter-all .count');
+    const activeBtn = document.querySelector('#filter-active .count');
+    const pendingBtn = document.querySelector('#filter-pending .count');
+
+    if (allBtn) allBtn.textContent = documents.length;
+    if (activeBtn) activeBtn.textContent = activeCount;
+    if (pendingBtn) pendingBtn.textContent = pendingCount;
+}
+
+// Global filter change handler that keeps the toolbar but updates buttons and list
+window.changeDocFilter = function (filter) {
+    docFilter = filter;
+
+    // Update button styles
+    const buttons = documentsToolbar.querySelectorAll('.filter-pill');
+    buttons.forEach(btn => {
+        const id = btn.id;
+        const isActive = id === `filter-${filter}`;
+        btn.classList.toggle('active', isActive);
+
+        if (id === 'filter-all') {
+            btn.style.background = isActive ? 'var(--text-accent)' : 'var(--bg-secondary)';
+        } else if (id === 'filter-active') {
+            btn.style.background = isActive ? '#22c55e' : 'var(--bg-secondary)';
+        } else if (id === 'filter-pending') {
+            btn.style.background = isActive ? '#f59e0b' : 'var(--bg-secondary)';
+        }
+        btn.style.color = isActive ? '#fff' : 'var(--text-secondary)';
+    });
+
+    const allDocuments = window.lastFetchedDocuments || [];
+    displayDocumentsListOnly(allDocuments);
+};
+
+// Main function to display documents
 function displayDocuments(documents) {
+    window.lastFetchedDocuments = documents; // Store for search/filter reference
+
     if (!documents || documents.length === 0) {
+        if (documentsToolbar) documentsToolbar.innerHTML = '';
         documentsList.innerHTML = `
             <div class="empty-state">
                 <div class="empty-state-icon">📚</div>
@@ -329,6 +420,12 @@ function displayDocuments(documents) {
         return;
     }
 
+    renderDocumentsToolbar(documents);
+    displayDocumentsListOnly(documents);
+}
+
+// Separate function that ONLY updates the list of document items
+function displayDocumentsListOnly(documents) {
     // Sort documents: pending first, then active, then by creation date
     const sortedDocs = [...documents].sort((a, b) => {
         if (a.isActive === b.isActive) {
@@ -336,33 +433,6 @@ function displayDocuments(documents) {
         }
         return a.isActive ? 1 : -1; // Pending (false) comes before active (true)
     });
-
-    const activeCount = documents.filter(d => d.isActive).length;
-    const pendingCount = documents.length - activeCount;
-
-    // Build filter + search toolbar
-    const toolbar = `
-        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:14px;">
-            <input
-                id="docSearchInput"
-                type="text"
-                placeholder="🔍 Search documents..."
-                value="${escapeHtml(docSearch)}"
-                style="flex:1; min-width:180px; padding:8px 12px; border:1px solid var(--border-color); border-radius:8px; font-size:0.9rem; background:var(--bg-secondary); color:var(--text-primary);"
-            />
-            <div style="display:flex; gap:6px;">
-                <button onclick="setDocFilter('all')" class="filter-pill ${docFilter === 'all' ? 'active' : ''}" style="padding:6px 14px; border-radius:20px; border:1px solid var(--border-color); cursor:pointer; font-size:0.82rem; background:${docFilter === 'all' ? 'var(--text-accent)' : 'var(--bg-secondary)'}; color:${docFilter === 'all' ? '#fff' : 'var(--text-secondary)'}; font-weight:600;">
-                    All (${documents.length})
-                </button>
-                <button onclick="setDocFilter('active')" class="filter-pill ${docFilter === 'active' ? 'active' : ''}" style="padding:6px 14px; border-radius:20px; border:1px solid var(--border-color); cursor:pointer; font-size:0.82rem; background:${docFilter === 'active' ? '#22c55e' : 'var(--bg-secondary)'}; color:${docFilter === 'active' ? '#fff' : 'var(--text-secondary)'}; font-weight:600;">
-                    ✅ Active (${activeCount})
-                </button>
-                <button onclick="setDocFilter('pending')" class="filter-pill ${docFilter === 'pending' ? 'active' : ''}" style="padding:6px 14px; border-radius:20px; border:1px solid var(--border-color); cursor:pointer; font-size:0.82rem; background:${docFilter === 'pending' ? '#f59e0b' : 'var(--bg-secondary)'}; color:${docFilter === 'pending' ? '#fff' : 'var(--text-secondary)'}; font-weight:600;">
-                    ⏳ Pending (${pendingCount})
-                </button>
-            </div>
-        </div>
-    `;
 
     // Apply filter + search
     const filtered = sortedDocs.filter(doc => {
@@ -377,11 +447,14 @@ function displayDocuments(documents) {
         return true;
     });
 
-    const itemsHtml = filtered.length === 0
-        ? `<div class="empty-state"><p>No documents match your filter.</p></div>`
-        : filtered.map(doc => {
-            const ft = getFileTypeLabel(doc);
-            return `
+    if (filtered.length === 0) {
+        documentsList.innerHTML = `<div class="empty-state"><p>No documents match your search or filter.</p></div>`;
+        return;
+    }
+
+    const itemsHtml = filtered.map(doc => {
+        const ft = getFileTypeLabel(doc);
+        return `
         <div class="document-item ${doc.isActive ? 'active-border' : 'pending-border'}">
             <div class="document-info">
                 <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
@@ -439,25 +512,11 @@ function displayDocuments(documents) {
             </div>
         </div>
         `;
-        }).join('');
+    }).join('');
 
-    documentsList.innerHTML = toolbar + itemsHtml;
-
-    // Bind search input
-    const searchInput = document.getElementById('docSearchInput');
-    if (searchInput) {
-        searchInput.addEventListener('input', (e) => {
-            docSearch = e.target.value;
-            displayDocuments(documents);
-        });
-    }
+    documentsList.innerHTML = itemsHtml;
 }
 
-// Helper to set active filter and re-render with last fetched docs
-function setDocFilter(filter) {
-    docFilter = filter;
-    loadDocuments();
-}
 
 
 
