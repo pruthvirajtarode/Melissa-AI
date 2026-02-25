@@ -191,8 +191,11 @@ function addMessage(role, content, meta = {}) {
 function formatMessage(text) {
     if (!text) return '';
 
+    // Un-escape markdown brackets if they were escaped by OpenAI
+    text = text.replace(/\\\[/g, '[').replace(/\\\]/g, ']').replace(/\\\(/g, '(').replace(/\\\)/g, ')');
+
     // 1. Convert markdown links: [text](url) -> <a href="url" target="_blank">text</a>
-    text = text.replace(/\[([^\]]+)\]\s*\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" style="color: var(--text-accent, #22c55e); text-decoration: underline;">$1</a>');
+    text = text.replace(/\[([\s\S]*?)\]\s*\(\s*(https?:\/\/[^\s)"]+)\s*\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" style="color: var(--text-accent, #22c55e); text-decoration: underline;">$1</a>');
 
     // 2. Handle bare URLs
     text = text.replace(/(^|\s)(https?:\/\/[^\s<]+[^.,\s<])/g, '$1<a href="$2" target="_blank" rel="noopener noreferrer" style="color: var(--text-accent, #22c55e); text-decoration: underline;">$2</a>');

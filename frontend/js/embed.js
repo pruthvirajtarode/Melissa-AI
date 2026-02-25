@@ -67,12 +67,14 @@
             const settings = await res.json();
             const avatarSrc = settings.avatarUrl || settings.avatarData;
             if (avatarSrc) {
-                button.innerHTML = `<img
+                const avatarHtml = `<img
                     src="${avatarSrc}"
                     alt="${settings.botName || config.botName}"
                     style="width:52px;height:52px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,0.6);"
                     onerror="this.parentElement.innerHTML='${defaultButtonIcon.replace(/"/g, "'")}';"
                 />`;
+                window.MELISS_AVATAR_HTML = avatarHtml;
+                button.innerHTML = avatarHtml;
             }
         } catch (e) {
             // Keep default icon on failure
@@ -83,7 +85,7 @@
     const iframe = document.createElement('iframe');
     iframe.id = 'meliss-widget-iframe';
     // ✅ Renamed path to forcefully bust Vercel cache
-    iframe.src = `${config.apiUrl}/widget.html?v=1.0.6`;
+    iframe.src = `${config.apiUrl}/widget.html?v=1.0.7`;
     iframe.style.cssText = `
         position: fixed;
         bottom: 100px;
@@ -112,14 +114,24 @@
         }
     });
 
+    const closeIcon = `
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+    `;
+
     function openWidget() {
         isOpen = true;
         iframe.style.display = 'block';
+        // Change icon to close
+        button.innerHTML = closeIcon;
+
         setTimeout(() => {
             iframe.style.opacity = '1';
             iframe.style.transform = 'translateY(0)';
-            button.style.transform = 'scale(0.8) rotate(90deg)';
-            button.style.opacity = '0.5';
+            button.style.transform = 'rotate(180deg) scale(0.9)';
+            button.style.background = 'linear-gradient(135deg, #1f2937 0%, #374151 100%)'; // Darker for active state
         }, 10);
         window.dispatchEvent(new Event('meliss:opened'));
     }
@@ -128,8 +140,12 @@
         isOpen = false;
         iframe.style.opacity = '0';
         iframe.style.transform = 'translateY(20px)';
-        button.style.transform = 'scale(1) rotate(0)';
-        button.style.opacity = '1';
+        button.style.transform = 'rotate(0) scale(1)';
+        button.style.background = config.buttonColor;
+
+        // Restore chat icon (check if avatar exists first)
+        button.innerHTML = window.MELISS_AVATAR_HTML || defaultButtonIcon;
+
         setTimeout(() => {
             iframe.style.display = 'none';
         }, 300);
