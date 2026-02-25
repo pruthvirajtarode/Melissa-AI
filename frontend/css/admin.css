@@ -1005,3 +1005,34 @@
     visibility: visible;
     transform: translateY(0);
 }
+
+/* Documents Toolbar & Filters */
+.documents-toolbar {
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.filter-pill {
+    transition: all 0.2s ease;
+    border: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.filter-pill:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.filter-pill.active {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+#docSearchInput:focus {
+    border-color: var(--text-accent) !important;
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1) !important;
+}

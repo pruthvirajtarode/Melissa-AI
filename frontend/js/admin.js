@@ -321,8 +321,8 @@ let docSearch = '';
 function renderDocumentsToolbar(documents) {
     if (!documentsToolbar) return;
 
-    // Only render once or if empty to preserve input focus
-    if (documentsToolbar.innerHTML.trim() !== '') {
+    // Only render once to preserve input focus
+    if (document.getElementById('docSearchInput')) {
         updateToolbarCounts(documents);
         return;
     }
