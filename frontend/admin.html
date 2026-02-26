@@ -194,12 +194,23 @@
 
                     <!-- URL Upload -->
                     <div class="upload-card">
-                        <h3>🌐 Add from URL</h3>
-                        <p class="upload-desc">Import content from web pages</p>
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <h3>🌐 Add from URL</h3>
+                                <p class="upload-desc">Import content from web pages (one per line)</p>
+                            </div>
+                            <div
+                                style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-secondary); background: var(--bg-secondary); padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border-color);">
+                                <input type="checkbox" id="urlAutoApprove" style="cursor: pointer;">
+                                <label for="urlAutoApprove"
+                                    style="cursor: pointer; margin: 0; font-weight: 500;">Auto-Approve</label>
+                            </div>
+                        </div>
                         <form id="urlUploadForm">
                             <div class="form-group">
-                                <input type="url" id="urlInput" class="form-input"
-                                    placeholder="https://example.com/article" required>
+                                <textarea id="urlInput" class="form-input" rows="3"
+                                    placeholder="https://example.com/page1&#10;https://example.com/page2" required
+                                    style="resize: vertical; min-height: 80px; font-family: monospace; font-size: 0.85rem;"></textarea>
                             </div>
                             <button type="submit" class="btn-primary btn-block">Fetch & Process</button>
                         </form>

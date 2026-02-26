@@ -113,48 +113,80 @@ router.post('/', upload.single('file'), async (req, res) => {
 
 /**
  * POST /api/upload/url
- * Process web page from URL
+ * Process web page(s) from URL(s)
  */
 router.post('/url', async (req, res) => {
     try {
-        const { url } = req.body;
+        const { url, urls, autoApprove } = req.body;
 
-        if (!url) {
-            return res.status(400).json({ error: 'URL is required' });
+        // Handle both single url and list of urls
+        let urlList = [];
+        if (urls && Array.isArray(urls)) {
+            urlList = urls;
+        } else if (url) {
+            urlList = [url];
+        }
+
+        if (urlList.length === 0) {
+            return res.status(400).json({ error: 'URL(s) required' });
         }
 
         const { scrapeWebPage, chunkText, summarizeDocument } = require('../services/documentProcessor');
 
-        const text = await scrapeWebPage(url);
-        const chunks = chunkText(text);
-        const summary = await summarizeDocument(text);
+        const results = [];
+        const errors = [];
 
-        // Prepare chunks for bulk addition
-        const chunksToAdd = chunks.map((chunk, index) => ({
-            text: chunk,
-            metadata: {
-                source: url,
-                type: 'webpage',
-                summary: summary,
-                chunkIndex: index,
-                totalChunks: chunks.length,
-                isActive: false // Set to false by default for admin review
+        for (const targetUrl of urlList) {
+            try {
+                if (!targetUrl.trim()) continue;
+
+                console.log(`🌐 Processing URL: ${targetUrl}`);
+                const text = await scrapeWebPage(targetUrl);
+                const chunks = chunkText(text);
+                const summary = await summarizeDocument(text);
+
+                // Prepare chunks for bulk addition
+                const chunksToAdd = chunks.map((chunk, index) => ({
+                    text: chunk,
+                    metadata: {
+                        source: targetUrl,
+                        type: 'webpage',
+                        summary: summary,
+                        chunkIndex: index,
+                        totalChunks: chunks.length,
+                        isActive: autoApprove === true || autoApprove === 'true', // Use flag if provided
+                        adminUploaded: true
+                    }
+                }));
+
+                // Add documents in bulk
+                await vectorStore.addDocuments(chunksToAdd);
+                results.push({ url: targetUrl, chunks: chunks.length });
+            } catch (err) {
+                console.error(`❌ Error processing ${targetUrl}:`, err.message);
+                errors.push({ url: targetUrl, error: err.message });
             }
-        }));
+        }
 
-        // Add documents in bulk
-        await vectorStore.addDocuments(chunksToAdd);
+        if (results.length === 0 && errors.length > 0) {
+            return res.status(500).json({
+                error: 'Failed to process any URLs',
+                details: errors
+            });
+        }
 
         res.json({
-            message: 'Web page processed and pending review',
-            url,
-            chunks: chunks.length
+            message: results.length === 1 && errors.length === 0
+                ? 'Web page processed successfully'
+                : `Processed ${results.length} URLs with ${errors.length} errors`,
+            results,
+            errors: errors.length > 0 ? errors : undefined
         });
 
     } catch (error) {
         console.error('URL processing error:', error);
         res.status(500).json({
-            error: 'Failed to process URL',
+            error: 'Failed to process URLs',
             message: error.message
         });
     }
